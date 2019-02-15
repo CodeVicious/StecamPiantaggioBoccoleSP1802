@@ -19,7 +19,7 @@ public class ConfigurationManager {
     private int byteArrayPlcPc;
     private int  dbNumberPcPlc;
     private int dbNumberPlcPc;
-
+    private String comPORT;
 
 
     public static ConfigurationManager getInstance() {
@@ -39,12 +39,14 @@ public class ConfigurationManager {
             e.printStackTrace();
         }
 
-                plcName = prop.getProperty("PLCName");
+        plcName = prop.getProperty("PLCName");
         plcIP = prop.getProperty("PLCIP");
         byteArrayPcPlc = Integer.parseInt(prop.getProperty("byteArrayWithLengthofDB-PLCPC"));
         byteArrayPlcPc = Integer.parseInt(prop.getProperty("byteArrayLengthofDB-PLCPC"));
         dbNumberPcPlc = Integer.parseInt(prop.getProperty("dbNumber-PLCPC"));
         dbNumberPlcPc = Integer.parseInt(prop.getProperty("dbNumber-PCPLC"));
+
+        comPORT = prop.getProperty("COM");
 
     }
 
@@ -71,4 +73,6 @@ public class ConfigurationManager {
     public int getDbNumberPlcPc() {
         return dbNumberPlcPc;
     }
+
+    public String getCOMPort() { return comPORT;  }
 }
