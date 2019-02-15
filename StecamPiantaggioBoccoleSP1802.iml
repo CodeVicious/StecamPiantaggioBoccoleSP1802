@@ -23,5 +23,6 @@
     <orderEntry type="library" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.17" level="project" />
     <orderEntry type="library" name="Maven: com.univocity:univocity-parsers:2.5.4" level="project" />
     <orderEntry type="library" name="Maven: com.fazecast:jSerialComm:2.4.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.microsoft.sqlserver:mssql-jdbc:7.2.1.jre8" level="project" />
   </component>
 </module>
