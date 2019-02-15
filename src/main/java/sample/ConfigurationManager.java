@@ -75,4 +75,8 @@ public class ConfigurationManager {
     }
 
     public String getCOMPort() { return comPORT;  }
+
+    public String getJDBCString() {
+        return "jdbc:sqlserver://<server>:<port>;databaseName=AdventureWorks;user=<user>;password=<password>";
+    }
 }

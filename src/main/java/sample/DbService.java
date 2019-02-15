@@ -9,7 +9,7 @@ public class DbService {
     }
 
     // Create a variable for the connection string.
-    String connectionUrl = "jdbc:sqlserver://<server>:<port>;databaseName=AdventureWorks;user=<user>;password=<password>";
+    String connectionUrl = ConfigurationManager.getInstance().getJDBCString();
 
     Connection con;
 
