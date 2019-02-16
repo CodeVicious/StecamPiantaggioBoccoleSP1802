@@ -19,6 +19,8 @@ public class PlcService {
         Preconditions.checkNotNull(listener);
         Preconditions.checkNotNull(service);
         plcMASTER = new PLC(name,ip,plcToPc,pcToPlc,plcToPcDb,pcToPlcDb,booleans);
+
+
         plcMASTER.listeners.add(listener); //inserisco un observer per i cambiamenti di stato
         this.service = service;
         this.service.submit(new Thread(plcMASTER)); //Inserisco l'osservatore nel pool di thread
@@ -33,4 +35,6 @@ public class PlcService {
         return plcMASTER.connected;
     }
 
+    public void send(String text) {
+    }
 }
