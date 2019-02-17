@@ -18,12 +18,12 @@ public class DbService {
         try {
             con = DriverManager.getConnection(connectionUrl);
             Statement stmt = con.createStatement();
-            String SQL = "SELECT TOP 10 * FROM Person.Contact";
+            String SQL = "SELECT * FROM StecamSP1802.dbo.utentiStecam";
             ResultSet rs = stmt.executeQuery(SQL);
 
             // Iterate through the data in the result set and display it.
             while (rs.next()) {
-                System.out.println(rs.getString("FirstName") + " " + rs.getString("LastName"));
+                System.out.println(rs.getString("Matricola") + " " + rs.getString("NomeOperatore"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

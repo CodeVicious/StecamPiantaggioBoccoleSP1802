@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
+<VBox prefHeight="678.0" prefWidth="1160.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainController">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
+    <MenuBar prefHeight="36.0" prefWidth="1160.0" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
@@ -35,12 +35,7 @@
     </MenuBar>
     <AnchorPane fx:id="MainW" maxHeight="-1.0" maxWidth="-1.0" prefHeight="600.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
       <children>
-        <Label alignment="CENTER" layoutX="201.0" layoutY="14.0" prefHeight="39.0" prefWidth="371.0" style="&#10;" text="Piantaggio STECAM" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
-          <font>
-            <Font size="18.0" />
-          </font>
-        </Label>
-            <Label fx:id="barCode" layoutX="53.0" layoutY="64.0" prefHeight="17.0" prefWidth="178.0" text="Bar Code">
+            <Label fx:id="barCode" layoutX="53.0" layoutY="64.0" prefHeight="23.0" prefWidth="224.0" text="Bar Code">
                <font>
                   <Font size="18.0" />
                </font>
@@ -50,12 +45,13 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="texToPLC" layoutX="53.0" layoutY="225.0" promptText="Send  To PLC">
+            <TextField fx:id="texToPLC" layoutX="32.0" layoutY="344.0" promptText="Send  To PLC">
                <font>
                   <Font size="18.0" />
                </font>
             </TextField>
-            <Button fx:id="sendToPLC" layoutX="288.0" layoutY="225.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="52.0" text="send" />
+            <Button fx:id="sendToPLC" layoutX="277.0" layoutY="342.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="52.0" text="send" />
+          
       </children>
     </AnchorPane>
   </children>
