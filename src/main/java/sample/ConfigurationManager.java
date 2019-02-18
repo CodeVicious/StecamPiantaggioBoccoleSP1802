@@ -1,7 +1,5 @@
 package sample;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -77,6 +75,6 @@ public class ConfigurationManager {
     public String getCOMPort() { return comPORT;  }
 
     public String getJDBCString() {
-        return "jdbc:sqlserver://<server>:<port>;databaseName=AdventureWorks;user=<user>;password=<password>";
+        return "jdbc:sqlserver://127.0.0.1;databaseName=StecamSP1802;user=sqluser;password=sqluser";
     }
 }

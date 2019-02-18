@@ -1,0 +1,23 @@
+scrivo sulla 114 - Byte 0 di comunicazione - Byte 1 al Byte 10 Codice Articolo (ricetta) -
+leggo sulla 112
+
+0.7 -> Implementeremo in futuro  di entrambe le DB - > da testare
+
+0.6 -> Bit della 114 che indica carico ricetta
+
+0.6 -> Bit della 112 OK RICETTA
+0.5 -> Bit della 112 KO RICETTA NON PRESENTE -> Si riparte. (resetto la 114)
+
+0.5 -> Bit della 114 VAI PIANTA
+0.4 -> Bit della 114 CODICE SCAZZATO SI RIPARTE. (resetto 114)
+
+0.4 -> Bit della 112 BUONO! Salvo dati piantaggio.
+0.3 -> Bit della 112 SCARTO! Scarto.
+
+0.3 -> Bit della 114 NUOVO W.O.
+
+
+
+WO: 7 o 8 interi tra 0 e 9 - ^\d{7,8}$
+Codice Articolo: 8 interi e può essere presente una lettera maiuscola tra A e Z - ^\d{8}[A-Z]?$
+UdM: 4 cifre una coppia tra ... e 5 a 8 cifre-  ^d{4}(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\d{5,8}$
