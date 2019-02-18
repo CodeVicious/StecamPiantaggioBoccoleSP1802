@@ -9,12 +9,13 @@ import java.util.TimerTask;
 
 import Moka7.S7;
 import Moka7.S7Client;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class PLC implements Runnable {
 
-    final Logger logger = LoggerFactory.getLogger(PLC.class);
+    final Logger logger = LogManager.getLogger(PLC.class);
 
     public ArrayList<PLCListener> listeners;
     public Object PLCSyncObj;

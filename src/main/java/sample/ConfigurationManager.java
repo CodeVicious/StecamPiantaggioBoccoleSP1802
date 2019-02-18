@@ -1,5 +1,6 @@
 package sample;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -8,6 +9,8 @@ public class ConfigurationManager {
     private static ConfigurationManager ourInstance = new ConfigurationManager();
 
     final Properties prop = new Properties();
+
+
     private InputStream input;
     private String plcName;
 

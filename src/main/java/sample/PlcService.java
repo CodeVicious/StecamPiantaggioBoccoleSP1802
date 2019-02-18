@@ -3,12 +3,13 @@ package sample;
 import java.util.concurrent.ExecutorService;
 
 import com.google.common.base.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 //Generatore pool di thread di mapping del PLC
 public class PlcService {
-    final Logger logger = LoggerFactory.getLogger(PlcService.class);
+    final Logger logger = LogManager.getLogger(PlcService.class);
     final PLC plcMASTER;
     final ExecutorService service;
 
