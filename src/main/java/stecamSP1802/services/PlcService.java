@@ -40,5 +40,7 @@ public class PlcService {
     }
 
     public void closeConnection() {
+
+        this.service.shutdownNow();
     }
 }

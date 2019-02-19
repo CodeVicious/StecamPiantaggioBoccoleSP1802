@@ -50,6 +50,7 @@ public class PLC implements Runnable {
     public short liveBitPCDuration = 250; // in ms
     public short liveBitPLCDuration = 500; // in ms
     public int LastError = 0;
+    private boolean exit = false;
 
     public PLC(String name,String ip,byte[] plcToPc,byte[] pcToPlc,int plcToPcDb,int pcToPlcDb,double[] booleans) {
         this.plcToPc = plcToPc;
@@ -514,7 +515,7 @@ public class PLC implements Runnable {
     }
 
     public void run() {
-        while(true) {
+        while(!exit) {
             if (this.moka.Connected == false) {
                 this.connected = false;
                 int error = this.moka.ConnectTo(this.PLCIp, this.rack, this.slot);
@@ -552,6 +553,9 @@ public class PLC implements Runnable {
                 logger.error(e.getMessage());
             }
         }
+    }
+    public void Stop(){
+        exit = true;
     }
 
 }
