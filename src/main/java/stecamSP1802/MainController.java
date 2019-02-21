@@ -143,5 +143,9 @@ public class MainController implements Initializable {
     }
 
     public void onNewBarCode() {
+        //check BarCode
+        //chiedi a db ed estrai codice prodotto
+
+        plcService.sendCodiceRicetta("12345678A");
     }
 }

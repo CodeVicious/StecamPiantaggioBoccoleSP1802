@@ -41,4 +41,9 @@ public class PlcService {
 
     public void closeConnection() {
     }
+
+    public void sendCodiceRicetta(String s) {
+        plcMASTER.put
+
+    }
 }

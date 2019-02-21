@@ -19,8 +19,8 @@
         <module name="StecamPiantaggioBoccoleSP1802" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="StecamPiantaggioBoccoleSP1802" target="1.5" />
+    <bytecodeTargetLevel target="8">
+      <module name="StecamPiantaggioBoccoleSP1802" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
