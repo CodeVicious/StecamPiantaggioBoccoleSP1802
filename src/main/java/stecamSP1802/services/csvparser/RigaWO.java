@@ -1,4 +1,4 @@
-package stecamSP1802.services;
+package stecamSP1802.services.csvparser;
 
 import com.univocity.parsers.annotations.NullString;
 import com.univocity.parsers.annotations.Parsed;

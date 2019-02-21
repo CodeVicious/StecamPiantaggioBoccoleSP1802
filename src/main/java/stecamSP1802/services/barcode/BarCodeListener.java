@@ -19,17 +19,18 @@ public class BarCodeListener implements SerialPortDataListener {
     }
 
     public int getListeningEvents() {
-        return 0;
+        return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
     }
 
     public void serialEvent(SerialPortEvent serialPortEvent) {
                 if (serialPortEvent.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                    Logger.info("BARCODE EVENT DISCARDED: " + SerialPort.LISTENING_EVENT_DATA_AVAILABLE);
+                    Logger.warn("BARCODE EVENT DISCARDED: " + SerialPort.LISTENING_EVENT_DATA_AVAILABLE);
                     return;
                 }
                 byte[] newData = new byte[comPort.bytesAvailable()];
                 int numRead = comPort.readBytes(newData, newData.length);
-                Logger.info("BARCODE: "+newData+" num Bytes: "+newData.length);
-                mainController.onNewBarCode();
+                String barCode = new String(newData);
+                Logger.info("BARCODE: "+barCode+" num Bytes: "+newData.length);
+                mainController.onNewBarCode(barCode);
     }
 }

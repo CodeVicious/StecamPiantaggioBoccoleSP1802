@@ -1,8 +1,14 @@
 package stecamSP1802.testers;
 
 import Moka7.*;
+import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortEvent;
+import stecamSP1802.ConfigurationManager;
 import stecamSP1802.services.PLC;
 import stecamSP1802.services.PLCListener;
+import stecamSP1802.services.barcode.BarCodeListener;
+import stecamSP1802.services.barcode.SerialService;
 
 public class PLCTest {
     private S7Client moka;
@@ -18,28 +24,7 @@ public class PLCTest {
     }
 
     public static void main(String[] args) throws Exception {
- /*       PLCTest test = new PLCTest();
-        S7CpuInfo cpuInfo = new S7CpuInfo();
-        System.out.println(test.moka.Connected);
-        System.out.println(test.moka.GetCpuInfo(cpuInfo));
-
-        System.out.println(cpuInfo.ASName());
-        System.out.println(cpuInfo.ModuleName());
-
-
-        IntByRef status = new IntByRef();
-        System.out.println(test.moka.GetPlcStatus(status));
-
-        byte[] buffer = new byte[4];
-        IntByRef dime = new IntByRef();
-        test.moka.DBGet(112,buffer,dime);
-
-        S7BlockInfo blockInfo = new S7BlockInfo();
-        test.moka.GetAgBlockInfo(41,112,blockInfo);
-
-        test.moka.ReadArea(S7.S7AreaDB,112,0,4,buffer);
-*/
-
+/*
         byte[] plcToPc = new byte[4];
 
         byte[] pcToPlc = new byte[4];
@@ -70,8 +55,43 @@ public class PLCTest {
         Thread.sleep(2000);
 
         plcMASTER.putDInt(false,0,23);
+*/
+
+        SerialPort comPort;
+        System.out.println("PORT "+SerialPort.getCommPorts());
+        comPort = SerialPort.getCommPort("COM3");
+        comPort.openPort();
+        String barCode = "123456";
+        System.out.println(barCode.matches("\\d{7,8}"));
+
+        //matches("^\\d{8}[A-Z]?$"));
+        //matches("^\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}$"));
 
 
+
+        comPort.addDataListener(new SerialPortDataListener() {
+            @Override
+            public int getListeningEvents() {
+                 return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+            }
+
+            @Override
+            public void serialEvent(SerialPortEvent serialPortEvent) {
+
+                if (serialPortEvent.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
+                       return;
+                byte[] newData = new byte[comPort.bytesAvailable()];
+                int numRead = comPort.readBytes(newData, newData.length);
+                String str = new String(newData);
+                System.out.println("CICICI "+str);
+                System.out.println("Read " + numRead + " bytes."+newData);
+
+                for (int i = 0; i < newData.length; ++i)
+                    System.out.print((char)newData[i]);
+                System.out.println("\n");
+
+            }
+        });
 
         while(true){
 

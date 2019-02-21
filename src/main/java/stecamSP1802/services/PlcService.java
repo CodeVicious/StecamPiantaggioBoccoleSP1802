@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 //Generatore pool di thread di mapping del PLC
 public class PlcService {
-    final Logger logger = LogManager.getLogger(PlcService.class);
+    final Logger Logger = LogManager.getLogger(PlcService.class);
     final PLC plcMASTER;
     final ExecutorService service;
 
@@ -42,5 +42,10 @@ public class PlcService {
     public void closeConnection() {
 
         this.service.shutdownNow();
+    }
+
+    public void sendCodiceRicetta(String s) {
+        Logger.info("INVIO AL PLC: "+s);
+        //plcMASTER.put
     }
 }

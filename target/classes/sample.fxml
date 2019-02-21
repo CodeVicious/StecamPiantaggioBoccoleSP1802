@@ -18,11 +18,6 @@
             <Font name="Courier New" size="24.0" />
          </font>
       </Text>
-      <Text layoutX="14.0" layoutY="570.0" stroke="#d3ce32" strokeType="OUTSIDE" text="BAR - CODE" wrappingWidth="265.0">
-         <font>
-            <Font name="Courier New" size="24.0" />
-         </font>
-      </Text>
       <Button fx:id="interfacciaParametri" layoutX="14.0" layoutY="430.0" mnemonicParsing="false" prefHeight="94.0" prefWidth="235.0" text="Carica Interfaccia Parametri" wrapText="true">
          <font>
             <Font name="Courier New" size="20.0" />
@@ -93,5 +88,10 @@
             </Text>
          </children>
       </Pane>
+      <Label fx:id="barcodeWO" layoutX="14.0" layoutY="551.0" prefHeight="28.0" prefWidth="198.0" text="Label">
+         <font>
+            <Font name="Courier New" size="24.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

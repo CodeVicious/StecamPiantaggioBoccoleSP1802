@@ -7,6 +7,21 @@ import java.util.Properties;
 
 public class ConfigurationManager {
     private static ConfigurationManager ourInstance = new ConfigurationManager();
+    private String verificaListaPartiWOURL;
+    private String verificaListaPartiUDM;
+    private String nomeStazione;
+    private String uRLVerificaUID;
+    private String uRLDisabilitaUDM;
+    private String connessioneSERVER;
+    private String connessioneLOCALSERVER;
+    private String passwordAmministrativa;
+    private String utenteLocale;
+    private int logoffTimeout;
+
+    public static ConfigurationManager getInstance() {
+        return ourInstance;
+    }
+    private ConfigurationManager() {}
 
     final Properties prop = new Properties();
 
@@ -24,12 +39,6 @@ public class ConfigurationManager {
     private double[] bitMonitor;
 
 
-    public static ConfigurationManager getInstance() {
-        return ourInstance;
-    }
-
-    private ConfigurationManager() {
-    }
 
     public void getConfiguration(){
 
@@ -51,7 +60,20 @@ public class ConfigurationManager {
         bitMonitor = new double[bitArray.length];
         for(int i=0;i<bitArray.length;i++)
             bitMonitor[i]=Double.parseDouble(bitArray[i]);
+
         comPORT = prop.getProperty("COM");
+
+        verificaListaPartiWOURL = prop.getProperty("VerificaListaPartiWOURL");
+        verificaListaPartiUDM  = prop.getProperty("VerificaListaPartiUDM");
+
+        nomeStazione =  prop.getProperty("NomeStazione");
+        uRLVerificaUID = prop.getProperty("URLVerificaUID");
+        uRLDisabilitaUDM = prop.getProperty("URLDisabilitaUDM");
+        connessioneSERVER = prop.getProperty("ConnessioneSERVER");
+        connessioneLOCALSERVER = prop.getProperty("ConnessioneLOCALSERVER");
+        passwordAmministrativa = prop.getProperty("PasswordAmministrativa");
+        utenteLocale = prop.getProperty("utenteLocale");
+        logoffTimeout = Integer.parseInt(prop.getProperty("LogoffTimeout"));
 
     }
 
@@ -86,4 +108,8 @@ public class ConfigurationManager {
     }
 
     public double[] getBitMonitor() { return bitMonitor; }
+
+    public String getVerificaListaPartiWOURL() {
+        return verificaListaPartiWOURL;
+    }
 }
