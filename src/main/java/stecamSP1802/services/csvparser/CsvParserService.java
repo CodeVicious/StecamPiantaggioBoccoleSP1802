@@ -1,10 +1,12 @@
 package stecamSP1802.services.csvparser;
 
+import com.google.common.base.Preconditions;
 import com.univocity.parsers.common.processor.BeanListProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import stecamSP1802.services.barcode.WorkOrder;
 import sun.rmi.runtime.Log;
 
 import java.io.*;
@@ -63,4 +65,12 @@ public class CsvParserService {
         return "";
     }
 
+    public WorkOrder getWO() {
+        Preconditions.checkNotNull(beans);
+        WorkOrder wo = new WorkOrder(beans.get(0).getWo(),beans.get(0).getArticolo());
+        for(int i = 1;i < beans.size(); i++){
+            wo.addParte(beans.get(i).getArticolo(),beans.get(i).getDescrizione(),false);
+        }
+        return wo;
+    }
 }

@@ -14,6 +14,11 @@ public class WorkOrder {
         this.listaParti = listaParti;
     }
 
+    public WorkOrder(String barCodeWO, String codiceRicetta) {
+        this.barCodeWO = barCodeWO;
+        this.codiceRicetta = codiceRicetta;
+    }
+
     public void addParte(String parte,String descrizione, Boolean verificata){
         this.listaParti.put(parte,new Parte(parte,descrizione,verificata));
     }

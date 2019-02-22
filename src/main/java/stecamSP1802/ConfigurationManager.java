@@ -67,7 +67,6 @@ public class ConfigurationManager {
         verificaListaPartiUDM  = prop.getProperty("VerificaListaPartiUDM");
 
         nomeStazione =  prop.getProperty("NomeStazione");
-        uRLVerificaUID = prop.getProperty("URLVerificaUID");
         uRLDisabilitaUDM = prop.getProperty("URLDisabilitaUDM");
         connessioneSERVER = prop.getProperty("ConnessioneSERVER");
         connessioneLOCALSERVER = prop.getProperty("ConnessioneLOCALSERVER");
@@ -111,5 +110,41 @@ public class ConfigurationManager {
 
     public String getVerificaListaPartiWOURL() {
         return verificaListaPartiWOURL;
+    }
+
+    public String getVerificaListaPartiUDM() {
+        return verificaListaPartiUDM;
+    }
+
+    public String getNomeStazione() {
+        return nomeStazione;
+    }
+
+    public String getuRLVerificaUID() {
+        return uRLVerificaUID;
+    }
+
+    public String getuRLDisabilitaUDM() {
+        return uRLDisabilitaUDM;
+    }
+
+    public String getConnessioneSERVER() {
+        return connessioneSERVER;
+    }
+
+    public String getConnessioneLOCALSERVER() {
+        return connessioneLOCALSERVER;
+    }
+
+    public String getPasswordAmministrativa() {
+        return passwordAmministrativa;
+    }
+
+    public String getUtenteLocale() {
+        return utenteLocale;
+    }
+
+    public int getLogoffTimeout() {
+        return logoffTimeout;
     }
 }

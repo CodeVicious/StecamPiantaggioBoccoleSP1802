@@ -39,11 +39,14 @@ public class MainController implements Initializable {
     @FXML
     Label barcodeWO;
 
+    @FXML
+    Label msgBOX;
+
     //Servizi
     ExecutorService executors;
     final ConfigurationManager conf = ConfigurationManager.getInstance();
     final StatusManager statusManager = StatusManager.getInstance();
-    final DbService dbService = DbService.getInstance();
+    DbService dbService;
     SerialService serialService;
     PlcService plcService;
     WebQueryService webQueryService;
@@ -61,6 +64,7 @@ public class MainController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         serialService = new SerialService(this);
         webQueryService =new WebQueryService();
+        dbService = new DbService(statusManager);
 
 
 
@@ -79,6 +83,7 @@ public class MainController implements Initializable {
                 conf.getBitMonitor(),
                 plcListener ,
                 statusManager,
+                webQueryService,
                 executors
         );
 
@@ -87,7 +92,7 @@ public class MainController implements Initializable {
     }
 
     private void launchTime() {
-        /*
+
         Task task = new Task<Void>() {
             @Override public Void call() {
                 for (;;) {
@@ -114,7 +119,7 @@ public class MainController implements Initializable {
         };
 
         new Thread(task).start();
-        */
+
 
     }
 
@@ -137,59 +142,103 @@ public class MainController implements Initializable {
     }
 
     public void plcDisconnected() {
+        Logger.warn("PLC DISCONNECTED ");
+        showMesage("PLC DISCONNECTED ");
     }
 
     public void plcConnected() {
+        Logger.info("PLC CONNECTED ");
+        showMesage("PLC CONNECTED ");
     }
 
     public void gDbDisconnected() {
+        Logger.warn("SQL DB SERVER DISCONNECTED ");
+        showMesage("SQL DB SERVER DISCONNECTED ");
     }
 
     public void gDbConnected() {
+        Logger.info("SQL DB SERVER CONNECTED ");
+        showMesage("SQL DB SERVER CONNECTED ");
     }
 
     public void lDbDisconnected() {
+        Logger.warn("LOCAL SQL DB SERVER DISCONNECTED ");
+        showMesage("LOCAL SQL DB SERVER DISCONNECTED ");
     }
 
     public void lDbConnected() {
+        Logger.info("LOCAL SQL DB SERVER CONNECTED ");
+        showMesage("LOCAL SQL DB SERVER CONNECTED");
     }
 
     public void onRicettaOK() {
+        Logger.warn("RICETTA OK! ");
+        showMesage("RICETTA OK! ");
     }
 
     public void onRicettaKO() {
+        Logger.warn("RICETTA KO! ");
+        showMesage("RICETTA KO! ");
     }
 
     public void piantaggioBUONO() {
+        Logger.warn("PIANTAGGIO BUONO! ");
+        showMesage("PIANTAGGIO BUONO! ");
     }
 
     public void piantaggioSCARTO() {
+        Logger.warn("PIANTAGGIO SCARTO! ");
+        showMesage("PIANTAGGIO SCARTO! ");
     }
 
     public void onNewBarCode(String barCode) {
-        Platform.runLater(new Runnable() {
-            public void run() {
-                //check BarCode
-                if (!barCode.matches("\\d{7,8}\r")) {
-                    Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
-                    barcodeWO.setText(barCode);
-                    barcodeWO.setTextFill(Color.RED);
-                } else {
-                    barcodeWO.setTextFill(Color.GREEN);
-                    barcodeWO.setText(barCode);
+        switch (statusManager.getGlobalStatus()) {
+            case RUNNING:
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        //check BarCode
+                        if (!barCode.matches("\\d{7,8}\r")) {
+                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
+                            barcodeWO.setText(barCode);
+                            barcodeWO.setTextFill(Color.RED);
+                        } else {
+                            barcodeWO.setTextFill(Color.GREEN);
+                            barcodeWO.setText(barCode);
 
-                }
-                webQueryService.VerificaListaPartiWO(barCode);
-                plcService.sendCodiceRicetta("12345678A");
-            }
+                        }
+                        webQueryService.VerificaListaPartiWO(barCode,statusManager);
+                        plcService.sendCodiceRicetta("12345678A");
+                    }
+                });
+                break;
+            case WAITING_UDM:
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        //check BarCode
+                        if (!barCode.matches("\\d{8}[A-Z]?")) {
+                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
+                            barcodeWO.setText(barCode);
+                            barcodeWO.setTextFill(Color.RED);
+                        } else {
+                            barcodeWO.setTextFill(Color.GREEN);
+                            barcodeWO.setText(barCode);
+
+                        }
+                        webQueryService.VerificaUDM(barCode,statusManager);
+                        plcService.checkPiantaggio();
+                    }
+                });
+                break;
+
+        }
+    }
+
+    private void showMesage(String msg){
+        Platform.runLater(()->{
+            msgBOX.setText(msg);
         });
     }
 
-
-
-    private boolean checkCodiceArticolo(String code){
-        return(code.matches("\\d{8}[A-Z]?"));
-    }
     private boolean checkUDMCode(String barCode){
         return(barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}"));
 
