@@ -9,6 +9,7 @@ import java.util.TimerTask;
 
 import Moka7.S7;
 import Moka7.S7Client;
+import com.google.common.base.Preconditions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 public class PLC implements Runnable {
 
     final Logger logger = LogManager.getLogger(PLC.class);
+    private StatusManager statusManager;
 
     public ArrayList<PLCListener> listeners;
     public Object PLCSyncObj;
@@ -40,8 +42,8 @@ public class PLC implements Runnable {
 
     boolean firstConnect = true;
 
-    private byte[] plcToPc,pcToPlc;
-    private Object plcToPcLock,pcToPlcLock;
+    private byte[] plcToPc, pcToPlc;
+    private Object plcToPcLock, pcToPlcLock;
 
     public boolean connected = false;
     public boolean liveBitEnabled = false;
@@ -52,7 +54,8 @@ public class PLC implements Runnable {
     public int LastError = 0;
     private boolean exit = false;
 
-    public PLC(String name,String ip,byte[] plcToPc,byte[] pcToPlc,int plcToPcDb,int pcToPlcDb,double[] booleans) {
+    public PLC(String name, String ip, byte[] plcToPc, byte[] pcToPlc, int plcToPcDb, int pcToPlcDb, double[] booleans, StatusManager statusManager) {
+        Preconditions.checkNotNull(statusManager);
         this.plcToPc = plcToPc;
         this.pcToPlc = pcToPlc;
         this.PLCName = name;
@@ -61,6 +64,7 @@ public class PLC implements Runnable {
         this.moka.SetConnectionType(S7.OP);
         this.plcToPcDb = plcToPcDb;
         this.pcToPlcDb = pcToPlcDb;
+        this.statusManager = statusManager;
         this.boolBitChange = new HashMap<Double, Boolean>();
         this.booleans = booleans;
         this.pcToPlcLock = new Object();
@@ -106,7 +110,7 @@ public class PLC implements Runnable {
 
     private void getBoolChange() {
         for (double b : this.booleans) {
-            String s = ""+b;
+            String s = "" + b;
             String[] nums = s.split("\\.");
             try {
                 boolean state = this.getBool(true, Integer.parseInt(nums[0]), Integer.parseInt(nums[1]));
@@ -118,14 +122,14 @@ public class PLC implements Runnable {
                 }
                 if (prevState == false && state == true) {
                     // Bit changed - signalize
-                    for(PLCListener m: this.listeners) {
+                    for (PLCListener m : this.listeners) {
                         synchronized (this.PLCSyncObj) {
                             m.onPLCBitChanged(Integer.parseInt(nums[0]), Integer.parseInt(nums[1]), state, this.PLCName);
                         }
                     }
                 } else if (prevState == true && state == false) {
                     // Bit changed - signalize
-                    for(PLCListener m: this.listeners) {
+                    for (PLCListener m : this.listeners) {
                         synchronized (this.PLCSyncObj) {
                             m.onPLCBitChanged(Integer.parseInt(nums[0]), Integer.parseInt(nums[1]), state, this.PLCName);
                         }
@@ -141,10 +145,10 @@ public class PLC implements Runnable {
 
     private void saveBoolStatus() {
         for (double b : this.booleans) {
-            String s = ""+b;
+            String s = "" + b;
             String[] nums = s.split("\\.");
             try {
-                this.boolBitChange.put(b,this.getBool(true, Integer.parseInt(nums[0]), Integer.parseInt(nums[1])));
+                this.boolBitChange.put(b, this.getBool(true, Integer.parseInt(nums[0]), Integer.parseInt(nums[1])));
             } catch (Exception e) {
             }
         }
@@ -174,7 +178,7 @@ public class PLC implements Runnable {
         this.processPLCEvents();
     }
 
-    public void inverseBit(boolean fromPLC,int address,int pos) throws Exception {
+    public void inverseBit(boolean fromPLC, int address, int pos) throws Exception {
         byte[] source;
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
@@ -182,7 +186,7 @@ public class PLC implements Runnable {
                 if (address >= source.length || pos > 7) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                 } else {
-                    if((((byte)source[address]) & (0x01 << pos)) > 0) {
+                    if ((((byte) source[address]) & (0x01 << pos)) > 0) {
                         source[address] &= ~(1 << pos);
                     } else {
                         source[address] |= 1 << pos;
@@ -195,7 +199,7 @@ public class PLC implements Runnable {
                 if (address >= source.length || pos > 7) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                 } else {
-                    if((((byte)source[address]) & (0x01 << pos)) > 0) {
+                    if ((((byte) source[address]) & (0x01 << pos)) > 0) {
                         source[address] &= ~(1 << pos);
                     } else {
                         source[address] |= 1 << pos;
@@ -205,7 +209,7 @@ public class PLC implements Runnable {
         }
     }
 
-    public boolean putBool(boolean fromPLC,int address,int pos,boolean val) {
+    public boolean putBool(boolean fromPLC, int address, int pos, boolean val) {
         byte[] source;
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
@@ -263,11 +267,11 @@ public class PLC implements Runnable {
         }
     }
 
-    public void putIntDecimal(boolean fromPLC,int address,double val) throws Exception {
-        this.putInt(fromPLC, address, (short) (val*100));
+    public void putIntDecimal(boolean fromPLC, int address, double val) throws Exception {
+        this.putInt(fromPLC, address, (short) (val * 100));
     }
 
-    public boolean putInt(boolean fromPLC,int address,short val) {
+    public boolean putInt(boolean fromPLC, int address, short val) {
         ByteBuffer b = ByteBuffer.allocate(2);
         b.putShort(val);
         byte[] spl = b.array();
@@ -275,30 +279,30 @@ public class PLC implements Runnable {
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
                 source = this.plcToPc;
-                if (address >= source.length-1) {
+                if (address >= source.length - 1) {
                     System.out.println("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                     return false;
                 } else {
                     source[address] = spl[0];
-                    source[address+1] = spl[1];
+                    source[address + 1] = spl[1];
                 }
             }
         } else {
             synchronized (this.pcToPlcLock) {
                 source = this.pcToPlc;
-                if (address >= source.length-1) {
+                if (address >= source.length - 1) {
                     System.out.println("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                     return false;
                 } else {
                     source[address] = spl[0];
-                    source[address+1] = spl[1];
+                    source[address + 1] = spl[1];
                 }
             }
         }
         return true;
     }
 
-    public boolean putIntToByte(boolean fromPLC,int address,short val) {
+    public boolean putIntToByte(boolean fromPLC, int address, short val) {
         byte[] source;
         if (val > 255 || val < 0) {
             System.out.println("Value out of boundaries");
@@ -311,7 +315,7 @@ public class PLC implements Runnable {
                     System.out.println("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                     return false;
                 } else {
-                    source[address] = (byte)val;
+                    source[address] = (byte) val;
                 }
             }
         } else {
@@ -321,18 +325,18 @@ public class PLC implements Runnable {
                     System.out.println("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                     return false;
                 } else {
-                    source[address] = (byte)val;
+                    source[address] = (byte) val;
                 }
             }
         }
         return true;
     }
 
-    public void putDIntDecimal(boolean fromPLC,int address, double val) throws Exception {
-        this.putDInt(fromPLC, address, (int)val*100);
+    public void putDIntDecimal(boolean fromPLC, int address, double val) throws Exception {
+        this.putDInt(fromPLC, address, (int) val * 100);
     }
 
-    public void putDInt(boolean fromPLC,int address,int val) throws Exception {
+    public void putDInt(boolean fromPLC, int address, int val) throws Exception {
         ByteBuffer b = ByteBuffer.allocate(4);
         b.putInt(val);
         byte[] spl = b.array();
@@ -340,31 +344,31 @@ public class PLC implements Runnable {
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
                 source = this.plcToPc;
-                if (address >= source.length-3) {
+                if (address >= source.length - 3) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                 } else {
                     source[address] = spl[0];
-                    source[address+1] = spl[1];
-                    source[address+2] = spl[2];
-                    source[address+3] = spl[3];
+                    source[address + 1] = spl[1];
+                    source[address + 2] = spl[2];
+                    source[address + 3] = spl[3];
                 }
             }
         } else {
             synchronized (this.plcToPcLock) {
                 source = this.pcToPlc;
-                if (address >= source.length-3) {
+                if (address >= source.length - 3) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                 } else {
                     source[address] = spl[0];
-                    source[address+1] = spl[1];
-                    source[address+2] = spl[2];
-                    source[address+3] = spl[3];
+                    source[address + 1] = spl[1];
+                    source[address + 2] = spl[2];
+                    source[address + 3] = spl[3];
                 }
             }
         }
     }
 
-    public boolean getBool(boolean fromPLC,int address,int pos) throws Exception {
+    public boolean getBool(boolean fromPLC, int address, int pos) throws Exception {
         byte[] source;
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
@@ -372,7 +376,7 @@ public class PLC implements Runnable {
                 if (address >= source.length || pos > 7) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                 }
-                int q = ((byte)source[address]) & (0x01 << pos) ;
+                int q = ((byte) source[address]) & (0x01 << pos);
                 if (q == 0) {
                     return false;
                 } else {
@@ -385,7 +389,7 @@ public class PLC implements Runnable {
                 if (address >= source.length || pos > 7) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                 }
-                int q = ((byte)source[address]) & (0x01 << pos) ;
+                int q = ((byte) source[address]) & (0x01 << pos);
                 if (q == 0) {
                     return false;
                 } else {
@@ -395,28 +399,28 @@ public class PLC implements Runnable {
         }
     }
 
-    public int getInt(boolean fromPLC,int address) throws Exception {
+    public int getInt(boolean fromPLC, int address) throws Exception {
         byte[] source;
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
                 source = this.plcToPc;
-                if (address >= source.length-1) {
+                if (address >= source.length - 1) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                 }
-                return ((source[address] & 0xff) << 8) | (source[address+1] & 0xff);
+                return ((source[address] & 0xff) << 8) | (source[address + 1] & 0xff);
             }
         } else {
             synchronized (this.pcToPlcLock) {
                 source = this.pcToPlc;
-                if (address >= source.length-1) {
+                if (address >= source.length - 1) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                 }
-                return ((source[address] & 0xff) << 8) | (source[address+1] & 0xff);
+                return ((source[address] & 0xff) << 8) | (source[address + 1] & 0xff);
             }
         }
     }
 
-    public int getIntFromByte(boolean fromPLC,int address) throws Exception {
+    public int getIntFromByte(boolean fromPLC, int address) throws Exception {
         byte[] source;
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
@@ -439,12 +443,12 @@ public class PLC implements Runnable {
         }
     }
 
-    public int getDInt(boolean fromPLC,int address) throws Exception {
+    public int getDInt(boolean fromPLC, int address) throws Exception {
         byte[] source;
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
                 source = this.plcToPc;
-                if (address >= source.length-3) {
+                if (address >= source.length - 3) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                 }
                 ByteBuffer b = ByteBuffer.allocate(4);
@@ -455,7 +459,7 @@ public class PLC implements Runnable {
         } else {
             synchronized (this.pcToPlcLock) {
                 source = this.pcToPlc;
-                if (address >= source.length-3) {
+                if (address >= source.length - 3) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                 }
                 ByteBuffer b = ByteBuffer.allocate(4);
@@ -473,7 +477,7 @@ public class PLC implements Runnable {
         if (fromPLC) {
             synchronized (this.plcToPcLock) {
                 source = this.plcToPc;
-                if (address >= source.length-3) {
+                if (address >= source.length - 3) {
                     throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
                 }
                 System.arraycopy(source, address, StrBuffer, 0, len);
@@ -482,7 +486,7 @@ public class PLC implements Runnable {
         } else {
             synchronized (this.pcToPlcLock) {
                 source = this.pcToPlc;
-                if (address >= source.length-3) {
+                if (address >= source.length - 3) {
                     new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
                 }
                 System.arraycopy(source, address, StrBuffer, 0, len);
@@ -515,12 +519,13 @@ public class PLC implements Runnable {
     }
 
     public void run() {
-        while(!exit) {
+        while (!exit) {
             if (this.moka.Connected == false) {
                 this.connected = false;
                 int error = this.moka.ConnectTo(this.PLCIp, this.rack, this.slot);
                 if (error > 0) {
                     logger.error(S7Client.ErrorText(error));
+                    statusManager.setPlcStatus(StatusManager.PlcStatus.PLC_CONNECTING);
                 }
             } else {
                 this.connected = true;
@@ -528,6 +533,7 @@ public class PLC implements Runnable {
 
                 if (this.firstConnect == true) {
                     logger.info("Connected to PLC " + this.PLCName);
+                    statusManager.setPlcStatus(StatusManager.PlcStatus.PLC_CONNECTED);
                     // read current db state, so we don't override it with zeroes
                     this.moka.ReadArea(this.pcToPlcAreaType, this.pcToPlcDb, 0, this.pcToPlc.length, this.pcToPlc);
                     this.firstConnect = false;
@@ -554,7 +560,8 @@ public class PLC implements Runnable {
             }
         }
     }
-    public void Stop(){
+
+    public void Stop() {
         exit = true;
     }
 

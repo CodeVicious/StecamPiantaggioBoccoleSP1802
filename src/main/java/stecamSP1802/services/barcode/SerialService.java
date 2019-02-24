@@ -19,4 +19,7 @@ public class SerialService {
         comPort.addDataListener(new BarCodeListener(comPort,mainController));
     }
 
+    public void close() {
+        comPort.closePort();
+    }
 }

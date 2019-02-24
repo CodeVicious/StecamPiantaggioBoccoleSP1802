@@ -10,7 +10,6 @@ import stecamSP1802.services.csvparser.CsvParserService;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 public class WebQueryService {
     URL urlWO,urlUDM,urlVERICFICA;
@@ -28,7 +27,7 @@ public class WebQueryService {
 
     }
 
-    synchronized public void VerificaListaPartiWO(String barCode, StatusManager statusManager)  {
+    synchronized public String VerificaListaPartiWO(String barCode, StatusManager statusManager)  {
         Preconditions.checkNotNull(statusManager);
 
         try {
@@ -50,7 +49,7 @@ public class WebQueryService {
         InputStream is =con.getInputStream();
         */
 
-        iFile = getClass().getResourceAsStream("/WO.csv");
+        iFile = getClass().getResourceAsStream("/WO2.csv");
 
         // Once you have the Input Stream, it's just plain old Java IO stuff.
 
@@ -65,13 +64,14 @@ public class WebQueryService {
 
 
         Logger.info("Parsing ");
-        if(csvParserService.parse(iFile)=="OK"){
+        if(csvParserService.parse(iFile).matches("OK")){
             WO=csvParserService.getWO();
             Logger.info("WAITING UDM ");
             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
+            return WO.getCodiceRicetta();
         }
 
-
+        return "KO";
     }
 
     public void VerificaUDM(String barCode, StatusManager statusManager) {
@@ -81,4 +81,10 @@ public class WebQueryService {
     public Boolean checkValidazioneUDM(){
         return WO.checkLavorabile();
     }
+
+    public WorkOrder getWO() {
+        return WO;
+    }
+
+
 }

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
@@ -42,17 +43,35 @@ public class MainController implements Initializable {
     @FXML
     Label msgBOX;
 
+    @FXML
+    ToggleButton attivaWO;
+
+    @FXML
+    Label plcStatus;
+
+    @FXML
+    Label localDBStatus;
+
+    @FXML
+    Label globalDBStatus;
+
+    @FXML
+    Label buttonESITO;
+
+    @FXML
+    Label codiceRICETTA;
+
     //Servizi
     ExecutorService executors;
     final ConfigurationManager conf = ConfigurationManager.getInstance();
-    final StatusManager statusManager = StatusManager.getInstance();
+    StatusManager statusManager;
     DbService dbService;
     SerialService serialService;
     PlcService plcService;
     WebQueryService webQueryService;
 
     // Observers
-    PLCListener plcListener ;
+    PLCListener plcListener;
     StatusManagerListener statusManagerListener;
 
 
@@ -62,18 +81,17 @@ public class MainController implements Initializable {
 
 
     public void initialize(URL location, ResourceBundle resources) {
+        executors = Executors.newCachedThreadPool();
+        statusManagerListener = new StatusManagerListenerImp(this);
         serialService = new SerialService(this);
-        webQueryService =new WebQueryService();
+        webQueryService = new WebQueryService();
+        statusManager = new StatusManager();
+        statusManager.addListener(statusManagerListener);
+        plcListener = new PLCListenerImp(this, statusManager);
+
         dbService = new DbService(statusManager);
 
-
-
-        executors =  Executors.newCachedThreadPool();
-        plcListener = new PLCListenerImp(this, statusManager);
-        statusManagerListener = new StatusManagerListenerImp(this);
-
-
-        plcService =  new PlcService(
+        plcService = new PlcService(
                 conf.getPlcName(),
                 conf.getPlcIP(),
                 new byte[conf.getByteArrayPcPlc()],
@@ -81,12 +99,13 @@ public class MainController implements Initializable {
                 conf.getDbNumberPcPlc(),
                 conf.getDbNumberPlcPc(),
                 conf.getBitMonitor(),
-                plcListener ,
+                plcListener,
                 statusManager,
                 webQueryService,
                 executors
         );
 
+        attivaWO.selectedProperty();
         launchTime();
 
     }
@@ -94,8 +113,9 @@ public class MainController implements Initializable {
     private void launchTime() {
 
         Task task = new Task<Void>() {
-            @Override public Void call() {
-                for (;;) {
+            @Override
+            public Void call() {
+                for (; ; ) {
                     DateFormat dateFormat = new SimpleDateFormat("hh:mm a");
                     Calendar cal = Calendar.getInstance();
 
@@ -124,75 +144,128 @@ public class MainController implements Initializable {
     }
 
 
-
-    public void firePLCBitChange(final int address,final int pos,final boolean val, final String plcName){
-        Platform.runLater(new Runnable() {
-            public void run() {
-                //plcSignal.setText(plcName+" Indirizzo "+ address+" Posizione "+pos+ "valore "+val);
-
-            }
-        });
-    }
-
-
-    public void CloseApp(ActionEvent event){
-        plcService.closeConnection();
+    public void CloseApp(ActionEvent event) {
+        //plcService.closeConnection();
+        //dbService.close();
+        //serialService.close();
         Platform.exit();
         System.exit(0);
     }
 
     public void plcDisconnected() {
         Logger.warn("PLC DISCONNECTED ");
+        Platform.runLater(() -> {
+            plcStatus.setText("PLC - DISCONNECTED");
+            plcStatus.setStyle("-fx-background-color: red");
+        });
         showMesage("PLC DISCONNECTED ");
     }
 
     public void plcConnected() {
         Logger.info("PLC CONNECTED ");
         showMesage("PLC CONNECTED ");
+        Platform.runLater(() -> {
+            plcStatus.setText("PLC - CONNECTED");
+            plcStatus.setStyle("-fx-background-color: green");
+        });
     }
 
     public void gDbDisconnected() {
         Logger.warn("SQL DB SERVER DISCONNECTED ");
+        Platform.runLater(() -> {
+            globalDBStatus.setText("GLOBAL DB - DISCONNECTED");
+            globalDBStatus.setStyle("-fx-background-color: red");
+        });
         showMesage("SQL DB SERVER DISCONNECTED ");
     }
 
     public void gDbConnected() {
         Logger.info("SQL DB SERVER CONNECTED ");
+        Platform.runLater(() -> {
+            globalDBStatus.setText("GLOBAL DB - CONNECTED");
+            globalDBStatus.setStyle("-fx-background-color: green");
+        });
         showMesage("SQL DB SERVER CONNECTED ");
     }
 
     public void lDbDisconnected() {
         Logger.warn("LOCAL SQL DB SERVER DISCONNECTED ");
+        Platform.runLater(() -> {
+            localDBStatus.setText("LOCAL DB - DISCONNECTED");
+            localDBStatus.setStyle("-fx-background-color: red");
+        });
         showMesage("LOCAL SQL DB SERVER DISCONNECTED ");
     }
 
     public void lDbConnected() {
         Logger.info("LOCAL SQL DB SERVER CONNECTED ");
+        Platform.runLater(() -> {
+            localDBStatus.setText("LOCAL DB - CONNECTED");
+            localDBStatus.setStyle("-fx-background-color: green");
+        });
         showMesage("LOCAL SQL DB SERVER CONNECTED");
     }
 
     public void onRicettaOK() {
-        Logger.warn("RICETTA OK! ");
-        showMesage("RICETTA OK! ");
+        plcService.unsetRicettaok(); //Abbasso il bit di carica ricetta al PLC
+        Logger.warn("RICETTA CARICATA! ");
+        Platform.runLater(() -> {
+            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta());
+            codiceRICETTA.setStyle("-fx-background-color: green");
+        });
+
+        showMesage("RICETTA CARICATA! ");
     }
 
     public void onRicettaKO() {
+        plcService.unsetRicettaok();
         Logger.warn("RICETTA KO! ");
+        Platform.runLater(() -> {
+            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta()+ "NON PRESENTE");
+            codiceRICETTA.setStyle("-fx-background-color: red");
+        });
         showMesage("RICETTA KO! ");
     }
 
     public void piantaggioBUONO() {
+        Platform.runLater(() -> {
+            buttonESITO.setText("BUONO");
+            localDBStatus.setStyle("-fx-background-color: green");
+        });
         Logger.warn("PIANTAGGIO BUONO! ");
         showMesage("PIANTAGGIO BUONO! ");
     }
 
     public void piantaggioSCARTO() {
+        Platform.runLater(() -> {
+            buttonESITO.setText("SCARTO");
+            localDBStatus.setStyle("-fx-background-color: red");
+        });
         Logger.warn("PIANTAGGIO SCARTO! ");
         showMesage("PIANTAGGIO SCARTO! ");
     }
 
     public void onNewBarCode(String barCode) {
+
+        Platform.runLater(new Runnable() {
+            public void run() {
+                //check BarCode
+                if (!barCode.matches("\\d{7,8}\r")) {
+                    Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
+                    barcodeWO.setText(barCode);
+                    barcodeWO.setTextFill(Color.RED);
+                } else {
+                    barcodeWO.setTextFill(Color.GREEN);
+                    barcodeWO.setText(barCode);
+                    String ricetta = webQueryService.VerificaListaPartiWO(barCode, statusManager);
+                    plcService.sendCodiceRicetta(ricetta);
+                }
+
+            }
+        });
+        /*
         switch (statusManager.getGlobalStatus()) {
+
             case RUNNING:
                 Platform.runLater(new Runnable() {
                     public void run() {
@@ -231,16 +304,17 @@ public class MainController implements Initializable {
                 break;
 
         }
+        */
     }
 
-    private void showMesage(String msg){
-        Platform.runLater(()->{
+    public void showMesage(String msg) {
+        Platform.runLater(() -> {
             msgBOX.setText(msg);
         });
     }
 
-    private boolean checkUDMCode(String barCode){
-        return(barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}"));
+    private boolean checkUDMCode(String barCode) {
+        return (barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}"));
 
     }
 }
