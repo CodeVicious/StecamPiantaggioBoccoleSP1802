@@ -2,43 +2,84 @@ package stecamSP1802;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import stecamSP1802.controllers.MainController;
+import stecamSP1802.controllers.ScreensController;
+
 
 public class MainStecamPiantaggioBoccoleSP1802 extends Application {
     final Logger Logger = LogManager.getLogger(MainStecamPiantaggioBoccoleSP1802.class);
 
     ConfigurationManager conf = ConfigurationManager.getInstance();
+
+    public static String mainID = "main";
+    public static String mainFile = "/main.fxml";
+    public static String loginID = "login";
+    public static String loginFile = "/loginpanel.fxml";
+    public static String propertiesID = "properties";
+    public static String propertiesFILE = "/properties.fxml";
+
     private Stage primaryStage;
-    private Parent root;
+    private Group root;
     private FXMLLoader loader;
+
+    private ScreensController mainContainer;
+
+
+
 
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        this.primaryStage = primaryStage;
+
+
+
         Logger.info("START STECAMSP1802");
         conf.getConfiguration();
-        loader= new FXMLLoader(getClass().getResource("/sample.fxml"));
-        root = (Parent)loader.load();
+
+        /*
+        loader= new FXMLLoader(getClass().getResource("/main.fxml"));
+
+        this.primaryStage = primaryStage;
+
+        primaryStage.show();
+
+
+        */
+        mainContainer = new ScreensController();
+        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.mainID,MainStecamPiantaggioBoccoleSP1802.mainFile);
+        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.loginID,MainStecamPiantaggioBoccoleSP1802.loginFile);
+        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID,MainStecamPiantaggioBoccoleSP1802.propertiesFILE);
+        mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
+
+
+        root = new Group();
+        root.getChildren().addAll(mainContainer);
+
+        this.primaryStage = primaryStage;
+        primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("STECAM Piantaggio Boccole SP1802");
         primaryStage.setOnCloseRequest(e->{
             e.consume();
             closeProgram();
         });
-        primaryStage.setScene(new Scene(root));
+
+
         primaryStage.show();
+
+
     }
 
     private void closeProgram() {
         System.out.println("CHIUDO");
-        MainController main = (MainController)loader.getController();
-        main.CloseApp(new ActionEvent());
-
+        mainContainer.closeMain(MainStecamPiantaggioBoccoleSP1802.mainID);
         this.primaryStage.close();
     }
 

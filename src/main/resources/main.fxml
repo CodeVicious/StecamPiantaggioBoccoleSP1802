@@ -5,34 +5,31 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stecamSP1802.MainController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stecamSP1802.controllers.MainController">
    <children>
-      <Button fx:id="interfacciaParametri" layoutX="14.0" layoutY="430.0" mnemonicParsing="false" prefHeight="94.0" prefWidth="235.0" text="Carica Interfaccia Parametri" wrapText="true">
-         <font>
-            <Font name="Courier New" size="20.0" />
-         </font>
-      </Button>
       <Pane layoutY="70.0" prefHeight="346.0" prefWidth="1280.0" style="-fx-background-color: #f89333;">
          <children>
-            <Label fx:id="plcStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="123.0" prefHeight="20.0" prefWidth="265.0" style="-fx-background-color: red; -fx-background-radius: 10;" text="PLC - OK" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+            <Label fx:id="plcStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="153.0" prefHeight="20.0" prefWidth="265.0" style="-fx-background-color: red; -fx-background-radius: 10;" text="PLC - OK" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
             </Label>
-            <Label fx:id="localDBStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="166.0" prefHeight="27.0" prefWidth="265.0" style="-fx-background-color: red; -fx-background-radius: 10;" text="LOCALDB - OK" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+            <Label fx:id="localDBStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="196.0" prefHeight="27.0" prefWidth="265.0" style="-fx-background-color: red; -fx-background-radius: 10;" text="LOCALDB - OK" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
             </Label>
-            <Label fx:id="remoteDBStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="209.0" prefHeight="27.0" prefWidth="265.0" style="-fx-background-color: red; -fx-background-radius: 10;" text="REMOTE DB - OK" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+            <Label fx:id="remoteDBStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="239.0" prefHeight="27.0" prefWidth="265.0" style="-fx-background-color: red; -fx-background-radius: 10;" text="REMOTE DB - OK" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
@@ -42,21 +39,36 @@
                   <DropShadow height="5.0" radius="2.0" width="5.0" />
                </effect>
                <children>
-                  <ImageView fitHeight="532.0" fitWidth="697.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@HMI/GENERALE2.JPG" />
-                     </image>
-                  </ImageView>
+                  <Label layoutX="14.0" layoutY="14.0" prefHeight="17.0" prefWidth="189.0" text="Work Order" />
+                  <Label layoutX="14.0" layoutY="31.0" prefHeight="17.0" prefWidth="189.0" text="Codice" />
+                  <Label layoutX="14.0" layoutY="48.0" prefHeight="17.0" prefWidth="174.0" text="Descrizione" />
+                  <TableView fx:id="woPiantaggio" disable="true" layoutY="127.0" prefHeight="296.0" prefWidth="697.0">
+                    <columns>
+                      <TableColumn prefWidth="361.0" text="Descrizione" />
+                      <TableColumn prefWidth="334.0" text="Articolo" />
+                    </columns>
+                  </TableView>
                </children>
             </AnchorPane>
-            <TableView fx:id="woPiantaggio" disable="true" layoutX="845.0" layoutY="12.0" prefHeight="423.0" prefWidth="435.0">
-              <columns>
-                <TableColumn prefWidth="220.0" text="Articolo" />
-                <TableColumn prefWidth="214.0" text="Descrizione" />
-              </columns>
-            </TableView>
-            <ToggleButton fx:id="attivaWO" layoutX="-11.0" layoutY="-10.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="235.0" stylesheets="@styles.css" text="Disattiva Controllo WO/UdM" wrapText="true" />
-            <ToggleButton fx:id="attivaWO1" layoutX="107.0" layoutY="14.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="235.0" stylesheets="@styles.css" text="Disattiva Controllo WO/UdM" wrapText="true" />
+            <AnchorPane layoutX="19.0" layoutY="12.0" prefHeight="101.0" prefWidth="235.0">
+               <children>
+                  <HBox fx:id="pannelloWO" alignment="BOTTOM_CENTER" layoutY="51.0" prefHeight="48.0" prefWidth="256.0">
+                     <children>
+                        <ToggleButton fx:id="disattivaWO" mnemonicParsing="false" onAction="#disableWORequest" prefHeight="47.0" prefWidth="139.0" selected="true" stylesheets="@styles.css" text="DISATTIVA" wrapText="true">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="gorupWO" />
+                           </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="attivaWO" mnemonicParsing="false" onAction="#enableWORequest" prefHeight="47.0" prefWidth="111.0" selected="true" stylesheets="@styles.css" text="ATTIVA" toggleGroup="$gorupWO" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="controlloWO" contentDisplay="CENTER" layoutX="1.0" layoutY="-1.0" prefHeight="54.0" prefWidth="256.0" text="Controllo WO e UDM - ATTIVO" wrapText="true">
+                     <font>
+                        <Font name="Courier New" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
          </children>
       </Pane>
       <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="1280.0" style="-fx-background-color: #ffcb99;">
@@ -111,5 +123,10 @@
             <Font name="Courier New" size="64.0" />
          </font>
       </Label>
+      <Button fx:id="interfacciaParametri" layoutX="14.0" layoutY="430.0" mnemonicParsing="false" onAction="#onCaricaParametri" prefHeight="94.0" prefWidth="235.0" text="Carica Interfaccia Parametri" wrapText="true">
+         <font>
+            <Font name="Courier New" size="20.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

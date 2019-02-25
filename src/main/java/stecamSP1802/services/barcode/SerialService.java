@@ -4,7 +4,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import stecamSP1802.ConfigurationManager;
-import stecamSP1802.MainController;
+
+import stecamSP1802.controllers.MainController;
 
 //Serial Service SINGLETON communication
 

@@ -1,4 +1,4 @@
-package stecamSP1802;
+package stecamSP1802.controllers;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -6,19 +6,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import stecamSP1802.ConfigurationManager;
+import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
+import stecamSP1802.StatusManagerListenerImp;
+import stecamSP1802.WebQueryService;
 import stecamSP1802.services.*;
 import stecamSP1802.services.barcode.SerialService;
-import sun.applet.Main;
-
-import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,11 +24,10 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.lang.Thread.sleep;
-
-public class MainController implements Initializable {
+public class MainController implements Initializable, ControlledScreen {
     private static Logger Logger = LogManager.getLogger(MainController.class);
 
+    ScreensController myController;
 
     //Controlli interfaccia
     @FXML
@@ -42,9 +38,6 @@ public class MainController implements Initializable {
 
     @FXML
     Label msgBOX;
-
-    @FXML
-    ToggleButton attivaWO;
 
     @FXML
     Label plcStatus;
@@ -60,6 +53,12 @@ public class MainController implements Initializable {
 
     @FXML
     Label codiceRICETTA;
+
+    @FXML
+    ToggleButton disattivaWO;
+
+    @FXML
+    ToggleButton attivaWO;
 
     //Servizi
     ExecutorService executors;
@@ -78,6 +77,11 @@ public class MainController implements Initializable {
     private long minute;
     private long second;
     private int hour;
+
+    @Override
+    public void setScreenParent(ScreensController screenController) {
+        myController = screenController;
+    }
 
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -105,7 +109,9 @@ public class MainController implements Initializable {
                 executors
         );
 
-        attivaWO.selectedProperty();
+
+
+
         launchTime();
 
     }
@@ -144,8 +150,8 @@ public class MainController implements Initializable {
     }
 
 
-    public void CloseApp(ActionEvent event) {
-        //plcService.closeConnection();
+    public void CloseApp() {
+        plcService.closeConnection();
         //dbService.close();
         //serialService.close();
         Platform.exit();
@@ -221,7 +227,7 @@ public class MainController implements Initializable {
         plcService.unsetRicettaok();
         Logger.warn("RICETTA KO! ");
         Platform.runLater(() -> {
-            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta()+ "NON PRESENTE");
+            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta() + "NON PRESENTE");
             codiceRICETTA.setStyle("-fx-background-color: red");
         });
         showMesage("RICETTA KO! ");
@@ -316,5 +322,19 @@ public class MainController implements Initializable {
     private boolean checkUDMCode(String barCode) {
         return (barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}"));
 
+    }
+
+    public void disableWORequest(ActionEvent event) {
+        webQueryService.sendDisabilitaUDM();
+    }
+
+    public void enableWORequest(ActionEvent event) {
+        webQueryService.sendAbilitaUDM();
+    }
+
+
+    public void onCaricaParametri(ActionEvent event) {
+        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
+        System.out.println("UU");
     }
 }

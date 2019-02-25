@@ -5,7 +5,8 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import stecamSP1802.MainController;
+
+import stecamSP1802.controllers.MainController;
 
 
 public class BarCodeListener implements SerialPortDataListener {

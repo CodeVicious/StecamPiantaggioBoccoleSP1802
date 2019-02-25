@@ -1,7 +1,8 @@
 package stecamSP1802.services;
 
 import com.google.common.base.Preconditions;
-import stecamSP1802.MainController;
+
+import stecamSP1802.controllers.MainController;
 
 public class PLCListenerImp implements PLCListener {
     private final MainController mainController;
