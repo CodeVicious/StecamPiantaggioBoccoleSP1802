@@ -24,15 +24,17 @@ public class PLCTest {
     }
 
     public static void main(String[] args) throws Exception {
-/*
-        byte[] plcToPc = new byte[4];
 
-        byte[] pcToPlc = new byte[4];
+        byte[] plcToPc = new byte[1];
+        byte[] pcToPlc = new byte[12];
+
         int plcToPcDb = 112;
         int pcToPlcDb = 114;
-        double[] booleans = {3.0,0.1};
+        double[] booleans = {0.3,0.4,0.5,0.6};
 
-        PLC plcMASTER = new PLC("PLC GROSSO", "192.168.10.1", plcToPc, pcToPlc, plcToPcDb, pcToPlcDb, booleans);
+
+        PLC plcMASTER = new PLC("PLC GROSSO","192.168.10.1", plcToPc, pcToPlc, plcToPcDb, pcToPlcDb,booleans);
+
 
         class imple implements PLCListener {
 
@@ -55,8 +57,8 @@ public class PLCTest {
         Thread.sleep(2000);
 
         plcMASTER.putDInt(false,0,23);
-*/
 
+/*
         SerialPort comPort;
         System.out.println("PORT "+SerialPort.getCommPorts());
         comPort = SerialPort.getCommPort("COM3");
@@ -92,7 +94,7 @@ public class PLCTest {
 
             }
         });
-
+*/
         while(true){
 
 

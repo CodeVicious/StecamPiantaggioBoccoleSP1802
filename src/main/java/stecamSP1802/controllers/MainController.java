@@ -98,17 +98,16 @@ public class MainController implements Initializable, ControlledScreen {
         plcService = new PlcService(
                 conf.getPlcName(),
                 conf.getPlcIP(),
-                new byte[conf.getByteArrayPcPlc()],
                 new byte[conf.getByteArrayPlcPc()],
-                conf.getDbNumberPcPlc(),
+                new byte[conf.getByteArrayPcPlc()],
                 conf.getDbNumberPlcPc(),
+                conf.getDbNumberPcPlc(),
                 conf.getBitMonitor(),
                 plcListener,
                 statusManager,
                 webQueryService,
                 executors
         );
-
 
 
 
@@ -214,6 +213,7 @@ public class MainController implements Initializable, ControlledScreen {
 
     public void onRicettaOK() {
         plcService.unsetRicettaok(); //Abbasso il bit di carica ricetta al PLC
+
         Logger.warn("RICETTA CARICATA! ");
         Platform.runLater(() -> {
             codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta());
@@ -240,6 +240,8 @@ public class MainController implements Initializable, ControlledScreen {
         });
         Logger.warn("PIANTAGGIO BUONO! ");
         showMesage("PIANTAGGIO BUONO! ");
+
+        plcService.unsetPianta();
     }
 
     public void piantaggioSCARTO() {

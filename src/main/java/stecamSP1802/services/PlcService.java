@@ -14,29 +14,54 @@ public class PlcService {
     final PLC plcMASTER;
     final ExecutorService service;
     private final WebQueryService webQueryService;
+    private final int pcToPlcDb;
+    private final int plcToPcDb;
 
-    public PlcService(String name, String ip, byte[] plcToPc, byte[] pcToPlc, int plcToPcDb, int pcToPlcDb, double[] booleans,
+    public PlcService(
+            String name,
+            String ip, byte[] plcToPc, byte[] pcToPlc, int plcToPcDb, int pcToPlcDb, double[] booleans,
                       final PLCListener listener, StatusManager statusManager, WebQueryService webQueryService, final ExecutorService service) {
 
         //never start without Executor nor listeners
         Preconditions.checkNotNull(listener);
         Preconditions.checkNotNull(service);
         Preconditions.checkNotNull(webQueryService);
+        
+        this.plcToPcDb = plcToPc.length;
+        this.pcToPlcDb = pcToPlc.length;
+
 
         this.webQueryService = webQueryService;
-        plcMASTER = new PLC(name, ip, plcToPc, pcToPlc, plcToPcDb, pcToPlcDb, booleans, statusManager);
+        plcMASTER = new PLC(
+                name,
+                ip,
+                plcToPc,
+                pcToPlc,
+                plcToPcDb,
+                pcToPlcDb,
+                booleans,
+                statusManager);
 
         plcMASTER.listeners.add(listener); //inserisco un observer per i cambiamenti di stato
+        plcMASTER.liveBitEnabled = true;
+
+
+        plcMASTER.liveBitAddress = 0;
+        plcMASTER.liveBitPosition = 0;
+        plcMASTER.liveBitPCDuration = 250;
+        plcMASTER.liveBitPLCDuration = 500;
+
         this.service = service;
-        this.service.execute(new Thread(plcMASTER)); //Inserisco l'osservatore nel pool di thread
-        //cleanUpDB(pcToPlc,plcToPc);
+
+        this.service.submit(new Thread(plcMASTER)); //Inserisco l'osservatore nel pool di thread
+        cleanUpDB();
     }
 
-    public void cleanUpDB(byte[] pcToPlc, byte[] plcToPc) {
+    public void cleanUpDB() {
         byte val = '0';
-        for (int i = 0; i < pcToPlc.length; i++)
+        for (int i = 0; i <pcToPlcDb; i++)
             plcMASTER.putIntToByte(false, i, val);
-        for (int i = 0; i < plcToPc.length; i++)
+        for (int i = 0; i < plcToPcDb; i++)
             plcMASTER.putIntToByte(true, i, val);
     }
 
@@ -73,6 +98,13 @@ public class PlcService {
 
     public void unsetRicettaok() {
         plcMASTER.putBool(false, 0, 6, false);
+
+
+
     }
 
+    public void unsetPianta() {
+        plcMASTER.putBool(false,0,5,false);
+        cleanUpDB();
+    }
 }

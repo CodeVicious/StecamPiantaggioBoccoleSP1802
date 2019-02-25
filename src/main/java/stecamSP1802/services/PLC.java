@@ -73,6 +73,24 @@ public class PLC implements Runnable {
         this.listeners = new ArrayList<PLCListener>();
     }
 
+    public PLC(String name, String ip, byte[] plcToPc, byte[] pcToPlc, int plcToPcDb, int pcToPlcDb, double[] booleans) {
+        this.plcToPc = plcToPc;
+        this.pcToPlc = pcToPlc;
+        this.PLCName = name;
+        this.PLCIp = ip;
+        this.moka = new S7Client();
+        this.moka.SetConnectionType(S7.OP);
+        this.plcToPcDb = plcToPcDb;
+        this.pcToPlcDb = pcToPlcDb;
+        this.boolBitChange = new HashMap<Double, Boolean>();
+        this.booleans = booleans;
+        this.pcToPlcLock = new Object();
+        this.plcToPcLock = new Object();
+        this.PLCSyncObj = new Object();
+        this.listeners = new ArrayList<PLCListener>();
+    }
+
+
     public PLC(String name,
                String ip,
                int plcToPcLength,
@@ -533,7 +551,8 @@ public class PLC implements Runnable {
 
                 if (this.firstConnect == true) {
                     logger.info("Connected to PLC " + this.PLCName);
-                    statusManager.setPlcStatus(StatusManager.PlcStatus.PLC_CONNECTED);
+                    if(statusManager!=null)
+                        statusManager.setPlcStatus(StatusManager.PlcStatus.PLC_CONNECTED);
                     // read current db state, so we don't override it with zeroes
                     this.moka.ReadArea(this.pcToPlcAreaType, this.pcToPlcDb, 0, this.pcToPlc.length, this.pcToPlc);
                     this.firstConnect = false;

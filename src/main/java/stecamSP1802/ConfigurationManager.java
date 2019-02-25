@@ -59,8 +59,8 @@ public class ConfigurationManager {
         plcIP = prop.getProperty("PLCIP");
         byteArrayPcPlc = Integer.parseInt(prop.getProperty("byteArrayWithLengthofDB-PLCPC"));
         byteArrayPlcPc = Integer.parseInt(prop.getProperty("byteArrayLengthofDB-PLCPC"));
-        dbNumberPcPlc = Integer.parseInt(prop.getProperty("dbNumber-PLCPC"));
-        dbNumberPlcPc = Integer.parseInt(prop.getProperty("dbNumber-PCPLC"));
+        dbNumberPcPlc = Integer.parseInt(prop.getProperty("dbNumber-PCPLC"));
+        dbNumberPlcPc = Integer.parseInt(prop.getProperty("dbNumber-PLCPC"));
         String[]bitArray = prop.get("bitMonitor").toString().split("#");
         bitMonitor = new double[bitArray.length];
         for(int i=0;i<bitArray.length;i++)
