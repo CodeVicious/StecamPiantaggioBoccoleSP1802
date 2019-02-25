@@ -1,11 +1,15 @@
 package stecamSP1802;
 
 
-import java.io.IOException;
-import java.io.InputStream;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.io.*;
+import java.net.URL;
 import java.util.Properties;
 
 public class ConfigurationManager {
+
     private static ConfigurationManager ourInstance = new ConfigurationManager();
     private String verificaListaPartiWOURL;
     private String verificaListaPartiUDM;
@@ -23,10 +27,12 @@ public class ConfigurationManager {
     }
     private ConfigurationManager() {}
 
-    final Properties prop = new Properties();
+    final public Properties prop = new Properties();
 
 
     private InputStream input;
+    private FileWriter output;
+
     private String plcName;
 
 
@@ -37,7 +43,6 @@ public class ConfigurationManager {
     private int dbNumberPlcPc;
     private String comPORT;
     private double[] bitMonitor;
-
 
 
     public void getConfiguration(){
@@ -74,6 +79,16 @@ public class ConfigurationManager {
         utenteLocale = prop.getProperty("utenteLocale");
         logoffTimeout = Integer.parseInt(prop.getProperty("LogoffTimeout"));
 
+    }
+
+    void saveProperties(Properties p) throws IOException
+    {
+
+        URL url = getClass().getResource("/config.properties");
+        output = new FileWriter(url.getPath());
+        p.store(output, "Properties");
+        output.close();
+        System.out.println("After saving properties: " + p);
     }
 
     public String getPlcName() {
@@ -146,5 +161,10 @@ public class ConfigurationManager {
 
     public int getLogoffTimeout() {
         return logoffTimeout;
+    }
+
+
+    public Properties getProp() {
+        return prop;
     }
 }
