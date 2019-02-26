@@ -10,6 +10,7 @@ leggo sulla 112
 
 0.5 -> Bit della 114 VAI PIANTA
 0.4 -> Bit della 114 CODICE SCAZZATO SI RIPARTE. (resetto 114)
+plcMASTER.putBool(false,0,4,true);
 
 0.4 -> Bit della 112 BUONO! Salvo dati piantaggio.
 0.3 -> Bit della 112 SCARTO! Scarto.

@@ -91,16 +91,12 @@ public class PlcService {
 
     public void checkPiantaggio() {
         if (webQueryService.checkValidazioneUDM()) {
-            //plcMASTER Vai
+            plcMASTER.putBool(false,0,5,true);
         }
-
     }
 
     public void unsetRicettaok() {
         plcMASTER.putBool(false, 0, 6, false);
-
-
-
     }
 
     public void unsetPianta() {
