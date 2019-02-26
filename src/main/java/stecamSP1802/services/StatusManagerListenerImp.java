@@ -1,4 +1,4 @@
-package stecamSP1802;
+package stecamSP1802.services;
 
 import stecamSP1802.controllers.MainController;
 import stecamSP1802.services.StatusManager;
@@ -20,7 +20,7 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
         }
     }
 
-    public void onGlobalDbStatusChange(StatusManager.GlobalDbStatus oldStatus, StatusManager.GlobalDbStatus globalDbStatus) {
+    public void onGlobalDbStatusChange(StatusManager.GlobalDbStatus globalDbStatus) {
         if (globalDbStatus == StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING) {
             mainController.gDbDisconnected();
         }
@@ -29,7 +29,7 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
         }
     }
 
-    public void onLocalDbStatusChange(StatusManager.LocalDbStatus oldStatus, StatusManager.LocalDbStatus localDbStatus) {
+    public void onLocalDbStatusChange(StatusManager.LocalDbStatus localDbStatus) {
         if (localDbStatus == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTING) {
             mainController.lDbDisconnected();
         }
@@ -38,7 +38,7 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
         }
     }
 
-    public void onGlobalStatusChange(StatusManager.GlobalStatus oldStatus, StatusManager.GlobalStatus globalStatus) {
+    public void onGlobalStatusChange(StatusManager.GlobalStatus globalStatus) {
         switch (globalStatus) {
             case WAITING_UDM:
                 mainController.showMesage("SPARARE I CODICI UDM");
@@ -50,10 +50,10 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
                 mainController.showMesage("PIANTAGGIO");
                 break;
             case CONNECTING:
-                mainController.showMesage("MACCHINA IN CONNESSIONE");
+                mainController.showMesage("TRACCIAMENTO IN CONNESSIONE");
                 break;
             case CONNECTED:
-                mainController.showMesage("MACCHINA CONNESSA");
+                mainController.showMesage("TRACCIAMENTO CONNESSO");
         }
 
     }

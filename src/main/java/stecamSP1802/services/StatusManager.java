@@ -51,10 +51,10 @@ public class StatusManager {
 
     synchronized public void setPlcStatus(PlcStatus plcStatus) {
 
-            for (StatusManagerListener l : this.listeners) {
-                l.onPLCStatusChange(this.plcStatus);
-            }
-            Logger.info("setPlcStatus: NEW STATUS ", plcStatus);
+        for (StatusManagerListener l : this.listeners) {
+            l.onPLCStatusChange(this.plcStatus);
+        }
+        Logger.info("setPlcStatus: NEW STATUS ", plcStatus);
 
     }
 
@@ -63,15 +63,10 @@ public class StatusManager {
     }
 
     synchronized public void setLocalDbStatus(LocalDbStatus localDbStatus) {
-        if (localDbStatus != this.localDbStatus) {
-            LocalDbStatus OldStatus = this.localDbStatus;
-            this.localDbStatus = localDbStatus;
-            for (StatusManagerListener l : this.listeners) {
-                l.onLocalDbStatusChange(OldStatus, this.localDbStatus);
-            }
-            Logger.info("setLocalDbStatus: NEW STATUS ", localDbStatus);
-        } else
-            Logger.warn("setLocalDbStatus: SAME STATUS ", localDbStatus);
+        for (StatusManagerListener l : this.listeners) {
+            l.onLocalDbStatusChange(this.localDbStatus);
+        }
+        Logger.info("setLocalDbStatus: NEW STATUS ", localDbStatus);
     }
 
     synchronized public GlobalDbStatus getGlobalDbStatus() {
@@ -79,15 +74,10 @@ public class StatusManager {
     }
 
     synchronized public void setGlobalDbStatus(GlobalDbStatus globalDbStatus) {
-        if (globalDbStatus != this.globalDbStatus) {
-            GlobalDbStatus OldStatus = this.globalDbStatus;
-            this.globalDbStatus = globalDbStatus;
-            for (StatusManagerListener l : this.listeners) {
-                l.onGlobalDbStatusChange(OldStatus, this.globalDbStatus);
-            }
-            Logger.info("setGlobalDbStatus: NEW STATUS ", globalDbStatus);
-        } else
-            Logger.warn("setGlobalDbStatus: SAME STATUS ", globalDbStatus);
+        for (StatusManagerListener l : this.listeners) {
+            l.onGlobalDbStatusChange(this.globalDbStatus);
+        }
+        Logger.info("setGlobalDbStatus: NEW STATUS ", globalDbStatus);
     }
 
     synchronized public GlobalStatus getGlobalStatus() {
@@ -95,15 +85,10 @@ public class StatusManager {
     }
 
     synchronized public void setGlobalStatus(GlobalStatus globalStatus) {
-        if (globalStatus != this.globalStatus) {
-            GlobalStatus OldStatus = this.globalStatus;
-            this.globalStatus = globalStatus;
-            for (StatusManagerListener l : this.listeners) {
-                l.onGlobalStatusChange(OldStatus, this.globalStatus);
-            }
-            Logger.info("setGlobalStatus: NEW STATUS ", globalStatus);
-        } else
-            Logger.warn("setGlobalStatus: SAME STATUS ", globalStatus);
+        for (StatusManagerListener l : this.listeners) {
+            l.onGlobalStatusChange(this.globalStatus);
+        }
+        Logger.info("setGlobalStatus: NEW STATUS ", globalStatus);
     }
 
     public void addListener(StatusManagerListener list) {

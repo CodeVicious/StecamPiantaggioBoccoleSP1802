@@ -52,9 +52,11 @@ public class PlcService {
         plcMASTER.liveBitPLCDuration = 500;
 
         this.service = service;
-
-        this.service.submit(new Thread(plcMASTER)); //Inserisco l'osservatore nel pool di thread
         cleanUpDB();
+    }
+
+    public void connect(){
+        this.service.submit(new Thread(plcMASTER)); //Inserisco l'osservatore nel pool di thread.
     }
 
     public void cleanUpDB() {
@@ -95,7 +97,7 @@ public class PlcService {
         }
     }
 
-    public void unsetRicettaok() {
+    public void unsetRicettaCaricata() {
         plcMASTER.putBool(false, 0, 6, false);
     }
 

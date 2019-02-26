@@ -7,16 +7,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import stecamSP1802.controllers.MainController;
+import stecamSP1802.services.StatusManager;
 
 
 public class BarCodeListener implements SerialPortDataListener {
     private final SerialPort comPort;
     private final MainController mainController;
+    private final StatusManager statusManager;
     private Logger Logger = LogManager.getLogger(BarCodeListener.class);
 
-    public BarCodeListener(final SerialPort comPort, final MainController mainController){
+    public BarCodeListener(final SerialPort comPort, final MainController mainController, StatusManager statusManager) {
         this.comPort = comPort;
         this.mainController = mainController;
+        this.statusManager = statusManager;
     }
 
     public int getListeningEvents() {
@@ -24,14 +27,24 @@ public class BarCodeListener implements SerialPortDataListener {
     }
 
     public void serialEvent(SerialPortEvent serialPortEvent) {
-                if (serialPortEvent.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-                    Logger.warn("BARCODE EVENT DISCARDED: " + SerialPort.LISTENING_EVENT_DATA_AVAILABLE);
-                    return;
-                }
-                byte[] newData = new byte[comPort.bytesAvailable()];
-                int numRead = comPort.readBytes(newData, newData.length);
-                String barCode = new String(newData);
-                Logger.info("BARCODE: "+barCode+" num Bytes: "+newData.length);
-                mainController.onNewBarCode(barCode);
+
+        //Check if Status not running for BarCode acquisiztion
+        if ((statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_UDM) ||
+                (statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_UDM) ||
+                (statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WORKING)) {
+            Logger.warn("STATUS NOT READY FOR BARCODE: " + statusManager.getGlobalStatus());
+            return;
+        }
+
+        if (serialPortEvent.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+            Logger.warn("BARCODE EVENT DISCARDED: " + SerialPort.LISTENING_EVENT_DATA_AVAILABLE);
+            return;
+        }
+
+        byte[] newData = new byte[comPort.bytesAvailable()];
+        int numRead = comPort.readBytes(newData, newData.length);
+        String barCode = new String(newData);
+        Logger.info("BARCODE: " + barCode + " num Bytes: " + newData.length);
+        mainController.onNewBarCode(barCode);
     }
 }

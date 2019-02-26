@@ -8,11 +8,16 @@ import stecamSP1802.ConfigurationManager;
 import java.sql.*;
 
 public class DbService {
+    private final StatusManager statusManager;
     private Logger Logger = LogManager.getLogger(DbService.class);
     Connection conLDB, conGDB;
 
     public DbService(StatusManager statusManager) {
         Preconditions.checkNotNull(statusManager);
+        this.statusManager=statusManager;
+    }
+
+    public void connectDB(){
         try {
             conLDB = DriverManager.getConnection(ConfigurationManager.getInstance().getConnessioneLOCALSERVER());
             Logger.info("LOCAL DB CONNECTED");
@@ -33,7 +38,6 @@ public class DbService {
             statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING);
         }
     }
-
 
     public void synckUSERS() {
         String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.userSPAL";
@@ -65,6 +69,10 @@ public class DbService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void login(String Matricola, String Password){
+
     }
 
     public void close() {

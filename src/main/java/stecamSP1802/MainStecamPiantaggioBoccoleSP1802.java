@@ -33,30 +33,17 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
     private ScreensController mainContainer;
 
 
-
-
-
     @Override
-    public void start(Stage primaryStage) throws Exception{
-
+    public void start(Stage primaryStage) throws Exception {
 
 
         Logger.info("START STECAMSP1802");
         conf.getConfiguration();
 
-        /*
-        loader= new FXMLLoader(getClass().getResource("/main.fxml"));
-
-        this.primaryStage = primaryStage;
-
-        primaryStage.show();
-
-
-        */
         mainContainer = new ScreensController();
-        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.mainID,MainStecamPiantaggioBoccoleSP1802.mainFile);
-        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.loginID,MainStecamPiantaggioBoccoleSP1802.loginFile);
-        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID,MainStecamPiantaggioBoccoleSP1802.propertiesFILE);
+        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.mainID, MainStecamPiantaggioBoccoleSP1802.mainFile);
+        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.loginID, MainStecamPiantaggioBoccoleSP1802.loginFile);
+        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID, MainStecamPiantaggioBoccoleSP1802.propertiesFILE);
         mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
 
 
@@ -66,9 +53,15 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
         this.primaryStage = primaryStage;
         primaryStage.setScene(new Scene(root));
         primaryStage.setTitle("STECAM Piantaggio Boccole SP1802");
-        primaryStage.setOnCloseRequest(e->{
+        primaryStage.setOnCloseRequest(e -> {
             e.consume();
             closeProgram();
+        });
+
+        primaryStage.setOnShown(event -> {
+            MainController m = (MainController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
+            m.startServices();
+            mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
         });
 
 

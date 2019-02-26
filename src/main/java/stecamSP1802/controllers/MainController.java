@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
-import stecamSP1802.StatusManagerListenerImp;
+import stecamSP1802.services.StatusManagerListenerImp;
 import stecamSP1802.WebQueryService;
 import stecamSP1802.services.*;
 import stecamSP1802.services.barcode.SerialService;
@@ -43,13 +43,13 @@ public class MainController implements Initializable, ControlledScreen {
     Label plcStatus;
 
     @FXML
+    Label remoteDBStatus;
+
+    @FXML
     Label localDBStatus;
 
     @FXML
-    Label globalDBStatus;
-
-    @FXML
-    Label buttonESITO;
+    Label labelESITO;
 
     @FXML
     Label codiceRICETTA;
@@ -85,16 +85,17 @@ public class MainController implements Initializable, ControlledScreen {
 
 
     public void initialize(URL location, ResourceBundle resources) {
+        //Setup Thread Pool for PLC Service
         executors = Executors.newCachedThreadPool();
+
         statusManagerListener = new StatusManagerListenerImp(this);
-        serialService = new SerialService(this);
-        webQueryService = new WebQueryService();
         statusManager = new StatusManager();
         statusManager.addListener(statusManagerListener);
-        plcListener = new PLCListenerImp(this, statusManager);
-
+        serialService = new SerialService(this,statusManager);
+        webQueryService = new WebQueryService();
         dbService = new DbService(statusManager);
 
+        plcListener = new PLCListenerImp(this, statusManager);
         plcService = new PlcService(
                 conf.getPlcName(),
                 conf.getPlcIP(),
@@ -109,10 +110,13 @@ public class MainController implements Initializable, ControlledScreen {
                 executors
         );
 
-
-
         launchTime();
+    }
 
+    public void startServices() {
+        serialService.open();
+        dbService.connectDB();
+        plcService.connect();
     }
 
     private void launchTime() {
@@ -160,6 +164,7 @@ public class MainController implements Initializable, ControlledScreen {
     public void plcDisconnected() {
         Logger.warn("PLC DISCONNECTED ");
         Platform.runLater(() -> {
+            statusManager.setGlobalStatus(StatusManager.GlobalStatus.CONNECTING);
             plcStatus.setText("PLC - DISCONNECTED");
             plcStatus.setStyle("-fx-background-color: red");
         });
@@ -172,14 +177,16 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             plcStatus.setText("PLC - CONNECTED");
             plcStatus.setStyle("-fx-background-color: green");
+            if(statusManager.getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTED)
+                statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
     }
 
     public void gDbDisconnected() {
         Logger.warn("SQL DB SERVER DISCONNECTED ");
         Platform.runLater(() -> {
-            globalDBStatus.setText("GLOBAL DB - DISCONNECTED");
-            globalDBStatus.setStyle("-fx-background-color: red");
+            remoteDBStatus.setText("GLOBAL DB - DISCONNECTED");
+            remoteDBStatus.setStyle("-fx-background-color: red");
         });
         showMesage("SQL DB SERVER DISCONNECTED ");
     }
@@ -187,8 +194,8 @@ public class MainController implements Initializable, ControlledScreen {
     public void gDbConnected() {
         Logger.info("SQL DB SERVER CONNECTED ");
         Platform.runLater(() -> {
-            globalDBStatus.setText("GLOBAL DB - CONNECTED");
-            globalDBStatus.setStyle("-fx-background-color: green");
+            remoteDBStatus.setText("GLOBAL DB - CONNECTED");
+            remoteDBStatus.setStyle("-fx-background-color: green");
         });
         showMesage("SQL DB SERVER CONNECTED ");
     }
@@ -196,8 +203,10 @@ public class MainController implements Initializable, ControlledScreen {
     public void lDbDisconnected() {
         Logger.warn("LOCAL SQL DB SERVER DISCONNECTED ");
         Platform.runLater(() -> {
+            statusManager.setGlobalStatus(StatusManager.GlobalStatus.CONNECTING);
             localDBStatus.setText("LOCAL DB - DISCONNECTED");
             localDBStatus.setStyle("-fx-background-color: red");
+
         });
         showMesage("LOCAL SQL DB SERVER DISCONNECTED ");
     }
@@ -207,36 +216,41 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             localDBStatus.setText("LOCAL DB - CONNECTED");
             localDBStatus.setStyle("-fx-background-color: green");
+            if(statusManager.getPlcStatus() == StatusManager.PlcStatus.PLC_CONNECTED)
+                statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
         showMesage("LOCAL SQL DB SERVER CONNECTED");
     }
 
     public void onRicettaOK() {
-        plcService.unsetRicettaok(); //Abbasso il bit di carica ricetta al PLC
+        plcService.unsetRicettaCaricata(); //Abbasso il bit di carica ricetta al PLC
 
         Logger.warn("RICETTA CARICATA! ");
         Platform.runLater(() -> {
             codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta());
             codiceRICETTA.setStyle("-fx-background-color: green");
+            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
         });
 
         showMesage("RICETTA CARICATA! ");
     }
 
     public void onRicettaKO() {
-        plcService.unsetRicettaok();
+        plcService.unsetRicettaCaricata();
         Logger.warn("RICETTA KO! ");
         Platform.runLater(() -> {
-            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta() + "NON PRESENTE");
+            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta() + " NON PRESENTE ");
             codiceRICETTA.setStyle("-fx-background-color: red");
+            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
-        showMesage("RICETTA KO! ");
+        showMesage("RICETTA KO! Ripetere il caricamento WorkOrder con codice UDM corretti");
     }
 
     public void piantaggioBUONO() {
         Platform.runLater(() -> {
-            buttonESITO.setText("BUONO");
-            localDBStatus.setStyle("-fx-background-color: green");
+            labelESITO.setText("BUONO");
+            labelESITO.setStyle("-fx-background-color: green");
+            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
         Logger.warn("PIANTAGGIO BUONO! ");
         showMesage("PIANTAGGIO BUONO! ");
@@ -246,8 +260,9 @@ public class MainController implements Initializable, ControlledScreen {
 
     public void piantaggioSCARTO() {
         Platform.runLater(() -> {
-            buttonESITO.setText("SCARTO");
-            localDBStatus.setStyle("-fx-background-color: red");
+            labelESITO.setText("SCARTO");
+            labelESITO.setStyle("-fx-background-color: red");
+            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
         Logger.warn("PIANTAGGIO SCARTO! ");
         showMesage("PIANTAGGIO SCARTO! ");
@@ -339,4 +354,6 @@ public class MainController implements Initializable, ControlledScreen {
         myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
         System.out.println("UU");
     }
+
+
 }

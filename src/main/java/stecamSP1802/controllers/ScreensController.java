@@ -107,4 +107,8 @@ public class ScreensController extends StackPane {
         MainController main = (MainController) controllers.get(controller);
         main.CloseApp();
     }
+
+    public ControlledScreen getController(String controller){
+        return controllers.get(controller);
+    }
 }
