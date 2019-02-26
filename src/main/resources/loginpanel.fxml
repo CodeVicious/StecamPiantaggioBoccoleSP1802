@@ -89,11 +89,21 @@
             </GridPane>
          </children>
       </AnchorPane>
-      <Label fx:id="matriLBL" layoutX="995.0" layoutY="159.0" prefHeight="69.0" prefWidth="222.0" style="-fx-background-color: lightgrey; -fx-background-radius: 10;" text="Label" textFill="#bc0000">
+      <Label fx:id="matriLBL" alignment="CENTER" layoutX="995.0" layoutY="101.0" prefHeight="50.0" prefWidth="222.0" style="-fx-background-color: lightgrey; -fx-background-radius: 10;" text="Label" textAlignment="CENTER" textFill="#bc0000">
          <font>
-            <Font size="47.0" />
+            <Font size="20.0" />
          </font>
       </Label>
       <Label fx:id="loginMSG" layoutX="995.0" layoutY="299.0" prefHeight="32.0" prefWidth="222.0" style="-fx-background-radius: 10;" />
+      <Label layoutX="505.0" layoutY="43.0" prefHeight="31.0" prefWidth="288.0" text="Inserire la Matricola Utente">
+         <font>
+            <Font size="21.0" />
+         </font>
+      </Label>
+      <Label fx:id="remoteDBStatus" alignment="CENTER" contentDisplay="CENTER" layoutX="80.0" layoutY="101.0" prefHeight="50.0" prefWidth="222.0" style="-fx-background-color: red; -fx-background-radius: 10;" text="REMOTE DB - OK" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+         <font>
+            <Font name="Courier New" size="20.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

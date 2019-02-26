@@ -2,24 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b65e99c5-17a8-4d03-b61c-92d6797f3f08" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/helper/PasswordMD5Converter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STECAMlog/StecamSP1802.log" beforeDir="false" afterPath="$PROJECT_DIR$/STECAMlog/StecamSP1802.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STECAMlog/StecamSP1802_20190221.log.gz" beforeDir="false" afterPath="$PROJECT_DIR$/STECAMlog/StecamSP1802_20190221.log.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/MainStecamPiantaggioBoccoleSP1802.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/MainStecamPiantaggioBoccoleSP1802.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/StatusManagerListenerImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManagerListenerImp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/ScreensController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/ScreensController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManagerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManagerListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/BarCodeListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/BarCodeListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/SerialService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/SerialService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/loginpanel.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/loginpanel.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config.properties" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -59,8 +44,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="373">
-              <caret line="86" column="45" selection-start-line="86" selection-start-column="45" selection-end-line="86" selection-end-column="45" />
+            <state relative-caret-position="339">
+              <caret line="89" selection-start-line="89" selection-end-line="89" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#587#588#0" expanded="true" />
@@ -393,7 +378,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551199346337" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551199478121" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/stecamSP1802" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
@@ -548,14 +533,21 @@
       <option name="project" value="LOCAL" />
       <updated>1551185613381</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Implemented partially login and status manager refined.">
+      <created>1551199454625</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1551199454625</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21055438" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21055438" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -564,7 +556,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32827735" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49946696" visible="true" weight="0.30119178" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49946696" visible="true" weight="0.30119178" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49932885" weight="0.42145178" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -676,7 +668,8 @@
     <MESSAGE value="Merge branch 'master' of https://github.com/CodeVicious/StecamPiantaggioBoccoleSP1802&#10;&#10;# Conflicts:&#10;#&#9;src/main/resources/config.properties&#10;#&#9;src/main/resources/sample.fxml" />
     <MESSAGE value="Added CSV parder, BarCode integration a partial machine workflow" />
     <MESSAGE value="Implemented multy scene loader." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented multy scene loader." />
+    <MESSAGE value="Implemented partially login and status manager refined." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented partially login and status manager refined." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1133,8 +1126,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="86" column="45" selection-start-line="86" selection-start-column="45" selection-end-line="86" selection-end-column="45" />
+        <state relative-caret-position="339">
+          <caret line="89" selection-start-line="89" selection-end-line="89" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#587#588#0" expanded="true" />
