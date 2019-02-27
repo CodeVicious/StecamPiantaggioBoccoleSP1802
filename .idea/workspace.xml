@@ -2,22 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b65e99c5-17a8-4d03-b61c-92d6797f3f08" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoggedUser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STECAMlog/StecamSP1802.log" beforeDir="false" afterPath="$PROJECT_DIR$/STECAMlog/StecamSP1802.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/STECAMlog/StecamSP1802_20190221.log.gz" beforeDir="false" afterPath="$PROJECT_DIR$/STECAMlog/StecamSP1802_20190221.log.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/MainStecamPiantaggioBoccoleSP1802.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/MainStecamPiantaggioBoccoleSP1802.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/codiciregexp.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/codiciregexp.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/loginpanel.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/loginpanel.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/styles.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/codiciregexp.txt" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/codiciregexp.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config.properties" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -282,11 +267,6 @@
             <path>
               <item name="StecamPiantaggioBoccoleSP1802" type="b2602c69:ProjectViewProjectNode" />
               <item name="StecamPiantaggioBoccoleSP1802" type="462c0819:PsiDirectoryNode" />
-              <item name=".idea" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="StecamPiantaggioBoccoleSP1802" type="b2602c69:ProjectViewProjectNode" />
-              <item name="StecamPiantaggioBoccoleSP1802" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -420,7 +400,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551274474484" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551274855941" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/stecamSP1802" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
@@ -589,14 +569,20 @@
       <option name="project" value="LOCAL" />
       <updated>1551200121326</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Implemented Databases MS SQL&#10;Implemented LOG IN Mechanism&#10;Added checkbox to select WO and UDM check (to be listened)">
+      <created>1551274590875</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1551274590875</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21055438" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21055438" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -605,7 +591,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32827735" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49946696" visible="true" weight="0.30119178" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49946696" visible="true" weight="0.30119178" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49932885" weight="0.42145178" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -718,7 +704,8 @@
     <MESSAGE value="Added CSV parder, BarCode integration a partial machine workflow" />
     <MESSAGE value="Implemented multy scene loader." />
     <MESSAGE value="Implemented partially login and status manager refined." />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented partially login and status manager refined." />
+    <MESSAGE value="Implemented Databases MS SQL&#10;Implemented LOG IN Mechanism&#10;Added checkbox to select WO and UDM check (to be listened)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented Databases MS SQL&#10;Implemented LOG IN Mechanism&#10;Added checkbox to select WO and UDM check (to be listened)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
