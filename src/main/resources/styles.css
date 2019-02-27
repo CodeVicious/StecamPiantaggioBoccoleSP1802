@@ -18,7 +18,7 @@
             radial-gradient(center 50% 50%, radius 100%,#d96e3a,#c54e2c);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.75),4,0,0,1);
     -fx-font-weight: bold;
-    -fx-font-size: 20px;
+    -fx-font-size: 10px;
     -fx-text-fill: white;
     -fx-font-family: "Courier New";
     -fx-text-wrap: true;

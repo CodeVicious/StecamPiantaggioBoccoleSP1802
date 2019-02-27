@@ -5,8 +5,8 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +16,7 @@ import stecamSP1802.services.StatusManagerListenerImp;
 import stecamSP1802.WebQueryService;
 import stecamSP1802.services.*;
 import stecamSP1802.services.barcode.SerialService;
+
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,14 +56,19 @@ public class MainController implements Initializable, ControlledScreen {
     Label codiceRICETTA;
 
     @FXML
-    ToggleButton disattivaWO;
+    Label lblUtenteLoggato;
 
     @FXML
-    ToggleButton attivaWO;
+    CheckBox controlloWO;
+
+    @FXML
+    CheckBox controlloUDM;
 
     //Servizi
     ExecutorService executors;
     final ConfigurationManager conf = ConfigurationManager.getInstance();
+    final LoggedUser loggedUser = LoggedUser.getInstance();
+
     StatusManager statusManager;
     DbService dbService;
     SerialService serialService;
@@ -77,6 +83,9 @@ public class MainController implements Initializable, ControlledScreen {
     private long minute;
     private long second;
     private int hour;
+    private String matricola;
+    private String nomeOperatore;
+    private boolean isConduttoreDiLinea;
 
     @Override
     public void setScreenParent(ScreensController screenController) {
@@ -91,7 +100,7 @@ public class MainController implements Initializable, ControlledScreen {
         statusManagerListener = new StatusManagerListenerImp(this);
         statusManager = new StatusManager();
         statusManager.addListener(statusManagerListener);
-        serialService = new SerialService(this,statusManager);
+        serialService = new SerialService(this, statusManager);
         webQueryService = new WebQueryService();
         dbService = new DbService(statusManager);
 
@@ -177,7 +186,7 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             plcStatus.setText("PLC - CONNECTED");
             plcStatus.setStyle("-fx-background-color: green");
-            if(statusManager.getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTED)
+            if (statusManager.getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTED)
                 statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
     }
@@ -187,6 +196,7 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             remoteDBStatus.setText("GLOBAL DB - DISCONNECTED");
             remoteDBStatus.setStyle("-fx-background-color: red");
+            ((LoginController) myController.getController(MainStecamPiantaggioBoccoleSP1802.loginID)).onDbDISConnected();
         });
         showMesage("SQL DB SERVER DISCONNECTED ");
     }
@@ -196,6 +206,7 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             remoteDBStatus.setText("GLOBAL DB - CONNECTED");
             remoteDBStatus.setStyle("-fx-background-color: green");
+            ((LoginController) myController.getController(MainStecamPiantaggioBoccoleSP1802.loginID)).onDbConnected();
         });
         showMesage("SQL DB SERVER CONNECTED ");
     }
@@ -216,7 +227,7 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             localDBStatus.setText("LOCAL DB - CONNECTED");
             localDBStatus.setStyle("-fx-background-color: green");
-            if(statusManager.getPlcStatus() == StatusManager.PlcStatus.PLC_CONNECTED)
+            if (statusManager.getPlcStatus() == StatusManager.PlcStatus.PLC_CONNECTED)
                 statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
         showMesage("LOCAL SQL DB SERVER CONNECTED");
@@ -356,4 +367,34 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
 
+    public StatusManager getStatusManager() {
+        return statusManager;
+    }
+
+    public DbService getDBService() {
+        return dbService;
+    }
+
+    public void setLoggedUser(String matricola, String nomeOperatore, boolean isConduttoreDiLinea) {
+        this.matricola = matricola;
+        this.nomeOperatore = nomeOperatore;
+        this.isConduttoreDiLinea = isConduttoreDiLinea;
+
+        loggedUser.setLoggedIN(true);
+        loggedUser.setConduttoreDiLinea(isConduttoreDiLinea);
+        loggedUser.setMatricola(matricola);
+        loggedUser.setNomeOperatore(nomeOperatore);
+
+        Platform.runLater(()->{
+            lblUtenteLoggato.setText(loggedUser.getMatricola()+" - "+loggedUser.getNomeoperatore()+(loggedUser.isConduttoreDiLinea()?" [CONDUTTORE LINEA]":""));
+                });
+    }
+
+    public void onControlloWO(ActionEvent event) {
+        System.out.println(controlloWO.isSelected());
+    }
+
+    public void onControlloUDM(ActionEvent event) {
+        System.out.println(controlloUDM.isSelected());
+    }
 }

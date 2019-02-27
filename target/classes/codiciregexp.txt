@@ -22,3 +22,7 @@ plcMASTER.putBool(false,0,4,true);
 WO: 7 o 8 interi tra 0 e 9 - ^\d{7,8}$
 Codice Articolo: 8 interi e può essere presente una lettera maiuscola tra A e Z - ^\d{8}[A-Z]?$
 UdM: 4 cifre una coppia tra ... e 5 a 8 cifre-  ^d{4}(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\d{5,8}$
+
+
+SELECT [Matricola],[NomeOperatore],[ConduttoreDiLinea],[HashPassword]
+FROM [SpalAutomazioneBrushless].[dbo].[b_Operatore]

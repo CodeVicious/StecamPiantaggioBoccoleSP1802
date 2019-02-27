@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
+import stecamSP1802.helper.PasswordMD5Converter;
 
 import java.sql.*;
 
@@ -14,10 +15,10 @@ public class DbService {
 
     public DbService(StatusManager statusManager) {
         Preconditions.checkNotNull(statusManager);
-        this.statusManager=statusManager;
+        this.statusManager = statusManager;
     }
 
-    public void connectDB(){
+    public void connectDB() {
         try {
             conLDB = DriverManager.getConnection(ConfigurationManager.getInstance().getConnessioneLOCALSERVER());
             Logger.info("LOCAL DB CONNECTED");
@@ -71,7 +72,7 @@ public class DbService {
         }
     }
 
-    public void login(String Matricola, String Password){
+    public void login(String Matricola, String Password) {
 
     }
 
@@ -86,5 +87,20 @@ public class DbService {
         } catch (SQLException e) {
             Logger.error(e);
         }
+    }
+
+    public ResultSet queryMatricola(StringBuilder matricola) throws SQLException {
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = "+matricola;
+        Statement stmt = null;
+        stmt = conLDB.createStatement();
+        return (stmt.executeQuery(SQLSELECT));
+    }
+
+    public ResultSet queryMatricolaPassword(StringBuilder matricola, StringBuilder password) throws SQLException {
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = "+matricola+
+                " AND HashPassword = '"+ PasswordMD5Converter.getMD5(password.toString())+"'";
+        Statement stmt = null;
+        stmt = conLDB.createStatement();
+        return (stmt.executeQuery(SQLSELECT));
     }
 }

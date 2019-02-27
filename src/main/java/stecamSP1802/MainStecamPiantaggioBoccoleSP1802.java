@@ -1,8 +1,6 @@
 package stecamSP1802;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -10,8 +8,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import stecamSP1802.controllers.LoginController;
 import stecamSP1802.controllers.MainController;
 import stecamSP1802.controllers.ScreensController;
+
 
 
 public class MainStecamPiantaggioBoccoleSP1802 extends Application {
@@ -46,6 +46,7 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
         mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID, MainStecamPiantaggioBoccoleSP1802.propertiesFILE);
         mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
 
+        LoginController lc = (LoginController)  mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.loginID);
 
         root = new Group();
         root.getChildren().addAll(mainContainer);
@@ -60,6 +61,8 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
 
         primaryStage.setOnShown(event -> {
             MainController m = (MainController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
+            lc.setStatusManager(m.getStatusManager());
+            lc.setDbService(m.getDBService());
             m.startServices();
             mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
         });

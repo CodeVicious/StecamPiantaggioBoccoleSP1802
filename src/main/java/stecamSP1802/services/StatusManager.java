@@ -50,7 +50,7 @@ public class StatusManager {
     }
 
     synchronized public void setPlcStatus(PlcStatus plcStatus) {
-
+        this.plcStatus = plcStatus;
         for (StatusManagerListener l : this.listeners) {
             l.onPLCStatusChange(this.plcStatus);
         }
@@ -63,10 +63,11 @@ public class StatusManager {
     }
 
     synchronized public void setLocalDbStatus(LocalDbStatus localDbStatus) {
+        this.localDbStatus = localDbStatus;
         for (StatusManagerListener l : this.listeners) {
             l.onLocalDbStatusChange(this.localDbStatus);
         }
-        Logger.info("setLocalDbStatus: NEW STATUS ", localDbStatus);
+        Logger.info("setLocalDbStatus: NEW STATUS ", localDbStatus.toString());
     }
 
     synchronized public GlobalDbStatus getGlobalDbStatus() {
@@ -74,10 +75,11 @@ public class StatusManager {
     }
 
     synchronized public void setGlobalDbStatus(GlobalDbStatus globalDbStatus) {
+        this.globalDbStatus = globalDbStatus;
         for (StatusManagerListener l : this.listeners) {
             l.onGlobalDbStatusChange(this.globalDbStatus);
         }
-        Logger.info("setGlobalDbStatus: NEW STATUS ", globalDbStatus);
+        Logger.info("setGlobalDbStatus: NEW STATUS ", globalDbStatus.toString());
     }
 
     synchronized public GlobalStatus getGlobalStatus() {
@@ -85,6 +87,7 @@ public class StatusManager {
     }
 
     synchronized public void setGlobalStatus(GlobalStatus globalStatus) {
+        this.globalStatus = globalStatus;
         for (StatusManagerListener l : this.listeners) {
             l.onGlobalStatusChange(this.globalStatus);
         }
