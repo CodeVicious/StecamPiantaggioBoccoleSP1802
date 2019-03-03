@@ -54,7 +54,7 @@ public class StatusManager {
         for (StatusManagerListener l : this.listeners) {
             l.onPLCStatusChange(this.plcStatus);
         }
-        Logger.info("setPlcStatus: NEW STATUS ", plcStatus);
+        Logger.info("setPlcStatus: NEW STATUS ", plcStatus.toString());
 
     }
 
@@ -91,7 +91,7 @@ public class StatusManager {
         for (StatusManagerListener l : this.listeners) {
             l.onGlobalStatusChange(this.globalStatus);
         }
-        Logger.info("setGlobalStatus: NEW STATUS ", globalStatus);
+        Logger.info("setGlobalStatus: NEW STATUS ", globalStatus.toString());
     }
 
     public void addListener(StatusManagerListener list) {

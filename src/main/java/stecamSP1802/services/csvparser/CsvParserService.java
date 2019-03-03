@@ -67,7 +67,7 @@ public class CsvParserService {
 
     public WorkOrder getWO() {
         Preconditions.checkNotNull(beans);
-        WorkOrder wo = new WorkOrder(beans.get(0).getWo(),beans.get(0).getArticolo());
+        WorkOrder wo = new WorkOrder(beans.get(0).getWo(),beans.get(0).getArticolo(),beans.get(0).getDescrizione());
         for(int i = 1;i < beans.size(); i++){
             wo.addParte(beans.get(i).getArticolo(),beans.get(i).getDescrizione(),false);
         }

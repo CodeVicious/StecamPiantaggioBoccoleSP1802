@@ -63,7 +63,7 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
             MainController m = (MainController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
             lc.setStatusManager(m.getStatusManager());
             lc.setDbService(m.getDBService());
-            m.startServices();
+            m.startMainServices();
             mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
         });
 

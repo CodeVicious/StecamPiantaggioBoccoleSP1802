@@ -5,7 +5,6 @@ import java.util.concurrent.ExecutorService;
 import com.google.common.base.Preconditions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import stecamSP1802.WebQueryService;
 
 
 //Generatore pool di thread di mapping del PLC
@@ -52,7 +51,6 @@ public class PlcService {
         plcMASTER.liveBitPLCDuration = 500;
 
         this.service = service;
-        cleanUpDB();
     }
 
     public void connect(){
@@ -60,8 +58,11 @@ public class PlcService {
     }
 
     public void cleanUpDB() {
-        byte val = '0';
-        for (int i = 0; i <pcToPlcDb; i++)
+        byte val = ' ';
+        plcMASTER.putInt(false, 0, (short)0);
+        plcMASTER.putInt(false, 1, (short)0);
+
+        for (int i = 2; i <pcToPlcDb; i++)
             plcMASTER.putIntToByte(false, i, val);
         for (int i = 0; i < plcToPcDb; i++)
             plcMASTER.putIntToByte(true, i, val);
@@ -88,20 +89,25 @@ public class PlcService {
         for (int i = 0; i < s.length(); i++)
             plcMASTER.putIntToByte(false, i + 2, toPLC[i]);
 
+        //Also il bit 0.6 di Ricetta pronta ad essere caricata
+        Logger.info("SETTO OK RICETTA PRONTA 0.6");
         plcMASTER.putBool(false, 0, 6, true);
     }
 
     public void checkPiantaggio() {
         if (webQueryService.checkValidazioneUDM()) {
+            Logger.info("SETTO OK PIANTA 0.5");
             plcMASTER.putBool(false,0,5,true);
         }
     }
 
     public void unsetRicettaCaricata() {
+        Logger.info("RESETTO CARICA RICETTA 0.6");
         plcMASTER.putBool(false, 0, 6, false);
     }
 
     public void unsetPianta() {
+        Logger.info("RESETTO OK PIANTE 0.5");
         plcMASTER.putBool(false,0,5,false);
         cleanUpDB();
     }

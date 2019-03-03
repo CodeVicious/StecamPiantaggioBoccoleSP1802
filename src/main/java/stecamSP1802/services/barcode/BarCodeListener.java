@@ -29,10 +29,10 @@ public class BarCodeListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
 
         //Check if Status not running for BarCode acquisiztion
-        if ((statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_UDM) ||
-                (statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_UDM) ||
+        if ((statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_UDM) &&
+                (statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_WO) &&
                 (statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WORKING)) {
-            Logger.warn("STATUS NOT READY FOR BARCODE: " + statusManager.getGlobalStatus());
+            Logger.warn("STATUS NOT READY FOR BARCODE. DISCARDED. " + statusManager.getGlobalStatus());
             return;
         }
 
@@ -43,7 +43,7 @@ public class BarCodeListener implements SerialPortDataListener {
 
         byte[] newData = new byte[comPort.bytesAvailable()];
         int numRead = comPort.readBytes(newData, newData.length);
-        String barCode = new String(newData);
+        String barCode = (new String(newData)).trim();
         Logger.info("BARCODE: " + barCode + " num Bytes: " + newData.length);
         mainController.onNewBarCode(barCode);
     }

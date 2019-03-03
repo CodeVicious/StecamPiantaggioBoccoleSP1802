@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 
 public class WorkOrder {
+    private String descrizione;
     private String barCodeWO;
     private String codiceRicetta;
     private Map<String, Parte> listaParti = Maps.newHashMap();
@@ -14,9 +15,10 @@ public class WorkOrder {
         this.listaParti = listaParti;
     }
 
-    public WorkOrder(String barCodeWO, String codiceRicetta) {
+    public WorkOrder(String barCodeWO, String codiceRicetta, String descrizione) {
         this.barCodeWO = barCodeWO;
         this.codiceRicetta = codiceRicetta;
+        this.descrizione = descrizione;
     }
 
     public void addParte(String parte,String descrizione, Boolean verificata){
@@ -57,5 +59,9 @@ public class WorkOrder {
 
     public void setListaParti(Map<String, Parte> listaParti) {
         this.listaParti = listaParti;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
     }
 }

@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,7 +82,7 @@ public class LoginController implements Initializable, ControlledScreen {
 
     StringBuilder matricola = new StringBuilder("");
     StringBuilder password = new StringBuilder("");
-    ;
+
 
     SimpleStringProperty matrLBL = new SimpleStringProperty();
     SimpleStringProperty pwLBL = new SimpleStringProperty();
@@ -143,9 +142,7 @@ public class LoginController implements Initializable, ControlledScreen {
                     if (rs.getBoolean("ConduttoreDiLinea")) { //Conduttore di Linea quindi password
                         setMsg(rs.getString("NomeOperatore") + " INSERIRE PASSWORD");
                     } else { //NON Conduttore di linea quindi procedere.
-                        MainController m = (MainController) myController.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
-                        m.setLoggedUser(matricola.toString(), rs.getString("NomeOperatore"), false);
-                        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
+                       loggedIn(rs, false);
                     }
                 }
             } catch (SQLException e) {
@@ -164,15 +161,20 @@ public class LoginController implements Initializable, ControlledScreen {
                     pwLBL.set("");
                 } else {
                     rs.next();
-                    MainController m = (MainController) myController.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
-                    m.setLoggedUser(matricola.toString(), rs.getString("NomeOperatore"), true);
-                    cleanUP();
-                    myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
+                    loggedIn(rs, true);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void loggedIn(ResultSet rs, boolean isConduttoreDiLinea) throws SQLException {
+        MainController m = (MainController) myController.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
+        m.setLoggedUser(matricola.toString(), rs.getString("NomeOperatore"), isConduttoreDiLinea);
+        cleanUP();
+        m.startBarCodeService(); //Inizializzo il BarCode solo a Login ok
+        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
     }
 
     public void onRESETPressed(ActionEvent event) {
@@ -184,6 +186,7 @@ public class LoginController implements Initializable, ControlledScreen {
         matricola.setLength(0);
         password.setLength(0);
         matrLBL.set(String.valueOf(matricola));
+        pwLBL.set("");
     }
 
     private void setMsg(String msg) {
