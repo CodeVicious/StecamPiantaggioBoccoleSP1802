@@ -7,10 +7,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +24,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
@@ -287,8 +285,9 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta());
             codiceRICETTA.setStyle("-fx-background-color: green");
+            cicloWO.setText(webQueryService.getWO().getBarCodeWO());
             cicloPRG.setText(webQueryService.getWO().getCodiceRicetta());
-            cicloPRG.setText(webQueryService.getWO().getDescrizione());
+            cicloDESCRIZIONE.setText(webQueryService.getWO().getDescrizione());
 
             Map<String, Parte> lista = webQueryService.getParti();
             for(String art: lista.keySet()){
@@ -322,6 +321,7 @@ public class MainController implements Initializable, ControlledScreen {
         showMesage("PIANTAGGIO BUONO! ");
 
         plcService.unsetPianta();
+        dbService.storePiantaggio(loggedUser.getMatricola(),codiceRICETTA.getText(), barcodeWO.getText(),"OK");
     }
 
     public void piantaggioSCARTO() {
@@ -332,6 +332,8 @@ public class MainController implements Initializable, ControlledScreen {
         });
         Logger.warn("PIANTAGGIO SCARTO! ");
         showMesage("PIANTAGGIO SCARTO! ");
+        plcService.unsetPianta();
+        dbService.storePiantaggio(loggedUser.getMatricola(),codiceRICETTA.getText(), barcodeWO.getText(),"KO");
     }
 
     public void onNewBarCode(String barCode) {
@@ -368,8 +370,12 @@ public class MainController implements Initializable, ControlledScreen {
                             barcodeWO.setTextFill(Color.GREEN);
                             barcodeWO.setText(barCode);
                         }
-                        webQueryService.VerificaUDM(barCode,statusManager);
-                        plcService.checkPiantaggio();
+                        if(webQueryService.VerificaUDM(barCode))
+                            refreshTabellaWO();
+                        if(plcService.checkPiantaggio()){
+                            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
+                            plcService.iniziaCicloMacchina();
+                        }
                     }
                 });
                 break;
@@ -377,6 +383,17 @@ public class MainController implements Initializable, ControlledScreen {
         }
 
     }
+
+    private void refreshTabellaWO() {
+        Iterator<WOTable> it = tblWoData.iterator();
+        Map<String, Parte> lista = webQueryService.getParti();
+        while (it.hasNext()) {
+            WOTable s = it.next();
+            s.setCheck(lista.get(s.getArticolo()).getVerificato());
+        }
+        woTblPiantaggio.refresh();
+    }
+
 
     public void showMesage(String msg) {
         Platform.runLater(() -> {
@@ -434,5 +451,47 @@ public class MainController implements Initializable, ControlledScreen {
 
     public void onControlloUDM(ActionEvent event) {
         System.out.println(controlloUDM.isSelected());
+    }
+
+    public void onSynckUsers(ActionEvent actionEvent) {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "SINCRONIZZO CON IL SERVER  ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            dbService.synckUSERS();
+        }
+    }
+
+    public void onLoginBtn(ActionEvent actionEvent) {
+        resetLoggedUser();
+        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
+    }
+
+    private void resetLoggedUser() {
+        this.matricola = "";
+        this.nomeOperatore = "";
+        this.isConduttoreDiLinea = false;
+
+        loggedUser.setLoggedIN(false);
+        loggedUser.setConduttoreDiLinea(false);
+        loggedUser.setMatricola("");
+        loggedUser.setNomeOperatore("");
+
+        Platform.runLater(()->{
+            lblUtenteLoggato.setText(loggedUser.getMatricola()+" - "+loggedUser.getNomeoperatore()+(loggedUser.isConduttoreDiLinea()?" [CONDUTTORE LINEA]":""));
+        });
+    }
+
+    public void checkControlForConduttoreDiLinea(boolean isConduttoreDiLinea){
+
+    }
+
+    public void onNewWO(ActionEvent actionEvent) {
+        resettaStatoGlobale();
+    }
+
+    private void resettaStatoGlobale() {
     }
 }

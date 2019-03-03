@@ -2,22 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b65e99c5-17a8-4d03-b61c-92d6797f3f08" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/WOTable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/STECAMlog/StecamSP1802.log" beforeDir="false" afterPath="$PROJECT_DIR$/STECAMlog/StecamSP1802.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/MainStecamPiantaggioBoccoleSP1802.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/MainStecamPiantaggioBoccoleSP1802.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/WebQueryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/WOTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/WOTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/BarCodeListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/BarCodeListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/WorkOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/WorkOrder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/csvparser/CsvParserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/services/csvparser/CsvParserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/main.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/main.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config.properties" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -34,47 +28,36 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="46" column="23" lean-forward="true" selection-start-line="46" selection-start-column="23" selection-end-line="46" selection-end-column="23" />
+            <state relative-caret-position="161">
+              <caret line="40" column="54" selection-start-line="40" selection-start-column="24" selection-end-line="40" selection-end-column="55" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/codiciregexp.txt">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/WorkOrder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="748">
-              <caret line="57" column="5" selection-start-line="57" selection-start-column="5" selection-end-line="57" selection-end-column="5" />
+            <state relative-caret-position="270">
+              <caret line="492" column="5" lean-forward="true" selection-start-line="492" selection-start-column="5" selection-end-line="492" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1782#1783#0" expanded="true" />
-                <element signature="e#1816#1817#0" expanded="true" />
+                <element signature="e#5094#5095#0" expanded="true" />
+                <element signature="e#5206#5207#0" expanded="true" />
+                <element signature="e#16120#16121#0" expanded="true" />
+                <element signature="e#16142#16143#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/main.fxml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-336">
-              <caret line="43" column="50" selection-start-line="43" selection-start-column="50" selection-end-line="43" selection-end-column="50" />
-              <folding>
-                <element signature="e#3637#3638#0" expanded="true" />
-                <element signature="e#3694#3695#0" expanded="true" />
-                <element signature="e#4402#4403#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="204">
+              <caret line="150" column="144" selection-start-line="150" selection-start-column="144" selection-end-line="150" selection-end-column="144" />
             </state>
           </provider>
+          <provider editor-type-id="JavaFX-Scene-Builder" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -89,37 +72,28 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/codiciregexp.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="366" column="32" lean-forward="true" selection-start-line="366" selection-start-column="32" selection-end-line="366" selection-end-column="32" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#5216#5217#0" expanded="true" />
-                <element signature="e#5328#5329#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="357">
+              <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/csvparser/CsvParserService.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="123">
-              <caret line="49" selection-start-line="49" selection-end-line="49" />
+            <state relative-caret-position="17">
+              <caret line="77" column="18" selection-start-line="77" selection-start-column="11" selection-end-line="77" selection-end-column="18" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#3594#3595#0" expanded="true" />
+                <element signature="e#3637#3638#0" expanded="true" />
+                <element signature="e#3669#3670#0" expanded="true" />
+                <element signature="e#3694#3695#0" expanded="true" />
+                <element signature="e#4361#4362#0" expanded="true" />
+                <element signature="e#4402#4403#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/config.properties">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="13" column="47" lean-forward="true" selection-start-line="13" selection-start-column="47" selection-end-line="13" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -127,8 +101,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/WOTable.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="16" column="12" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+            <state relative-caret-position="358">
+              <caret line="47" column="25" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#642#643#0" expanded="true" />
@@ -151,8 +125,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1734">
-              <caret line="112" column="5" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
+            <state relative-caret-position="343">
+              <caret line="112" column="43" selection-start-line="112" selection-start-column="43" selection-end-line="112" selection-end-column="43" />
+              <folding>
+                <element signature="e#2923#2924#0" expanded="true" />
+                <element signature="e#2983#2984#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -170,8 +148,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>checkPiantaggio</find>
-      <find>PutStr</find>
       <find>source</find>
       <find>12345</find>
       <find>runn</find>
@@ -196,10 +172,12 @@
       <find>toggl</find>
       <find>rack</find>
       <find>run</find>
-      <find>tblWoData</find>
       <find>cicloDESCRIZIONE</find>
       <find>cicloPRG</find>
       <find>cicloWO</find>
+      <find>verifica</find>
+      <find>tblWoData</find>
+      <find>refreshTabellaWO</find>
     </findStrings>
     <replaceStrings>
       <replace>mnemonicParsing=&quot;false&quot; onAction=&quot;#onKeyPressed&quot;</replace>
@@ -229,7 +207,6 @@
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/ScreensController.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/MainController.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLC.java" />
-        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java" />
         <option value="$PROJECT_DIR$/src/main/resources/WO2.csv" />
         <option value="$PROJECT_DIR$/target/classes/WO2.csv" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/PropertiesController.java" />
@@ -243,7 +220,6 @@
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManagerListenerImp.java" />
         <option value="$PROJECT_DIR$/src/main/resources/loginpanel.fxml" />
         <option value="$PROJECT_DIR$/src/main/resources/codiciregexp.txt" />
-        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/ControlledScreen.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoggedUser.java" />
         <option value="$PROJECT_DIR$/src/main/resources/main.fxml" />
@@ -252,16 +228,18 @@
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/MainStecamPiantaggioBoccoleSP1802.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/StatusManager.java" />
-        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/WOTable.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/csvparser/CsvParserService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/WorkOrder.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/WebQueryService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java" />
         <option value="$PROJECT_DIR$/src/main/resources/config.properties" />
         <option value="$PROJECT_DIR$/src/main/resources/config.properties" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/BarCodeListener.java" />
-        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/WorkOrder.java" />
+        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/WOTable.java" />
+        <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java" />
         <option value="$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java" />
       </list>
     </option>
@@ -431,7 +409,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551612648576" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551634020790" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/stecamSP1802" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
@@ -607,7 +585,14 @@
       <option name="project" value="LOCAL" />
       <updated>1551274590875</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Implemented and tested with simulator WebQuery emulated&#10;Revamped main sycle.&#10;Introduced safety checks for strange bit from PLC.">
+      <created>1551612976091</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1551612976091</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TodoView">
@@ -623,7 +608,7 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23221476" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2624161" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -633,7 +618,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32719547" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49946696" weight="0.30028328" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49932885" visible="true" weight="0.34702548" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49932885" visible="true" weight="0.34560907" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.3286119" />
@@ -746,7 +731,8 @@
     <MESSAGE value="Implemented multy scene loader." />
     <MESSAGE value="Implemented partially login and status manager refined." />
     <MESSAGE value="Implemented Databases MS SQL&#10;Implemented LOG IN Mechanism&#10;Added checkbox to select WO and UDM check (to be listened)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented Databases MS SQL&#10;Implemented LOG IN Mechanism&#10;Added checkbox to select WO and UDM check (to be listened)" />
+    <MESSAGE value="Implemented and tested with simulator WebQuery emulated&#10;Revamped main sycle.&#10;Introduced safety checks for strange bit from PLC." />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented and tested with simulator WebQuery emulated&#10;Revamped main sycle.&#10;Introduced safety checks for strange bit from PLC." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -759,9 +745,45 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java</url>
-          <line>41</line>
+          <line>170</line>
           <properties />
-          <option name="timeStamp" value="59" />
+          <option name="timeStamp" value="65" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java</url>
+          <line>181</line>
+          <properties />
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java</url>
+          <line>45</line>
+          <properties />
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java</url>
+          <line>78</line>
+          <properties />
+          <option name="timeStamp" value="80" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java</url>
+          <line>387</line>
+          <properties />
+          <option name="timeStamp" value="81" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java</url>
+          <line>39</line>
+          <properties />
+          <option name="timeStamp" value="82" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java</url>
+          <line>40</line>
+          <properties />
+          <option name="timeStamp" value="83" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -774,12 +796,27 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateExpression">
       <expression>
-        <expression-string>stmt.executeQuery(SQLSELECT)</expression-string>
+        <expression-string>statusManager.getGlobalStatus()</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
         <expression-string>rs.next()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>rs.isBeforeFirst()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>rs.getInt(&quot;ConduttoreDiLinea&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>stmt.executeQuery(SQLSELECT)</expression-string>
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -803,25 +840,9 @@
         <language-id>JAVA</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
-      <expression>
-        <expression-string>getClass().getResource(&quot;./main.fxml&quot;)</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>getClass().getResource(resource)</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>line==&quot;OK&quot;</expression-string>
-        <language-id>JAVA</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/javafx-src.zip!/javafx/scene/layout/Background.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/javafx-src.zip!/javafx/scene/paint/Color.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/Thread.java" />
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/javafx-src.zip!/com/sun/glass/ui/win/WinApplication.java" />
@@ -835,16 +856,6 @@
       </provider>
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/univocity/univocity-parsers/2.5.4/univocity-parsers-2.5.4-sources.jar!/com/univocity/parsers/common/AbstractParser.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="969">
-          <caret line="65" selection-start-line="65" selection-end-line="65" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListener.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
@@ -915,18 +926,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/ConfigurationManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="464">
-          <caret line="151" column="20" selection-start-line="151" selection-start-column="20" selection-end-line="151" selection-end-column="20" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4184#4185#0" expanded="true" />
-            <element signature="e#4211#4212#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/properties.fxml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -978,21 +977,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/main.fxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="969">
-          <caret line="57" column="126" selection-start-line="57" selection-start-column="126" selection-end-line="57" selection-end-column="126" />
-        </state>
-      </provider>
-      <provider editor-type-id="JavaFX-Scene-Builder" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="364">
-          <caret line="98" column="114" lean-forward="true" selection-start-line="98" selection-start-column="114" selection-end-line="98" selection-end-column="114" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/SerialService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="279">
@@ -1030,32 +1014,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="86" column="29" lean-forward="true" selection-start-line="86" selection-start-column="29" selection-end-line="86" selection-end-column="29" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/PropertiesController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="544">
           <caret line="47" column="61" selection-start-line="47" selection-start-column="11" selection-end-line="47" selection-end-column="61" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/Parte.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="15" column="36" selection-start-line="15" selection-start-column="36" selection-end-line="15" selection-end-column="36" />
-          <folding>
-            <element signature="e#483#484#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1114,13 +1078,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/WO.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/STECAMlog/StecamSP1802.log">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -1128,29 +1085,121 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/codiciregexp.txt">
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/csvparser/CsvParserService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
+        <state relative-caret-position="123">
+          <caret line="49" selection-start-line="49" selection-end-line="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/log4j2.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="26" column="34" lean-forward="true" selection-start-line="26" selection-start-column="34" selection-end-line="26" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/ConfigurationManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-85">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4184#4185#0" expanded="true" />
+            <element signature="e#4211#4212#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/Parte.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="11" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
+          <folding>
+            <element signature="e#449#450#0" expanded="true" />
+            <element signature="e#483#484#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/WorkOrder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="748">
-          <caret line="57" column="5" selection-start-line="57" selection-start-column="5" selection-end-line="57" selection-end-column="5" />
+        <state relative-caret-position="340">
+          <caret line="45" column="4" selection-start-line="45" selection-start-column="4" selection-end-line="45" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1782#1783#0" expanded="true" />
-            <element signature="e#1816#1817#0" expanded="true" />
+            <element signature="e#1304#1305#0" expanded="true" />
+            <element signature="e#1396#1397#0" expanded="true" />
+            <element signature="e#1430#1431#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/WO.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/testers/PLCTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="376">
+          <caret line="62" column="5" lean-forward="true" selection-start-line="41" selection-start-column="2" selection-end-line="62" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1254#1255#0" expanded="true" />
+            <element signature="e#1334#1335#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/config.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="8" column="19" lean-forward="true" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/DbService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1057">
+          <caret line="97" column="31" lean-forward="true" selection-start-line="97" selection-start-column="31" selection-end-line="97" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/LoginController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1071">
+          <caret line="86" column="29" lean-forward="true" selection-start-line="86" selection-start-column="29" selection-end-line="86" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="77" column="18" selection-start-line="77" selection-start-column="11" selection-end-line="77" selection-end-column="18" />
+          <folding>
+            <element signature="e#3594#3595#0" expanded="true" />
+            <element signature="e#3637#3638#0" expanded="true" />
+            <element signature="e#3669#3670#0" expanded="true" />
+            <element signature="e#3694#3695#0" expanded="true" />
+            <element signature="e#4361#4362#0" expanded="true" />
+            <element signature="e#4402#4403#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/WOTable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="16" column="12" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="12" />
+        <state relative-caret-position="358">
+          <caret line="47" column="25" selection-start-line="47" selection-start-column="25" selection-end-line="47" selection-end-column="25" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#642#643#0" expanded="true" />
@@ -1169,49 +1218,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1734">
-          <caret line="112" column="5" selection-start-line="112" selection-start-column="5" selection-end-line="112" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/config.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="13" column="47" lean-forward="true" selection-start-line="13" selection-start-column="47" selection-end-line="13" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/csvparser/CsvParserService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123">
-          <caret line="49" selection-start-line="49" selection-end-line="49" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="46" column="23" lean-forward="true" selection-start-line="46" selection-start-column="23" selection-end-line="46" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/WebQueryService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-336">
-          <caret line="43" column="50" selection-start-line="43" selection-start-column="50" selection-end-line="43" selection-end-column="50" />
-          <folding>
-            <element signature="e#3637#3638#0" expanded="true" />
-            <element signature="e#3694#3695#0" expanded="true" />
-            <element signature="e#4402#4403#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/barcode/BarCodeListener.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="308">
@@ -1222,14 +1228,49 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/codiciregexp.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PLCListenerImp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="40" column="54" selection-start-line="40" selection-start-column="24" selection-end-line="40" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/services/PlcService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="343">
+          <caret line="112" column="43" selection-start-line="112" selection-start-column="43" selection-end-line="112" selection-end-column="43" />
+          <folding>
+            <element signature="e#2923#2924#0" expanded="true" />
+            <element signature="e#2983#2984#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/main.fxml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="150" column="144" selection-start-line="150" selection-start-column="144" selection-end-line="150" selection-end-column="144" />
+        </state>
+      </provider>
+      <provider editor-type-id="JavaFX-Scene-Builder" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/stecamSP1802/controllers/MainController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="366" column="32" lean-forward="true" selection-start-line="366" selection-start-column="32" selection-end-line="366" selection-end-column="32" />
+        <state relative-caret-position="270">
+          <caret line="492" column="5" lean-forward="true" selection-start-line="492" selection-start-column="5" selection-end-line="492" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5216#5217#0" expanded="true" />
-            <element signature="e#5328#5329#0" expanded="true" />
+            <element signature="e#5094#5095#0" expanded="true" />
+            <element signature="e#5206#5207#0" expanded="true" />
+            <element signature="e#16120#16121#0" expanded="true" />
+            <element signature="e#16142#16143#0" expanded="true" />
           </folding>
         </state>
       </provider>

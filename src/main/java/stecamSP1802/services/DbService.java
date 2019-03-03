@@ -1,12 +1,17 @@
 package stecamSP1802.services;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.helper.PasswordMD5Converter;
+import stecamSP1802.services.barcode.Parte;
+import stecamSP1802.services.barcode.WorkOrder;
 
 import java.sql.*;
+import java.util.Calendar;
+import java.util.Map;
 
 public class DbService {
     private final StatusManager statusManager;
@@ -41,35 +46,128 @@ public class DbService {
     }
 
     public void synckUSERS() {
-        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.userSPAL";
-        String SQLDROP = "DELETE * FROM [dbo].[utentiREMOTI]";
-        String SQLINSERT = " INSERT INTO [dbo].[utentiREMOTI]" +
+        String SQLSELECT = "SELECT * FROM [dbo].[b_OperatoreIMP]";
+        String SQLDROP = "TRUNCATE TABLE [dbo].[b_Operatore_SYNK]";
+        String SQLINSERT = " INSERT INTO [dbo].[b_Operatore_SYNK]" +
                 "           ([Matricola]" +
                 "           ,[NomeOperatore]" +
                 "           ,[ConduttoreDiLinea]" +
                 "           ,[HashPassword])" +
                 "     VALUES" +
-                "           (?,?,?,?,?)";
+                "           (?,?,?,?)";
 
+        PreparedStatement preparedStmt = null;
         try {
-            PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
-            preparedStmt.execute();
+            preparedStmt = conLDB.prepareStatement(SQLINSERT);
 
             Statement stmt = conLDB.createStatement();
-            stmt.executeQuery(SQLDROP);
+            stmt.executeUpdate(SQLDROP);
             ResultSet rs = stmt.executeQuery(SQLSELECT);
             // Iterate through the data in the result set and display it.
             while (rs.next()) {
                 preparedStmt.setString(1, rs.getString("Matricola"));
                 preparedStmt.setString(2, rs.getString("NomeOperatore"));
-                preparedStmt.setInt(4, rs.getInt("ConduttoreDiLinea"));
-                preparedStmt.setString(5, rs.getString("HashPassword"));
-
+                preparedStmt.setInt(3, rs.getInt("ConduttoreDiLinea"));
+                preparedStmt.setString(4, rs.getString("HashPassword"));
+                preparedStmt.execute();
                 // execute the preparedstatement
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
+
+    }
+
+
+    public  void storePiantaggio(String IOP, String PRG, String WO, String ESITO) {
+        try {
+
+            String SQLINSERT = " INSERT INTO [dbo].[piantaggi]" +
+                    "([TS],[IOP],[PRG],[WO],[ESITO])" +
+                    "     VALUES (?,?,?,?,?)";
+
+            PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
+            preparedStmt.setTimestamp(1, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));
+            preparedStmt.setString(2, IOP);
+            preparedStmt.setString(3, PRG);
+            preparedStmt.setString(4, WO);
+            preparedStmt.setString(5, ESITO);
+            preparedStmt.execute();
+
+
+        } catch (SQLException e) {
+            Logger.error(e);
+        }
+
+    }
+
+    public  void storeWO(WorkOrder wo) {
+
+        String SQLDROP = "TRUNCATE TABLE [dbo].[cache]";
+
+        try {
+
+            Statement stmt = conLDB.createStatement();
+            stmt.executeUpdate(SQLDROP);
+
+            String SQLINSERT = " INSERT INTO [dbo].[cache]" +
+                    "([wo],[TipoArt],[Articolo],[Descrizione],[Checked])" +
+                    "     VALUES (?,?,?,?,?)";
+
+            PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
+            preparedStmt.setString(1, wo.getBarCodeWO());
+            preparedStmt.setString(2, "PF");
+            preparedStmt.setString(3, wo.getCodiceRicetta());
+            preparedStmt.setString(4, wo.getDescrizione());
+            preparedStmt.setBoolean(5, false);
+
+            preparedStmt.execute();
+
+            Map<String, Parte> listaParti = wo.getListaParti();
+            for (String s : listaParti.keySet()) {
+                preparedStmt.setString(1, s);
+                preparedStmt.setString(2, "Componente");
+                preparedStmt.setString(3, listaParti.get(s).getCodice());
+                preparedStmt.setString(4, listaParti.get(s).getDescrizione());
+                preparedStmt.setBoolean(5, listaParti.get(s).getVerificato());
+                preparedStmt.execute();
+            }
+
+
+        } catch (SQLException e) {
+           Logger.error(e);
+        }
+    }
+
+    public WorkOrder loadWO() {
+
+        try {
+            String SQLSELECT = "SELECT * FROM [dbo].[cache]";
+            Statement stmt = conLDB.createStatement();
+            ResultSet rs = stmt.executeQuery(SQLSELECT);
+
+            WorkOrder wo = new WorkOrder();
+            Map<String, Parte> listaParti = Maps.newHashMap();
+
+            while (rs.next()) {
+                if (rs.getString("TipoArt").matches("PF")) {
+                    wo.setBarCodeWO(rs.getString("wo"));
+                    wo.setCodiceRicetta(rs.getString("Articolo"));
+                    wo.setDescrizione(rs.getString("Descrizione"));
+                } else {
+                    listaParti.put(rs.getString("Articolo"), new Parte(rs.getString("Articolo"),
+                            rs.getString("Descrizione"), rs.getBoolean("Checked")));
+                }
+
+            }
+            wo.setListaParti(listaParti);
+
+            return wo;
+
+        } catch (SQLException e) {
+            Logger.error(e);
+        }
+        return null;
     }
 
     public void login(String Matricola, String Password) {

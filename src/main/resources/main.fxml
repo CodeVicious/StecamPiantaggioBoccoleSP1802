@@ -78,6 +78,12 @@
                   </CheckBox>
                </children>
             </AnchorPane>
+            <Button fx:id="synckUSERS" layoutX="1045.0" layoutY="19.0" mnemonicParsing="false" onAction="#onSynckUsers" prefHeight="54.0" prefWidth="222.0" text="Synk Users">
+               <font>
+                  <Font name="Courier New" size="18.0" />
+               </font>
+            </Button>
+            <Button fx:id="loginBTN" layoutX="1045.0" layoutY="104.0" mnemonicParsing="false" onAction="#onLoginBtn" prefHeight="54.0" prefWidth="222.0" text="LOGOUT" />
          </children>
       </Pane>
       <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="1280.0" style="-fx-background-color: #ffcb99;">
@@ -142,5 +148,10 @@
             </Label>
          </children>
       </AnchorPane>
+      <Button fx:id="newWoBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="523.0" layoutY="536.0" mnemonicParsing="false" onAction="#onNewWO" prefHeight="71.0" prefWidth="235.0" text="Nuovo Work Order" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="Courier New" size="23.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

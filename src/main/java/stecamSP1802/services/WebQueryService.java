@@ -75,7 +75,7 @@ public class WebQueryService {
         return "KO";
     }
 
-    public Boolean VerificaUDM(String barCode, StatusManager statusManager) {
+    public Boolean VerificaUDM(String barCode) {
 
         try {
             URL urlUDM = new URL(conf.getVerificaListaPartiUDM()+

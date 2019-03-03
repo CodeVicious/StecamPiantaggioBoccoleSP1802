@@ -94,11 +94,8 @@ public class PlcService {
         plcMASTER.putBool(false, 0, 6, true);
     }
 
-    public void checkPiantaggio() {
-        if (webQueryService.checkValidazioneUDM()) {
-            Logger.info("SETTO OK PIANTA 0.5");
-            plcMASTER.putBool(false,0,5,true);
-        }
+    public boolean checkPiantaggio() {
+        return webQueryService.checkValidazioneUDM();
     }
 
     public void unsetRicettaCaricata() {
@@ -110,5 +107,10 @@ public class PlcService {
         Logger.info("RESETTO OK PIANTE 0.5");
         plcMASTER.putBool(false,0,5,false);
         cleanUpDB();
+    }
+
+    public void iniziaCicloMacchina(){
+        Logger.info("SETTO OK PIANTA 0.5");
+        plcMASTER.putBool(false,0,5,true);
     }
 }

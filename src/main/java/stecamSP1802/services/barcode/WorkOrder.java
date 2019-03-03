@@ -1,6 +1,7 @@
 package stecamSP1802.services.barcode;
 
 import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 public class WorkOrder {
@@ -21,21 +22,32 @@ public class WorkOrder {
         this.descrizione = descrizione;
     }
 
-    public void addParte(String parte,String descrizione, Boolean verificata){
-        this.listaParti.put(parte,new Parte(parte,descrizione,verificata));
+    public WorkOrder() {
+
     }
 
-    public void setVerificata (String parte){
+    public void addParte(String parte, String descrizione, Boolean verificata) {
+        this.listaParti.put(parte, new Parte(parte, descrizione, verificata));
+    }
+
+    public void setVerificata(String parte) {
         this.listaParti.get(parte).setVerificato(true);
     }
 
-    public Boolean checkLavorabile(){
+    public Boolean checkLavorabile() {
         Boolean lavorabile = true;
-        for (String s: listaParti.keySet())
+        for (String s : listaParti.keySet())
             lavorabile = listaParti.get(s).getVerificato() && lavorabile;
         return lavorabile;
     }
 
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public String getDescrizione() {
+        return descrizione;
+    }
 
     public String getBarCodeWO() {
         return barCodeWO;
@@ -61,7 +73,5 @@ public class WorkOrder {
         this.listaParti = listaParti;
     }
 
-    public String getDescrizione() {
-        return descrizione;
-    }
+
 }

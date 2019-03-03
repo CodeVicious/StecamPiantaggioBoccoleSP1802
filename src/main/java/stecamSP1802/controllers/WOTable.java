@@ -40,4 +40,11 @@ public class WOTable {
     public void setCheck(String check) {
         this.check.set(check);
     }
+
+    public void setCheck(Boolean verificato) {
+        if (verificato)
+            setCheck("OK");
+        else
+            setCheck("KO");
+    }
 }
