@@ -364,11 +364,11 @@ public class MainController implements Initializable, ControlledScreen {
                         //check BarCode
                         if (!barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
-                            barcodeWO.setText(barCode);
-                            barcodeWO.setTextFill(Color.RED);
+                            codiceRICETTA.setText(barCode);
+                            codiceRICETTA.setTextFill(Color.RED);
                         } else {
-                            barcodeWO.setTextFill(Color.GREEN);
-                            barcodeWO.setText(barCode);
+                            codiceRICETTA.setTextFill(Color.GREEN);
+                            codiceRICETTA.setText(barCode);
                         }
                         if(webQueryService.VerificaUDM(barCode))
                             refreshTabellaWO();
