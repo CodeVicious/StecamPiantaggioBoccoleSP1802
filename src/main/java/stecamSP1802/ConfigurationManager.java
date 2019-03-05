@@ -1,12 +1,19 @@
 package stecamSP1802;
 
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Properties;
+
 
 public class ConfigurationManager {
     private static ConfigurationManager ourInstance = new ConfigurationManager();
+    private static Logger Logger = LogManager.getLogger(ConfigurationManager.class);
+
     private String verificaListaPartiWOURL;
     private String verificaListaPartiUDM;
     private String nomeStazione;
@@ -150,5 +157,21 @@ public class ConfigurationManager {
 
     public Properties getProp() {
         return prop;
+    }
+
+
+
+    public void saveProperties() {
+        URL resourceUrl = getClass().getResource("/config.properties");
+        File file = null;
+        try {
+            file = new File(resourceUrl.toURI());
+            FileOutputStream output = new FileOutputStream(file);
+            prop.store(output,null);
+
+        } catch (URISyntaxException | IOException e) {
+            Logger.error(e);
+        }
+
     }
 }

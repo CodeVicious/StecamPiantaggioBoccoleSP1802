@@ -173,6 +173,7 @@ public class LoginController implements Initializable, ControlledScreen {
         MainController m = (MainController) myController.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
         m.setLoggedUser(matricola.toString(), rs.getString("NomeOperatore"), isConduttoreDiLinea);
         cleanUP();
+        setMsg("");
         m.startBarCodeService(); //Inizializzo il BarCode solo a Login ok
         myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
     }

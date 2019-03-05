@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,6 +13,8 @@ import stecamSP1802.controllers.LoginController;
 import stecamSP1802.controllers.MainController;
 import stecamSP1802.controllers.ScreensController;
 
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 
 
 public class MainStecamPiantaggioBoccoleSP1802 extends Application {
@@ -46,7 +49,7 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
         mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID, MainStecamPiantaggioBoccoleSP1802.propertiesFILE);
         mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
 
-        LoginController lc = (LoginController)  mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.loginID);
+        LoginController lc = (LoginController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.loginID);
 
         root = new Group();
         root.getChildren().addAll(mainContainer);
@@ -80,6 +83,28 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+
+        if (checkSingleRun()) {
+            launch(args);
+        }
+        System.exit(0);
+    }
+
+    private static boolean checkSingleRun() {
+        try {
+            RandomAccessFile randomFile =
+                    new RandomAccessFile("single.class", "rw");
+
+            FileChannel channel = randomFile.getChannel();
+
+            if (channel.tryLock() == null) {
+                System.out.println("Already Running...");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return true;
     }
 }
+

@@ -71,6 +71,12 @@ public class MainController implements Initializable, ControlledScreen {
     CheckBox controlloUDM;
 
     @FXML
+    private Button interfacciaParametri;
+
+    @FXML
+    private Button synckUSERS;
+
+    @FXML
     private Label cicloDESCRIZIONE;
 
     @FXML
@@ -117,6 +123,8 @@ public class MainController implements Initializable, ControlledScreen {
     private String matricola;
     private String nomeOperatore;
     private boolean isConduttoreDiLinea;
+    private boolean isWOListPartEnabled;
+    private boolean isUDMVerificaEnabled;
 
 
     @Override
@@ -347,16 +355,29 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         //check BarCode
-                        if (!barCode.matches("\\d{7,8}")) {
-                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
-                            barcodeWO.setText(barCode);
-                            barcodeWO.setTextFill(Color.RED);
+                        if (isWOListPartEnabled) {
+                            if (!barCode.matches("\\d{7,8}")) {
+                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
+                                barcodeWO.setText(barCode);
+                                barcodeWO.setTextFill(Color.RED);
+                            } else {
+                                barcodeWO.setTextFill(Color.GREEN);
+                                barcodeWO.setText(barCode);
+                                cicloWO.setText(barCode);
+                                String ricetta = webQueryService.VerificaListaPartiWO(barCode);
+                                plcService.sendCodiceRicetta(ricetta);
+                            }
                         } else {
-                            barcodeWO.setTextFill(Color.GREEN);
-                            barcodeWO.setText(barCode);
-                            cicloWO.setText(barCode);
-                            String ricetta = webQueryService.VerificaListaPartiWO(barCode);
-                            plcService.sendCodiceRicetta(ricetta);
+                            if (!barCode.matches("\\d{8}[A-Z]?")) {
+                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO");
+                                barcodeWO.setText(barCode);
+                                barcodeWO.setTextFill(Color.RED);
+                            } else {
+                                barcodeWO.setTextFill(Color.GREEN);
+                                barcodeWO.setText(barCode);
+                                cicloWO.setText("disabled"); //Chiedo il caricamento della ricetta direttamente al PLC
+                                plcService.sendCodiceRicetta(barCode);
+                            }
                         }
                     }
                 });
@@ -365,19 +386,31 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         //check BarCode
-                        if (!barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}")) {
-                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
-                            codiceRICETTA.setText(barCode);
-                            codiceRICETTA.setTextFill(Color.RED);
+                        if (isUDMVerificaEnabled) {
+                            if (!barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}")) {
+                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
+                                codiceRICETTA.setText(barCode);
+                                codiceRICETTA.setTextFill(Color.RED);
+                            } else {
+                                codiceRICETTA.setTextFill(Color.GREEN);
+                                codiceRICETTA.setText(barCode);
+                            }
+                            if (webQueryService.VerificaUDM(barCode, isWOListPartEnabled))
+                                refreshTabellaWO();
+                            if (plcService.checkPiantaggio()) {
+                                statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
+                                plcService.iniziaCicloMacchina();
+                            }
                         } else {
-                            codiceRICETTA.setTextFill(Color.GREEN);
-                            codiceRICETTA.setText(barCode);
-                        }
-                        if (webQueryService.VerificaUDM(barCode))
-                            refreshTabellaWO();
-                        if (plcService.checkPiantaggio()) {
-                            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
-                            plcService.iniziaCicloMacchina();
+                            if (!barCode.matches("\\d{8}[A-Z]?")) {
+                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO UDM");
+                                codiceRICETTA.setText(barCode);
+                                codiceRICETTA.setTextFill(Color.RED);
+                            } else {
+                                codiceRICETTA.setTextFill(Color.GREEN);
+                                codiceRICETTA.setText(barCode);
+                            }
+                            addTabellaWO(barCode);
                         }
                     }
                 });
@@ -394,6 +427,13 @@ public class MainController implements Initializable, ControlledScreen {
             WOTable s = it.next();
             s.setCheck(lista.get(s.getArticolo()).getVerificato());
         }
+        woTblPiantaggio.refresh();
+    }
+
+    private void addTabellaWO(String code){
+
+        tblWoData.add(new WOTable(code, "codice da barcode", true));
+
         woTblPiantaggio.refresh();
     }
 
@@ -447,14 +487,36 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             lblUtenteLoggato.setText(loggedUser.getMatricola() + " - " + loggedUser.getNomeoperatore() + (loggedUser.isConduttoreDiLinea() ? " [CONDUTTORE LINEA]" : ""));
         });
+
+        setupControlliLoggedUser();
+    }
+
+    private void setupControlliLoggedUser() {
+
+        if (loggedUser.isConduttoreDiLinea()) {
+            controlloWO.setDisable(false);
+            controlloUDM.setDisable(false);
+            interfacciaParametri.setDisable(false);
+            synckUSERS.setDisable(false);
+
+
+        } else {
+            controlloWO.setDisable(true);
+            controlloUDM.setDisable(true);
+            interfacciaParametri.setDisable(true);
+            synckUSERS.setDisable(true);
+        }
+
     }
 
     public void onControlloWO(ActionEvent event) {
-        System.out.println(controlloWO.isSelected());
+        isWOListPartEnabled = controlloWO.isSelected();
+        webQueryService.checkSendUDM(isWOListPartEnabled,isUDMVerificaEnabled);
     }
 
     public void onControlloUDM(ActionEvent event) {
-        System.out.println(controlloUDM.isSelected());
+        isUDMVerificaEnabled = controlloUDM.isSelected();
+        webQueryService.checkSendUDM(isWOListPartEnabled,isUDMVerificaEnabled);
     }
 
     public void onSynckUsers(ActionEvent actionEvent) {
