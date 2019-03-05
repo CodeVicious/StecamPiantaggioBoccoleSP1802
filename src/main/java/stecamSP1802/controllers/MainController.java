@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
+import stecamSP1802.schedulers.WatchDog;
 import stecamSP1802.services.StatusManagerListenerImp;
 import stecamSP1802.services.WebQueryService;
 import stecamSP1802.services.*;
@@ -103,6 +104,7 @@ public class MainController implements Initializable, ControlledScreen {
     SerialService serialService;
     PlcService plcService;
     WebQueryService webQueryService;
+    WatchDog watchDog;
 
     // Observers
     PLCListener plcListener;
@@ -115,7 +117,6 @@ public class MainController implements Initializable, ControlledScreen {
     private String matricola;
     private String nomeOperatore;
     private boolean isConduttoreDiLinea;
-
 
 
     @Override
@@ -131,20 +132,22 @@ public class MainController implements Initializable, ControlledScreen {
         woTblPiantaggio.setItems(tblWoData);
         woTblPiantaggio.setEditable(false);
 
-        tblArticolo.setCellValueFactory(new PropertyValueFactory<WOTable,String>("articolo"));
-        tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable,String>("descrizione"));
-        tblCheck.setCellValueFactory(new PropertyValueFactory<WOTable,String>("check"));
+        tblArticolo.setCellValueFactory(new PropertyValueFactory<WOTable, String>("articolo"));
+        tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizione"));
+        tblCheck.setCellValueFactory(new PropertyValueFactory<WOTable, String>("check"));
 
 
         //Setup Thread Pool for PLC Service
         executors = Executors.newCachedThreadPool();
 
         statusManagerListener = new StatusManagerListenerImp(this);
-        statusManager = new StatusManager();
+        statusManager = new StatusManager(); // Gestore degli stati generale e di connessione
         statusManager.addListener(statusManagerListener);
-        serialService = new SerialService(this, statusManager);
+
+        serialService = new SerialService(this, statusManager); //Gestore Bar Code
         webQueryService = new WebQueryService(statusManager);
-        dbService = new DbService(statusManager);
+        dbService = new DbService(statusManager); //Gestore interfacce DB
+        watchDog = new WatchDog(this); // Gestore inattività ed altri alert temporizzati.
 
         plcListener = new PLCListenerImp(this, statusManager);
         plcService = new PlcService(
@@ -159,9 +162,9 @@ public class MainController implements Initializable, ControlledScreen {
                 statusManager,
                 webQueryService,
                 executors
-        );
+        ); // Gestore interfaccia PLC
 
-        launchTime();
+        launchTime(); //Clock TODO:REMOVE?
     }
 
     public void startMainServices() {
@@ -169,7 +172,7 @@ public class MainController implements Initializable, ControlledScreen {
         plcService.connect();
     }
 
-    public void startBarCodeService(){
+    public void startBarCodeService() {
         serialService.open();
     }
 
@@ -290,8 +293,8 @@ public class MainController implements Initializable, ControlledScreen {
             cicloDESCRIZIONE.setText(webQueryService.getWO().getDescrizione());
 
             Map<String, Parte> lista = webQueryService.getParti();
-            for(String art: lista.keySet()){
-                tblWoData.add(new WOTable(lista.get(art).getCodice(),lista.get(art).getDescrizione(),lista.get(art).getVerificato()));
+            for (String art : lista.keySet()) {
+                tblWoData.add(new WOTable(lista.get(art).getCodice(), lista.get(art).getDescrizione(), lista.get(art).getVerificato()));
             }
 
             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
@@ -321,7 +324,7 @@ public class MainController implements Initializable, ControlledScreen {
         showMesage("PIANTAGGIO BUONO! ");
 
         plcService.unsetPianta();
-        dbService.storePiantaggio(loggedUser.getMatricola(),codiceRICETTA.getText(), barcodeWO.getText(),"OK");
+        dbService.storePiantaggio(loggedUser.getMatricola(), codiceRICETTA.getText(), barcodeWO.getText(), "OK");
     }
 
     public void piantaggioSCARTO() {
@@ -333,7 +336,7 @@ public class MainController implements Initializable, ControlledScreen {
         Logger.warn("PIANTAGGIO SCARTO! ");
         showMesage("PIANTAGGIO SCARTO! ");
         plcService.unsetPianta();
-        dbService.storePiantaggio(loggedUser.getMatricola(),codiceRICETTA.getText(), barcodeWO.getText(),"KO");
+        dbService.storePiantaggio(loggedUser.getMatricola(), codiceRICETTA.getText(), barcodeWO.getText(), "KO");
     }
 
     public void onNewBarCode(String barCode) {
@@ -370,9 +373,9 @@ public class MainController implements Initializable, ControlledScreen {
                             codiceRICETTA.setTextFill(Color.GREEN);
                             codiceRICETTA.setText(barCode);
                         }
-                        if(webQueryService.VerificaUDM(barCode))
+                        if (webQueryService.VerificaUDM(barCode))
                             refreshTabellaWO();
-                        if(plcService.checkPiantaggio()){
+                        if (plcService.checkPiantaggio()) {
                             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
                             plcService.iniziaCicloMacchina();
                         }
@@ -417,8 +420,8 @@ public class MainController implements Initializable, ControlledScreen {
 
 
     public void onCaricaParametri(ActionEvent event) {
+        watchDog.resetSchedule();
         myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
-        System.out.println("UU");
     }
 
 
@@ -431,6 +434,7 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
     public void setLoggedUser(String matricola, String nomeOperatore, boolean isConduttoreDiLinea) {
+        watchDog.scheduleTimer();
         this.matricola = matricola;
         this.nomeOperatore = nomeOperatore;
         this.isConduttoreDiLinea = isConduttoreDiLinea;
@@ -440,9 +444,9 @@ public class MainController implements Initializable, ControlledScreen {
         loggedUser.setMatricola(matricola);
         loggedUser.setNomeOperatore(nomeOperatore);
 
-        Platform.runLater(()->{
-            lblUtenteLoggato.setText(loggedUser.getMatricola()+" - "+loggedUser.getNomeoperatore()+(loggedUser.isConduttoreDiLinea()?" [CONDUTTORE LINEA]":""));
-                });
+        Platform.runLater(() -> {
+            lblUtenteLoggato.setText(loggedUser.getMatricola() + " - " + loggedUser.getNomeoperatore() + (loggedUser.isConduttoreDiLinea() ? " [CONDUTTORE LINEA]" : ""));
+        });
     }
 
     public void onControlloWO(ActionEvent event) {
@@ -466,25 +470,29 @@ public class MainController implements Initializable, ControlledScreen {
 
     public void onLoginBtn(ActionEvent actionEvent) {
         resetLoggedUser();
-        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
+
     }
 
-    private void resetLoggedUser() {
-        this.matricola = "";
-        this.nomeOperatore = "";
-        this.isConduttoreDiLinea = false;
+    public void resetLoggedUser() {
+        if (loggedUser.isLoggedIN()) {
+            this.matricola = "";
+            this.nomeOperatore = "";
+            this.isConduttoreDiLinea = false;
 
-        loggedUser.setLoggedIN(false);
-        loggedUser.setConduttoreDiLinea(false);
-        loggedUser.setMatricola("");
-        loggedUser.setNomeOperatore("");
+            loggedUser.setLoggedIN(false);
+            loggedUser.setConduttoreDiLinea(false);
+            loggedUser.setMatricola("");
+            loggedUser.setNomeOperatore("");
 
-        Platform.runLater(()->{
-            lblUtenteLoggato.setText(loggedUser.getMatricola()+" - "+loggedUser.getNomeoperatore()+(loggedUser.isConduttoreDiLinea()?" [CONDUTTORE LINEA]":""));
-        });
+            Platform.runLater(() -> {
+                lblUtenteLoggato.setText(loggedUser.getMatricola() + " - " + loggedUser.getNomeoperatore() + (loggedUser.isConduttoreDiLinea() ? " [CONDUTTORE LINEA]" : ""));
+            });
+            watchDog.stopSchedule();
+            myController.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
+        }
     }
 
-    public void checkControlForConduttoreDiLinea(boolean isConduttoreDiLinea){
+    public void checkControlForConduttoreDiLinea(boolean isConduttoreDiLinea) {
 
     }
 

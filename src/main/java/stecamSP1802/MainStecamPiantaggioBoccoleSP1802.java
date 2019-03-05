@@ -15,7 +15,7 @@ import stecamSP1802.controllers.ScreensController;
 
 
 public class MainStecamPiantaggioBoccoleSP1802 extends Application {
-    final Logger Logger = LogManager.getLogger(MainStecamPiantaggioBoccoleSP1802.class);
+    private static Logger Logger = LogManager.getLogger(MainStecamPiantaggioBoccoleSP1802.class);
 
     ConfigurationManager conf = ConfigurationManager.getInstance();
 
