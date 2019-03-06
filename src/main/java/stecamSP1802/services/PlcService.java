@@ -104,7 +104,7 @@ public class PlcService {
     }
 
     public void unsetPianta() {
-        Logger.info("RESETTO OK PIANTE 0.5");
+        Logger.info("RESETTO OK PIANTA 0.5");
         plcMASTER.putBool(false,0,5,false);
         cleanUpDB();
     }

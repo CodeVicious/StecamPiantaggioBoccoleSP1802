@@ -27,14 +27,14 @@ public class PLCListenerImp implements PLCListener {
                         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
                         mainController.onRicettaOK();
                     } else {
-                        Logger.error("RICEVUTO 0.6 - Riceta OK inatteso");
+                        Logger.error("RICEVUTO 0.6 - Ricetta OK inatteso");
                     }
                     break;
                 case 5:
                     if (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_WO) {
                         mainController.onRicettaKO();
                     } else {
-                        Logger.error("RICEVUTO 0.5 - Riceta KO inatteso");
+                        Logger.error("RICEVUTO 0.5 - Ricetta KO inatteso");
                     }
                     break;
                 case 4:

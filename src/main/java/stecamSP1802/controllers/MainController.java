@@ -123,8 +123,8 @@ public class MainController implements Initializable, ControlledScreen {
     private String matricola;
     private String nomeOperatore;
     private boolean isConduttoreDiLinea;
-    private boolean isWOListPartEnabled;
-    private boolean isUDMVerificaEnabled;
+    private boolean isWOListPartEnabled=true;
+    private boolean isUDMVerificaEnabled=true;
 
 
     @Override
@@ -326,12 +326,10 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             labelESITO.setText("BUONO");
             labelESITO.setStyle("-fx-background-color: green");
-            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
         Logger.warn("PIANTAGGIO BUONO! ");
         showMesage("PIANTAGGIO BUONO! ");
 
-        plcService.unsetPianta();
         dbService.storePiantaggio(loggedUser.getMatricola(), codiceRICETTA.getText(), barcodeWO.getText(), "OK");
     }
 
@@ -339,11 +337,11 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             labelESITO.setText("SCARTO");
             labelESITO.setStyle("-fx-background-color: red");
-            statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
+
         });
         Logger.warn("PIANTAGGIO SCARTO! ");
         showMesage("PIANTAGGIO SCARTO! ");
-        plcService.unsetPianta();
+
         dbService.storePiantaggio(loggedUser.getMatricola(), codiceRICETTA.getText(), barcodeWO.getText(), "KO");
     }
 
@@ -563,5 +561,19 @@ public class MainController implements Initializable, ControlledScreen {
     }
 
     private void resettaStatoGlobale() {
+        codiceRICETTA.setText("");
+        codiceRICETTA.setStyle("-fx-background-color: green");
+        cicloWO.setText("");
+        cicloPRG.setText("");
+        cicloDESCRIZIONE.setText("");
+
+        webQueryService.cleanWO();
+        tblWoData.removeAll();
+
+        woTblPiantaggio.refresh();
+
+
+        statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
+        plcService.unsetPianta();
     }
 }

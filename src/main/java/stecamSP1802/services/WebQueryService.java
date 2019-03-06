@@ -161,4 +161,11 @@ public class WebQueryService {
         }
 
     }
+
+    public void cleanWO() {
+        WO.getListaParti().clear();
+        WO.setDescrizione("");
+        WO.setCodiceRicetta("");
+        WO.setBarCodeWO("");
+    }
 }
