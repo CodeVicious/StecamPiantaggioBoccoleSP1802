@@ -63,12 +63,15 @@ public class PropertiesController implements Initializable, ControlledScreen {
     }
 
     public void onSaveProperties(ActionEvent event) {
+        conf.saveProperties();
     }
 
     public void onEditSalva(TableColumn.CellEditEvent cellEditEvent) {
         AppProperty p = (AppProperty)cellEditEvent.getTableView().getItems()
                 .get(cellEditEvent.getTablePosition().getRow());
         p.setValue((String)cellEditEvent.getNewValue());
+        conf.getProp().setProperty(p.getKeyword(),p.getValue());
+
         tableProperties.refresh();
 
     }

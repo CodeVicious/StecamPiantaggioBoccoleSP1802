@@ -268,11 +268,9 @@ public class PLC implements Runnable {
 
                 @Override
                 public void run() {
-                    // TODO Auto-generated method stub
                     try {
                         putBool(fromPLC, address, pos, false);
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -280,7 +278,6 @@ public class PLC implements Runnable {
             t.schedule(tt, 300);
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -532,7 +529,7 @@ public class PLC implements Runnable {
                 logger.error("No live bit from PLC: " + this.PLCName);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 

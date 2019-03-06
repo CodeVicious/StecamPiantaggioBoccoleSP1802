@@ -37,15 +37,15 @@ public class WebQueryService {
 
         try {
 
-            URL urlWO = new URL(conf.getVerificaListaPartiWOURL()+
-                    "?NumeroWO="+barCode+
-                    "&NomeStazione="+conf.getNomeStazione());
+            URL urlWO = new URL(conf.getVerificaListaPartiWOURL() +
+                    "?NumeroWO=" + barCode +
+                    "&NomeStazione=" + conf.getNomeStazione());
 
             URLConnection yc = urlWO.openConnection();
 
             yc.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
 
-            InputStream is  = yc.getInputStream();
+            InputStream is = yc.getInputStream();
 
             Logger.info("Parsing ");
             if (csvParserService.parse(is).matches("OK")) {
@@ -75,12 +75,12 @@ public class WebQueryService {
         return "KO";
     }
 
-    public Boolean VerificaUDM(String barCode) {
+    public Boolean VerificaUDM(String barCode, boolean isWOListPartEnabled) {
 
         try {
-            URL urlUDM = new URL(conf.getVerificaListaPartiUDM()+
-                    "?UdM="+barCode
-                    );
+            URL urlUDM = new URL(conf.getVerificaListaPartiUDM() +
+                    "?UdM=" + barCode
+            );
             URLConnection con = urlUDM.openConnection();
 
             BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -91,12 +91,15 @@ public class WebQueryService {
                 return false;
             } else if (line.matches("OK")) {
                 line = inputStreamReader.readLine();
-                if(WO.getListaParti().containsKey(line)) {
-                    Parte codice = WO.getListaParti().get(line);
-                    codice.setVerificato(true);
-                    Logger.info("UDM OK - CODE " + line);
+                if (isWOListPartEnabled) {
+                    if (WO.getListaParti().containsKey(line)) {
+                        Parte codice = WO.getListaParti().get(line);
+                        codice.setVerificato(true);
+                        Logger.info("UDM OK - CODE " + line);
+                    }
                     return true;
                 }
+
             } else {
                 Logger.info("CODICE NON PRESENTE IN LISTA");
                 return false;
@@ -121,7 +124,10 @@ public class WebQueryService {
 
     public void sendAbilitaUDM() {
         try {
-            URL urlVERICFICA = new URL(conf.getuRLVerificaUID());
+            URL urlVERICFICA = new URL(conf.getuRLVerificaUID() +
+                    "?NomeStazione=" + conf.getNomeStazione() +
+                    "&DisabilitaConvertiUDM=NO");
+
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
         } catch (IOException e) {
@@ -132,7 +138,10 @@ public class WebQueryService {
     public void sendDisabilitaUDM() {
 
         try {
-            URL urlVERICFICA = new URL(conf.getuRLVerificaUID());
+            URL urlVERICFICA = new URL(conf.getuRLVerificaUID() +
+                    "?NomeStazione=" + conf.getNomeStazione() +
+                    "&DisabilitaConvertiUDM=SI");
+
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
         } catch (IOException e) {
@@ -142,5 +151,14 @@ public class WebQueryService {
 
     public Map<String, Parte> getParti() {
         return WO.getListaParti();
+    }
+
+    public void checkSendUDM(boolean isWOListPartEnabled, boolean isUDMVerificaEnabled) {
+        if(isUDMVerificaEnabled && isWOListPartEnabled){
+            sendAbilitaUDM();
+        } else {
+            sendDisabilitaUDM();
+        }
+
     }
 }
