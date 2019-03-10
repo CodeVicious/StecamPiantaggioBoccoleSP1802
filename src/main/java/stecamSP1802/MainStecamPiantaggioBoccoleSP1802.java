@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.controllers.LoginController;
 import stecamSP1802.controllers.MainController;
+import stecamSP1802.controllers.RicetteController;
 import stecamSP1802.controllers.ScreensController;
 
 import java.io.RandomAccessFile;
@@ -28,7 +29,8 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
     public static String loginFile = "/loginpanel.fxml";
     public static String propertiesID = "properties";
     public static String propertiesFILE = "/properties.fxml";
-
+    public static String ricetteID = "ricette";
+    public static String ricetteFile = "/ricette.fxml";
     private Stage primaryStage;
     private Group root;
     private FXMLLoader loader;
@@ -47,9 +49,12 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
         mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.mainID, MainStecamPiantaggioBoccoleSP1802.mainFile);
         mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.loginID, MainStecamPiantaggioBoccoleSP1802.loginFile);
         mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID, MainStecamPiantaggioBoccoleSP1802.propertiesFILE);
+        mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.ricetteID, MainStecamPiantaggioBoccoleSP1802.ricetteFile);
+
         mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
 
         LoginController lc = (LoginController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.loginID);
+        RicetteController ric = (RicetteController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.ricetteID);
 
         root = new Group();
         root.getChildren().addAll(mainContainer);
@@ -66,7 +71,9 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
             MainController m = (MainController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
             lc.setStatusManager(m.getStatusManager());
             lc.setDbService(m.getDBService());
+            ric.setDbService(m.getDBService());
             m.startMainServices();
+
             mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
         });
 

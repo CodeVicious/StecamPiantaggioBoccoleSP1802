@@ -141,7 +141,7 @@ public class MainController implements Initializable, ControlledScreen {
         woTblPiantaggio.setEditable(false);
 
         tblArticolo.setCellValueFactory(new PropertyValueFactory<WOTable, String>("articolo"));
-        tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizione"));
+        tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizioneDett"));
         tblCheck.setCellValueFactory(new PropertyValueFactory<WOTable, String>("check"));
 
 
@@ -319,7 +319,7 @@ public class MainController implements Initializable, ControlledScreen {
             codiceRICETTA.setStyle("-fx-background-color: red");
             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
-        showMesage("RICETTA KO! Ripetere il caricamento WorkOrder con codice UDM corretti");
+        showMesage("RICETTA KO! Ripetere il caricamento WorkOrder con codiceDett UDM corretti");
     }
 
     public void piantaggioBUONO() {
@@ -430,7 +430,7 @@ public class MainController implements Initializable, ControlledScreen {
 
     private void addTabellaWO(String code){
 
-        tblWoData.add(new WOTable(code, "codice da barcode", true));
+        tblWoData.add(new WOTable(code, "codiceDett da barcode", true));
 
         woTblPiantaggio.refresh();
     }
@@ -575,5 +575,11 @@ public class MainController implements Initializable, ControlledScreen {
 
         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         plcService.unsetPianta();
+    }
+
+    public void onRicetteBtn(ActionEvent actionEvent) {
+        RicetteController ric = (RicetteController) myController.getController(MainStecamPiantaggioBoccoleSP1802.ricetteID);
+        ric.loadDataFromDB();
+        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.ricetteID);
     }
 }

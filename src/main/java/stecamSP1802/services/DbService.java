@@ -201,4 +201,33 @@ public class DbService {
         stmt = conLDB.createStatement();
         return (stmt.executeQuery(SQLSELECT));
     }
+
+    public ResultSet caricaRicette() throws SQLException {
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.ricette";
+        Statement stmt = null;
+        stmt = conLDB.createStatement();
+        return (stmt.executeQuery(SQLSELECT));
+    }
+
+    public ResultSet caricaRicettaDettaglio(String id) throws SQLException {
+        String SQLSELECT = "SELECT [id]" +
+                "      ,[codice]" +
+                "      ,[descrizione]" +
+                "      ,[fk_ricetta] FROM StecamSP1802.dbo.ricette_dettaglio where fk_ricetta ="+id;
+        Statement stmt = null;
+        stmt = conLDB.createStatement();
+        return (stmt.executeQuery(SQLSELECT));
+    }
+
+    public boolean insertRicette(String cod, String des) throws SQLException {
+
+        String SQLINSERT = " INSERT INTO [dbo].[ricette]" +
+                "([codice],[descrizione])" +
+                "     VALUES (?,?)";
+
+        PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
+        preparedStmt.setString(1, cod) ;
+        preparedStmt.setString(2, des);
+        return  preparedStmt.execute();
+    }
 }

@@ -84,6 +84,7 @@
                </font>
             </Button>
             <Button fx:id="loginBTN" layoutX="1045.0" layoutY="104.0" mnemonicParsing="false" onAction="#onLoginBtn" prefHeight="54.0" prefWidth="222.0" text="LOGOUT" />
+            <Button fx:id="btnRicette" layoutX="1045.0" layoutY="194.0" mnemonicParsing="false" onAction="#onRicetteBtn" prefHeight="54.0" prefWidth="222.0" text="Ricette" />
          </children>
       </Pane>
       <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="1280.0" style="-fx-background-color: #ffcb99;">
