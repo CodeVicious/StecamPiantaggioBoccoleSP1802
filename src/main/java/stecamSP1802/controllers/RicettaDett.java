@@ -6,11 +6,13 @@ public class RicettaDett {
     SimpleStringProperty idDett;
     SimpleStringProperty codiceDett;
     SimpleStringProperty descrizioneDett;
+    SimpleStringProperty fkRicettaDett;
 
-    RicettaDett(String idDett, String codiceDett, String descrizioneDett) {
+    RicettaDett(String idDett, String codiceDett, String descrizioneDett, String fkRicetta) {
         this.idDett = new SimpleStringProperty(idDett);
         this.codiceDett = new SimpleStringProperty(codiceDett);
         this.descrizioneDett = new SimpleStringProperty(descrizioneDett);
+        this.fkRicettaDett = new SimpleStringProperty(fkRicetta);
     }
 
     public String getIdDett() {
@@ -35,5 +37,13 @@ public class RicettaDett {
 
     public void setDescrizioneDett(String descrizioneDett) {
         this.descrizioneDett.set(descrizioneDett);
+    }
+
+    public String getFkRicettaDett() {
+        return fkRicettaDett.get();
+    }
+
+    public void setFkRicettaDett(String fkRicettaDett) {
+        this.fkRicettaDett.set(fkRicettaDett);
     }
 }

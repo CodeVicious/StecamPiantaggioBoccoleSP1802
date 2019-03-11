@@ -79,7 +79,7 @@ public class DbService {
     }
 
 
-    public  void storePiantaggio(String IOP, String PRG, String WO, String ESITO) {
+    public void storePiantaggio(String IOP, String PRG, String WO, String ESITO) {
         try {
 
             String SQLINSERT = " INSERT INTO [dbo].[piantaggi]" +
@@ -101,7 +101,7 @@ public class DbService {
 
     }
 
-    public  void storeWO(WorkOrder wo) {
+    public void storeWO(WorkOrder wo) {
 
         String SQLDROP = "TRUNCATE TABLE [dbo].[cache]";
 
@@ -135,7 +135,7 @@ public class DbService {
 
 
         } catch (SQLException e) {
-           Logger.error(e);
+            Logger.error(e);
         }
     }
 
@@ -188,15 +188,15 @@ public class DbService {
     }
 
     public ResultSet queryMatricola(StringBuilder matricola) throws SQLException {
-        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = "+matricola;
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = " + matricola;
         Statement stmt = null;
         stmt = conLDB.createStatement();
         return (stmt.executeQuery(SQLSELECT));
     }
 
     public ResultSet queryMatricolaPassword(StringBuilder matricola, StringBuilder password) throws SQLException {
-        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = "+matricola+
-                " AND HashPassword = '"+ PasswordMD5Converter.getMD5(password.toString())+"'";
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = " + matricola +
+                " AND HashPassword = '" + PasswordMD5Converter.getMD5(password.toString()) + "'";
         Statement stmt = null;
         stmt = conLDB.createStatement();
         return (stmt.executeQuery(SQLSELECT));
@@ -213,7 +213,7 @@ public class DbService {
         String SQLSELECT = "SELECT [id]" +
                 "      ,[codice]" +
                 "      ,[descrizione]" +
-                "      ,[fk_ricetta] FROM StecamSP1802.dbo.ricette_dettaglio where fk_ricetta ="+id;
+                "      ,[fk_ricetta] FROM StecamSP1802.dbo.ricette_dettaglio where fk_ricetta =" + id;
         Statement stmt = null;
         stmt = conLDB.createStatement();
         return (stmt.executeQuery(SQLSELECT));
@@ -226,8 +226,76 @@ public class DbService {
                 "     VALUES (?,?)";
 
         PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
-        preparedStmt.setString(1, cod) ;
+        preparedStmt.setString(1, cod);
         preparedStmt.setString(2, des);
-        return  preparedStmt.execute();
+        return preparedStmt.execute();
+    }
+
+    public void deleteRicetta(String id) throws SQLException {
+
+        String SQLDEL = " DELETE FROM [dbo].[ricette] WHERE id = ?";
+
+        PreparedStatement preparedStmt = conLDB.prepareStatement(SQLDEL);
+        preparedStmt.setString(1, id);
+
+        String SQLDETAILDEL = " DELETE FROM [dbo].[ricette_dettaglio] WHERE fk_ricetta = ?";
+        PreparedStatement preparedStmtDettaglio = conLDB.prepareStatement(SQLDETAILDEL);
+        preparedStmtDettaglio.setString(1, id);
+
+        try {
+            preparedStmtDettaglio.execute();
+            preparedStmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void insertDettaglioRicetta(String codice, String des, String id) throws SQLException {
+        String SQLINSERT = " INSERT INTO [dbo].[ricette_dettaglio]" +
+                "([codice],[descrizione],[fk_ricetta])" +
+                "     VALUES (?,?,?)";
+
+        PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
+        preparedStmt.setString(1, codice);
+        preparedStmt.setString(2, des);
+        preparedStmt.setString(3, id);
+        preparedStmt.execute();
+
+    }
+
+    public void deleteRicettaDettaglio(String idDett) throws SQLException {
+
+        String SQLDETAILDEL = " DELETE FROM [dbo].[ricette_dettaglio] WHERE id = ?";
+        PreparedStatement preparedStmtDettaglio = conLDB.prepareStatement(SQLDETAILDEL);
+        preparedStmtDettaglio.setString(1, idDett);
+        preparedStmtDettaglio.execute();
+
+
+    }
+
+    public void modificaRicetta(String cod, String desc, String id) throws SQLException {
+
+        String SQLMODRIC = "UPDATE [dbo].[ricette] SET [codice] = ?, [descrizione] = ?" +
+                " WHERE id = ? ";
+
+        PreparedStatement preparedStmt = conLDB.prepareStatement(SQLMODRIC);
+        preparedStmt.setString(1,cod);
+        preparedStmt.setString(2,desc);
+        preparedStmt.setString(3,id);
+        preparedStmt.execute();
+
+    }
+
+    public void modificaDettaglioRicetta(String cod, String desc, String idDett) throws SQLException {
+
+        String SQLMODRIC = "UPDATE [dbo].[ricette_dettaglio] SET [codice] = ?, [descrizione] = ?" +
+                " WHERE id = ? ";
+
+        PreparedStatement preparedStmtDettaglio = conLDB.prepareStatement(SQLMODRIC);
+        preparedStmtDettaglio.setString(1,cod);
+        preparedStmtDettaglio.setString(2,desc);
+        preparedStmtDettaglio.setString(3,idDett);
+        preparedStmtDettaglio.execute();
     }
 }
