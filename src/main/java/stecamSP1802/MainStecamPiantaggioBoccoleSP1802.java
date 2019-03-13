@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import stecamSP1802.controllers.LoginController;
 import stecamSP1802.controllers.MainController;
 import stecamSP1802.controllers.RicetteController;
 import stecamSP1802.controllers.ScreensController;
+import stecamSP1802.services.StatusManager;
 
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -72,9 +74,24 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
             lc.setStatusManager(m.getStatusManager());
             lc.setDbService(m.getDBService());
             ric.setDbService(m.getDBService());
+
             m.startMainServices();
 
-            mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
+            if (m.getStatusManager().getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTING) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Dabase Locale non accessibile. Impossible procedere!", ButtonType.OK);
+                alert.setWidth(250);
+                alert.setHeight(100);
+                alert.showAndWait();
+                closeProgram();
+            } else if(m.getStatusManager().getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Attenzione, DATABASE SPAL OFF LINE. INSERIRE PASSWORD AMMINISTRATORE LOCALE!", ButtonType.OK);
+                alert.setWidth(250);
+                alert.setHeight(100);
+                alert.showAndWait();
+                lc.setOFFLINEControls();
+
+                mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
+            }
         });
 
 

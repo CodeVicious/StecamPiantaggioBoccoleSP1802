@@ -58,10 +58,6 @@ public class LoginController implements Initializable, ControlledScreen {
     private Button tasto0;
 
     @FXML
-    private Button tastoCANCEL;
-
-
-    @FXML
     private Label matriLBL;
 
     @FXML
@@ -125,53 +121,63 @@ public class LoginController implements Initializable, ControlledScreen {
     }
 
     public void onOKPressed(ActionEvent event) {
-        if (isMastricolaStage) { //Fase di inserimento matricola
-            if (matricola.length() == 0) {
-                loginMSG.setText("MATRICOLA VUOTA");
-                return;
+        try {
+            if(statusManager.getGlobalDbStatus()==StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING){
+                if(dbService.queryLocalPassword().matches("OK")) {
+                    loggedIn("Local Admin", true, false);
+                    return;
+                }
             }
+            if (isMastricolaStage) { //Fase di inserimento matricola
+                if (matricola.length() == 0) {
+                    loginMSG.setText("MATRICOLA VUOTA");
+                    return;
+                }
 
-            try {
-                ResultSet rs = dbService.queryMatricola(matricola);
-                if (!rs.isBeforeFirst()) {
-                    setMsg("MATRICOLA NON PRESENTE! - REINSERIRE");
-                    cleanUP();
-                } else {
-                    isMastricolaStage = false; //eventuale password stage
-                    rs.next();
-                    if (rs.getBoolean("ConduttoreDiLinea")) { //Conduttore di Linea quindi password
-                        setMsg(rs.getString("NomeOperatore") + " INSERIRE PASSWORD");
-                    } else { //NON Conduttore di linea quindi procedere.
-                       loggedIn(rs, false);
+                try {
+                    ResultSet rs = dbService.queryMatricola(matricola);
+                    if (!rs.isBeforeFirst()) {
+                        setMsg("MATRICOLA NON PRESENTE! - REINSERIRE");
+                        cleanUP();
+                    } else {
+                        isMastricolaStage = false; //eventuale password stage
+                        rs.next();
+                        if (rs.getBoolean("ConduttoreDiLinea")) { //Conduttore di Linea quindi password
+                            setMsg(rs.getString("NomeOperatore") + " INSERIRE PASSWORD");
+                        } else { //NON Conduttore di linea quindi procedere.
+                           loggedIn(rs.getString("NomeOperatore"), false, true);
+                        }
                     }
+                } catch (SQLException e) {
+                    Logger.error(e);
                 }
-            } catch (SQLException e) {
-                Logger.error(e);
-            }
-        } else {
-            if (password.length() == 0) {
-                setMsg("PW VUOTA - INSERIRE PASSWORD");
-                return;
-            }
-            try {
-                ResultSet rs = dbService.queryMatricolaPassword(matricola, password);
-                if (!rs.isBeforeFirst()) {
-                    setMsg(matricola + " PASSWORD SBAGLIATA! - RIPETERE PASSWORD");
-                    password.setLength(0);
-                    pwLBL.set("");
-                } else {
-                    rs.next();
-                    loggedIn(rs, true);
+            } else {
+                if (password.length() == 0) {
+                    setMsg("PW VUOTA - INSERIRE PASSWORD");
+                    return;
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                try {
+                    ResultSet rs = dbService.queryMatricolaPassword(matricola, password);
+                    if (!rs.isBeforeFirst()) {
+                        setMsg(matricola + " PASSWORD SBAGLIATA! - RIPETERE PASSWORD");
+                        password.setLength(0);
+                        pwLBL.set("");
+                    } else {
+                        rs.next();
+                        loggedIn(rs.getString("NomeOperatore"),true, true);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-    private void loggedIn(ResultSet rs, boolean isConduttoreDiLinea) throws SQLException {
+    private void loggedIn(String nomeOperatore, boolean isConduttoreDiLinea, boolean isOnLine) throws SQLException {
         MainController m = (MainController) myController.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
-        m.setLoggedUser(matricola.toString(), rs.getString("NomeOperatore"), isConduttoreDiLinea);
+        m.setLoggedUser(matricola.toString(), nomeOperatore, isConduttoreDiLinea, isOnLine);
         cleanUP();
         setMsg("");
         m.startBarCodeService(); //Inizializzo il BarCode solo a Login ok
@@ -207,5 +213,10 @@ public class LoginController implements Initializable, ControlledScreen {
             remoteDBStatus.setStyle("-fx-background-color: red");
         });
 
+    }
+
+    public void setOFFLINEControls() {
+        isMastricolaStage = false;
+        setMsg("INSERIRE LA PASSWORD LOCALE");
     }
 }

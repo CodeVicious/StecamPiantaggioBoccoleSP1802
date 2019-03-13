@@ -298,4 +298,9 @@ public class DbService {
         preparedStmtDettaglio.setString(3,idDett);
         preparedStmtDettaglio.execute();
     }
+
+
+    public String queryLocalPassword() {
+        return "OK";
+    }
 }

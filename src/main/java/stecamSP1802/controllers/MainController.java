@@ -471,7 +471,7 @@ public class MainController implements Initializable, ControlledScreen {
         return dbService;
     }
 
-    public void setLoggedUser(String matricola, String nomeOperatore, boolean isConduttoreDiLinea) {
+    public void setLoggedUser(String matricola, String nomeOperatore, boolean isConduttoreDiLinea, boolean isOnLine) {
         watchDog.scheduleTimer();
         this.matricola = matricola;
         this.nomeOperatore = nomeOperatore;

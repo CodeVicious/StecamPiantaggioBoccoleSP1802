@@ -30,12 +30,7 @@
             <TextField fx:id="txtDesRicetta" layoutX="941.0" layoutY="143.0" prefHeight="31.0" prefWidth="307.0" />
             <TextField fx:id="txtCodComponente" layoutX="941.0" layoutY="457.0" prefHeight="31.0" prefWidth="307.0" />
             <TextField fx:id="txtDesComponente" layoutX="941.0" layoutY="524.0" prefHeight="31.0" prefWidth="307.0" />
-            <Button fx:id="btnSAVE" layoutX="1157.0" layoutY="698.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="118.0" text="SAVE">
-               <font>
-                  <Font name="Courier New" size="23.0" />
-               </font>
-            </Button>
-            <Button fx:id="btnCANCEL" layoutX="1028.0" layoutY="698.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="118.0" text="CANCEL">
+            <Button fx:id="btnBACK" layoutX="1148.0" layoutY="692.0" mnemonicParsing="false" onAction="#onBtnBack" prefHeight="62.0" prefWidth="118.0" text="BACK">
                <font>
                   <Font name="Courier New" size="23.0" />
                </font>

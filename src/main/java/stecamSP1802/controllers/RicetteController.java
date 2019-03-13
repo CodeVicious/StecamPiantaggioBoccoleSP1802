@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
+import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
 import stecamSP1802.services.DbService;
 
 import java.net.URL;
@@ -61,11 +62,9 @@ public class RicetteController implements Initializable, ControlledScreen {
     @FXML
     private TextField txtDesComponente;
 
-    @FXML
-    private Button btnSAVE;
 
     @FXML
-    private Button btnCANCEL;
+    private Button btnBACK;
 
 
     @FXML
@@ -320,5 +319,9 @@ public class RicetteController implements Initializable, ControlledScreen {
                 }
             }
         }
+    }
+
+    public void onBtnBack(ActionEvent event) {
+        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
     }
 }
