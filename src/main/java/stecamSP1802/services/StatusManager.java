@@ -15,7 +15,7 @@ public class StatusManager {
 
 
     public static enum GlobalStatus {
-        CONNECTING, CONNECTED, WAITING_WO, WAITING_UDM, WORKING
+        CONNECTING, CONNECTED, WAITING_WO, WAITING_CODICE_RICETTA, WAITING_UDM, WAITING_CODICE_COMPONENTE, WORKING
     }
 
     public static enum PlcStatus {
@@ -23,11 +23,11 @@ public class StatusManager {
     }
 
     public static enum LocalDbStatus {
-        LOCAL_DB_CONNECTING, LOCAL_DB_CONNECTED, LOCAL_DB_DISABLED
+        LOCAL_DB_DISCONNECTED, LOCAL_DB_CONNECTED, LOCAL_DB_DISABLED
     }
 
     public static enum GlobalDbStatus {
-        GLOBAL_DB_CONNECTING, GLOBAL_DB_CONNECTED, GLOBAL_DB_DISABLED,
+        GLOBAL_DB_DISCONNECTED, GLOBAL_DB_CONNECTED, GLOBAL_DB_DISABLED,
     }
 
     private PlcStatus plcStatus;
@@ -39,8 +39,8 @@ public class StatusManager {
         listeners = Lists.newArrayList();
         isServerConnectionDisabled = false;
         plcStatus = PlcStatus.PLC_CONNECTING;
-        localDbStatus = LocalDbStatus.LOCAL_DB_CONNECTING;
-        globalDbStatus = GlobalDbStatus.GLOBAL_DB_CONNECTING;
+        localDbStatus = LocalDbStatus.LOCAL_DB_DISCONNECTED;
+        globalDbStatus = GlobalDbStatus.GLOBAL_DB_DISCONNECTED;
         globalStatus = GlobalStatus.CONNECTING;
     }
 
@@ -54,7 +54,7 @@ public class StatusManager {
         for (StatusManagerListener l : this.listeners) {
             l.onPLCStatusChange(this.plcStatus);
         }
-        Logger.info("setPlcStatus: NEW STATUS ", plcStatus.toString());
+        Logger.info("setPlcStatus: NEW STATUS "+ plcStatus.toString());
 
     }
 
@@ -67,7 +67,7 @@ public class StatusManager {
         for (StatusManagerListener l : this.listeners) {
             l.onLocalDbStatusChange(this.localDbStatus);
         }
-        Logger.info("setLocalDbStatus: NEW STATUS ", localDbStatus.toString());
+        Logger.info("setLocalDbStatus: NEW STATUS "+ localDbStatus.toString());
     }
 
     synchronized public GlobalDbStatus getGlobalDbStatus() {
@@ -79,7 +79,7 @@ public class StatusManager {
         for (StatusManagerListener l : this.listeners) {
             l.onGlobalDbStatusChange(this.globalDbStatus);
         }
-        Logger.info("setGlobalDbStatus: NEW STATUS ", globalDbStatus.toString());
+        Logger.info("setGlobalDbStatus: NEW STATUS "+ globalDbStatus.toString());
     }
 
     synchronized public GlobalStatus getGlobalStatus() {
@@ -91,7 +91,7 @@ public class StatusManager {
         for (StatusManagerListener l : this.listeners) {
             l.onGlobalStatusChange(this.globalStatus);
         }
-        Logger.info("setGlobalStatus: NEW STATUS ", globalStatus.toString());
+        Logger.info("setGlobalStatus: NEW STATUS " + globalStatus.toString());
     }
 
     public void addListener(StatusManagerListener list) {

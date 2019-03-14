@@ -4,6 +4,7 @@ package stecamSP1802.controllers;
 public class LoggedUser {
     private static LoggedUser ourInstance = new LoggedUser();
     private String nomeoperatore;
+    private String password;
 
     public static LoggedUser getInstance() {
         return ourInstance;
@@ -47,5 +48,13 @@ public class LoggedUser {
 
     public String getNomeoperatore() {
         return nomeoperatore;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

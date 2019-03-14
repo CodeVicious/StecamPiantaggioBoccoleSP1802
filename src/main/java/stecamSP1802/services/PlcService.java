@@ -94,9 +94,7 @@ public class PlcService {
         plcMASTER.putBool(false, 0, 6, true);
     }
 
-    public boolean checkPiantaggio() {
-        return webQueryService.checkValidazioneUDM();
-    }
+
 
     public void unsetRicettaCaricata() {
         Logger.info("RESETTO CARICA RICETTA 0.6");

@@ -122,8 +122,8 @@ public class LoginController implements Initializable, ControlledScreen {
 
     public void onOKPressed(ActionEvent event) {
         try {
-            if(statusManager.getGlobalDbStatus()==StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING){
-                if(dbService.queryLocalPassword().matches("OK")) {
+            if(statusManager.getGlobalDbStatus()==StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED){
+                if(dbService.queryLocalPassword(password.toString())) {
                     loggedIn("Local Admin", true, false);
                     return;
                 }
@@ -218,5 +218,13 @@ public class LoginController implements Initializable, ControlledScreen {
     public void setOFFLINEControls() {
         isMastricolaStage = false;
         setMsg("INSERIRE LA PASSWORD LOCALE");
+    }
+
+    public String getPassword() {
+        return password.toString();
+    }
+
+    public String getMatricola() {
+        return matricola.toString();
     }
 }

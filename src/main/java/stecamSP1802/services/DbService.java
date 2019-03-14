@@ -31,7 +31,7 @@ public class DbService {
         } catch (SQLException e1) {
             Logger.error("LOCAL DB NOT CONNECTED");
             Logger.error(e1);
-            statusManager.setLocalDbStatus(StatusManager.LocalDbStatus.LOCAL_DB_CONNECTING);
+            statusManager.setLocalDbStatus(StatusManager.LocalDbStatus.LOCAL_DB_DISCONNECTED);
         }
 
         try {
@@ -41,47 +41,50 @@ public class DbService {
         } catch (SQLException e) {
             Logger.error("GLOBAL DB NOT AVAILABLE");
             Logger.error(e);
-            statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING);
+            statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED);
         }
     }
 
     public void synckUSERS() {
-        String SQLSELECT = "SELECT * FROM [dbo].[b_OperatoreIMP]";
-        String SQLDROP = "TRUNCATE TABLE [dbo].[b_Operatore_SYNK]";
-        String SQLINSERT = " INSERT INTO [dbo].[b_Operatore_SYNK]" +
-                "           ([Matricola]" +
-                "           ,[NomeOperatore]" +
-                "           ,[ConduttoreDiLinea]" +
-                "           ,[HashPassword])" +
-                "     VALUES" +
-                "           (?,?,?,?)";
+        if(statusManager.getGlobalDbStatus()==StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTED) {
+            String SQLSELECT = "SELECT * FROM [dbo].[b_OperatoreIMP]";
+            String SQLDROP = "TRUNCATE TABLE [dbo].[b_Operatore_SYNK]";
+            String SQLINSERT = " INSERT INTO [dbo].[b_Operatore_SYNK]" +
+                    "           ([Matricola]" +
+                    "           ,[NomeOperatore]" +
+                    "           ,[ConduttoreDiLinea]" +
+                    "           ,[HashPassword])" +
+                    "     VALUES" +
+                    "           (?,?,?,?)";
 
-        PreparedStatement preparedStmt = null;
-        try {
-            preparedStmt = conLDB.prepareStatement(SQLINSERT);
+            PreparedStatement preparedStmt = null;
+            try {
+                preparedStmt = conLDB.prepareStatement(SQLINSERT);
 
-            Statement stmt = conLDB.createStatement();
-            stmt.executeUpdate(SQLDROP);
-            ResultSet rs = stmt.executeQuery(SQLSELECT);
-            // Iterate through the data in the result set and display it.
-            while (rs.next()) {
-                preparedStmt.setString(1, rs.getString("Matricola"));
-                preparedStmt.setString(2, rs.getString("NomeOperatore"));
-                preparedStmt.setInt(3, rs.getInt("ConduttoreDiLinea"));
-                preparedStmt.setString(4, rs.getString("HashPassword"));
-                preparedStmt.execute();
-                // execute the preparedstatement
+                Statement stmt = conLDB.createStatement();
+                stmt.executeUpdate(SQLDROP);
+                ResultSet rs = stmt.executeQuery(SQLSELECT);
+                // Iterate through the data in the result set and display it.
+                while (rs.next()) {
+                    preparedStmt.setString(1, rs.getString("Matricola"));
+                    preparedStmt.setString(2, rs.getString("NomeOperatore"));
+                    preparedStmt.setInt(3, rs.getInt("ConduttoreDiLinea"));
+                    preparedStmt.setString(4, rs.getString("HashPassword"));
+                    preparedStmt.execute();
+                    // execute the preparedstatement
+                }
+            } catch (SQLException e) {
+                Logger.error(e);
             }
-        } catch (SQLException e) {
-            Logger.error(e);
         }
+        else
+            Logger.warn("DB SPAL DISCONNESSO. SINCRONIZZAZIONE UTENTI IMPOSSIIBLE.");
 
     }
 
 
     public void storePiantaggio(String IOP, String PRG, String WO, String ESITO) {
         try {
-
             String SQLINSERT = " INSERT INTO [dbo].[piantaggi]" +
                     "([TS],[IOP],[PRG],[WO],[ESITO])" +
                     "     VALUES (?,?,?,?,?)";
@@ -102,7 +105,6 @@ public class DbService {
     }
 
     public void storeWO(WorkOrder wo) {
-
         String SQLDROP = "TRUNCATE TABLE [dbo].[cache]";
 
         try {
@@ -170,9 +172,6 @@ public class DbService {
         return null;
     }
 
-    public void login(String Matricola, String Password) {
-
-    }
 
     public void close() {
         try {
@@ -300,7 +299,36 @@ public class DbService {
     }
 
 
-    public String queryLocalPassword() {
-        return "OK";
+    public boolean queryLocalPassword(String password) {
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.parametri where chiave = localadmin";
+
+        Statement stmt = null;
+        try {
+            stmt = conLDB.createStatement();
+            ResultSet rs = stmt.executeQuery(SQLSELECT);
+            if(rs.getString("value")==PasswordMD5Converter.getMD5(password.toString()))
+                return true;
+            else
+                return false;
+
+        } catch (SQLException e) {
+            Logger.error(e);
+            return false;
+        }
+    }
+
+    public String queryParametro(String chiave) {
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.parametri where chiave = ?";
+
+        PreparedStatement preparedStmtDettaglio = null;
+        try {
+            preparedStmtDettaglio = conLDB.prepareStatement(SQLSELECT);
+            preparedStmtDettaglio.setString(1,chiave);
+            ResultSet res = preparedStmtDettaglio.executeQuery();
+            return res.getString("value");
+        } catch (SQLException e) {
+            Logger.error(e);
+            return "";
+        }
     }
 }

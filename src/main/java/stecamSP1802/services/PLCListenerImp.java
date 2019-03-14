@@ -23,28 +23,31 @@ public class PLCListenerImp implements PLCListener {
         if ((address == 0) && (val == true)) {
             switch (pos) {
                 case 6: //Ok Ricetta, atteso lettura UDM
-                    if (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_WO) {
+                    if ( (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_WO)||
+                            (statusManager.getGlobalStatus()== StatusManager.GlobalStatus.WAITING_CODICE_RICETTA)){
                         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
                         mainController.onRicettaOK();
                     } else {
                         Logger.error("RICEVUTO 0.6 - Ricetta OK inatteso");
                     }
                     break;
-                case 5:
-                    if (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_WO) {
+                case 5:// KO Ricetta
+                    if ( (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_WO)||
+                            (statusManager.getGlobalStatus()== StatusManager.GlobalStatus.WAITING_CODICE_RICETTA)){
+
                         mainController.onRicettaKO();
                     } else {
                         Logger.error("RICEVUTO 0.5 - Ricetta KO inatteso");
                     }
                     break;
-                case 4:
+                case 4:// BUONO
                     if (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WORKING) {
                         mainController.piantaggioBUONO();
                     } else {
                         Logger.error("RICEVUTO 0.4 - BUONO inatteso");
                     }
                     break;
-                case 3:
+                case 3:// SCARTO
                     if (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WORKING) {
                         mainController.piantaggioSCARTO();
                     } else {

@@ -1,7 +1,6 @@
 package stecamSP1802.services;
 
 import stecamSP1802.controllers.MainController;
-import stecamSP1802.services.StatusManager;
 
 public class StatusManagerListenerImp implements stecamSP1802.services.StatusManagerListener {
 
@@ -21,7 +20,7 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
     }
 
     public void onGlobalDbStatusChange(StatusManager.GlobalDbStatus globalDbStatus) {
-        if (globalDbStatus == StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING) {
+        if (globalDbStatus == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
             mainController.gDbDisconnected();
         }
         if (globalDbStatus == StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTED) {
@@ -30,7 +29,7 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
     }
 
     public void onLocalDbStatusChange(StatusManager.LocalDbStatus localDbStatus) {
-        if (localDbStatus == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTING) {
+        if (localDbStatus == StatusManager.LocalDbStatus.LOCAL_DB_DISCONNECTED) {
             mainController.lDbDisconnected();
         }
         if (localDbStatus == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTED) {
@@ -45,6 +44,12 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
                 break;
             case WAITING_WO:
                 mainController.showMesage("IN ATTESA DI WORK ORDER");
+                break;
+            case WAITING_CODICE_RICETTA:
+                mainController.showMesage("IN ATTESA DI CODICE RICETTA");
+                break;
+            case WAITING_CODICE_COMPONENTE:
+                mainController.showMesage("IN ATTESA DI CODICE COMPONENTE");
                 break;
             case WORKING:
                 mainController.showMesage("PIANTAGGIO");

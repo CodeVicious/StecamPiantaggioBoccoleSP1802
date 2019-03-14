@@ -8,18 +8,22 @@ import org.apache.logging.log4j.Logger;
 
 import stecamSP1802.controllers.MainController;
 import stecamSP1802.services.StatusManager;
+import stecamSP1802.services.WebQueryService;
 
 
 public class BarCodeListener implements SerialPortDataListener {
+    private Logger Logger = LogManager.getLogger(BarCodeListener.class);
+
     private final SerialPort comPort;
     private final MainController mainController;
     private final StatusManager statusManager;
-    private Logger Logger = LogManager.getLogger(BarCodeListener.class);
+    private final WebQueryService webQueryService;
 
-    public BarCodeListener(final SerialPort comPort, final MainController mainController, StatusManager statusManager) {
+    public BarCodeListener(final SerialPort comPort, final MainController mainController, StatusManager statusManager, WebQueryService webQueryService) {
         this.comPort = comPort;
         this.mainController = mainController;
         this.statusManager = statusManager;
+        this.webQueryService = webQueryService;
     }
 
     public int getListeningEvents() {
@@ -27,12 +31,12 @@ public class BarCodeListener implements SerialPortDataListener {
     }
 
     public void serialEvent(SerialPortEvent serialPortEvent) {
-
         //Check if Status not running for BarCode acquisiztion
-        if ((statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_UDM) &&
-                (statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WAITING_WO) &&
-                (statusManager.getGlobalStatus() != StatusManager.GlobalStatus.WORKING)) {
-            Logger.warn("STATUS NOT READY FOR BARCODE. DISCARDED. " + statusManager.getGlobalStatus());
+
+        if (
+                ((statusManager.getGlobalStatus() == StatusManager.GlobalStatus.CONNECTING) &&
+                        !webQueryService.isWebOffline())) {
+            Logger.warn("STATUS NOT READY FOR BARCODE. DISCARDED. GLOBAL STATUS " + statusManager.getGlobalStatus() + "AND IsOffLine:"+webQueryService.isWebOffline());
             return;
         }
 

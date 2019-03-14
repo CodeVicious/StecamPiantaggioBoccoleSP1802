@@ -25,6 +25,7 @@ public class WebQueryService {
 
     private WorkOrder WO;
     private StatusManager statusManager;
+    private boolean isWebOffline = false;
 
     public WebQueryService(StatusManager statusManager) {
         Preconditions.checkNotNull(statusManager);
@@ -35,18 +36,18 @@ public class WebQueryService {
 
     synchronized public String VerificaListaPartiWO(String barCode) {
 
+        URL urlWO = null;
         try {
-
-            URL urlWO = new URL(conf.getVerificaListaPartiWOURL() +
+            urlWO = new URL(conf.getVerificaListaPartiWOURL() +
                     "?NumeroWO=" + barCode +
                     "&NomeStazione=" + conf.getNomeStazione());
 
             URLConnection yc = urlWO.openConnection();
 
+            isWebOffline = false;
+
             yc.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
-
             InputStream is = yc.getInputStream();
-
             Logger.info("Parsing ");
             if (csvParserService.parse(is).matches("OK")) {
                 WO = csvParserService.getWO();
@@ -54,8 +55,12 @@ public class WebQueryService {
                 return WO.getCodiceRicetta();
             }
 
+        } catch (MalformedURLException e) {
+            Logger.error("l'URL " + conf.getVerificaListaPartiWOURL() + " è sbagliato" + e);
+            isWebOffline = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiWOURL() + " " + e);
+            isWebOffline = true;
         }
 
 
@@ -83,6 +88,8 @@ public class WebQueryService {
             );
             URLConnection con = urlUDM.openConnection();
 
+            isWebOffline = false;
+
             BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line = inputStreamReader.readLine();
 
@@ -107,10 +114,16 @@ public class WebQueryService {
 
             return false;
 
+        } catch (MalformedURLException e) {
+            Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
+            isWebOffline = true;
+            return false;
         } catch (IOException e) {
-            Logger.error(e);
+            Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiUDM() + " " + e);
+            isWebOffline = true;
             return false;
         }
+
     }
 
     public Boolean checkValidazioneUDM() {
@@ -130,8 +143,15 @@ public class WebQueryService {
 
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
+            isWebOffline = false;
+        } catch (MalformedURLException e) {
+            Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
+            isWebOffline = true;
+
         } catch (IOException e) {
-            Logger.error(e);
+            Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiUDM() + " " + e);
+            isWebOffline = true;
+
         }
     }
 
@@ -144,8 +164,13 @@ public class WebQueryService {
 
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
+            isWebOffline = false;
+        } catch (MalformedURLException e) {
+            Logger.error("l'URL "+conf.getVerificaListaPartiUDM()+" è sbagliato" + e );
+            isWebOffline = true;
         } catch (IOException e) {
-            Logger.error(e);
+            Logger.error("Errore di accesso all'URL "+conf.getVerificaListaPartiUDM() +" "+ e );
+            isWebOffline = true;
         }
     }
 
@@ -154,7 +179,7 @@ public class WebQueryService {
     }
 
     public void checkSendUDM(boolean isWOListPartEnabled, boolean isUDMVerificaEnabled) {
-        if(isUDMVerificaEnabled && isWOListPartEnabled){
+        if (isUDMVerificaEnabled && isWOListPartEnabled) {
             sendAbilitaUDM();
         } else {
             sendDisabilitaUDM();
@@ -167,5 +192,9 @@ public class WebQueryService {
         WO.setDescrizione("");
         WO.setCodiceRicetta("");
         WO.setBarCodeWO("");
+    }
+
+    public boolean isWebOffline() {
+        return isWebOffline;
     }
 }

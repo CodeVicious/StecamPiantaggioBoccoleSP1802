@@ -3,7 +3,6 @@ package stecamSP1802;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -77,22 +76,24 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
 
             m.startMainServices();
 
-            if (m.getStatusManager().getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTING) {
+            m.setMainApp(this);
+
+            if (m.getStatusManager().getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_DISCONNECTED) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Dabase Locale non accessibile. Impossible procedere!", ButtonType.OK);
                 alert.setWidth(250);
                 alert.setHeight(100);
                 alert.showAndWait();
                 closeProgram();
-            } else if(m.getStatusManager().getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTING) {
+            } else if(m.getStatusManager().getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Attenzione, DATABASE SPAL OFF LINE. INSERIRE PASSWORD AMMINISTRATORE LOCALE!", ButtonType.OK);
                 alert.setWidth(250);
                 alert.setHeight(100);
                 alert.showAndWait();
                 lc.setOFFLINEControls();
-
-                mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
             }
+            mainContainer.setScreen(MainStecamPiantaggioBoccoleSP1802.loginID);
         });
+
 
 
         primaryStage.show();
@@ -129,6 +130,10 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
             System.out.println(e.toString());
         }
         return true;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 }
 

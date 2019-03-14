@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -114,6 +115,46 @@
             <Font name="Courier New Bold" size="20.0" />
          </font>
       </Label>
+      <CheckBox fx:id="controlloWO" layoutX="10.0" layoutY="446.0" mnemonicParsing="false" onAction="#onControlloWO" prefHeight="28.0" prefWidth="198.0" selected="true" text="Controllo WO">
+         <font>
+            <Font name="Courier New" size="18.0" />
+         </font>
+      </CheckBox>
+      <CheckBox fx:id="controlloUDM" layoutX="10.0" layoutY="478.0" mnemonicParsing="false" onAction="#onControlloUDM" prefHeight="28.0" prefWidth="198.0" selected="true" text="Controllo UDM">
+         <font>
+            <Font name="Courier New" size="18.0" />
+         </font>
+      </CheckBox>
+      <AnchorPane layoutX="1.0" layoutY="537.0" prefHeight="234.0" prefWidth="1280.0">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" text="Work Order">
+               <font>
+                  <Font name="Courier New" size="20.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="60.0" text="Ricetta">
+               <font>
+                  <Font name="Courier New" size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="labelESITO" alignment="CENTER" contentDisplay="CENTER" layoutX="1044.0" layoutY="7.0" prefHeight="101.0" prefWidth="222.0" style="-fx-background-color: orange; -fx-background-radius: 10;" text="ESITO" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+               <font>
+                  <Font name="Courier New" size="64.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="imageALERTS" fitHeight="228.0" fitWidth="395.0" layoutX="508.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
+            <TextField fx:id="barcodeWO" layoutX="151.0" layoutY="4.0" onAction="#onBarcodeTyped" prefHeight="44.0" prefWidth="308.0" promptText="BARCODE">
+               <font>
+                  <Font name="Courier New" size="24.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="codiceRICETTA" layoutX="151.0" layoutY="50.0" onAction="#onRicettaTyped" prefHeight="25.0" prefWidth="308.0" promptText="CODICE">
+               <font>
+                  <Font name="Courier New" size="24.0" />
+               </font>
+            </TextField>
+         </children>
+      </AnchorPane>
       <AnchorPane layoutX="-3.0" layoutY="696.0" prefHeight="72.0" prefWidth="1287.0">
          <children>
             <Text layoutX="853.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sistema di Piantaggio Boccola - STECAM SP1802" textAlignment="RIGHT" wrappingWidth="411.609375">
@@ -131,46 +172,6 @@
                   <Font name="Courier New" size="20.0" />
                </font>
             </Label>
-         </children>
-      </AnchorPane>
-      <CheckBox fx:id="controlloWO" layoutX="10.0" layoutY="446.0" mnemonicParsing="false" onAction="#onControlloWO" prefHeight="28.0" prefWidth="198.0" selected="true" text="Controllo WO">
-         <font>
-            <Font name="Courier New" size="18.0" />
-         </font>
-      </CheckBox>
-      <CheckBox fx:id="controlloUDM" layoutX="10.0" layoutY="478.0" mnemonicParsing="false" onAction="#onControlloUDM" prefHeight="28.0" prefWidth="198.0" selected="true" text="Controllo UDM">
-         <font>
-            <Font name="Courier New" size="18.0" />
-         </font>
-      </CheckBox>
-      <AnchorPane layoutX="1.0" layoutY="537.0" prefHeight="234.0" prefWidth="1280.0">
-         <children>
-            <Label layoutX="14.0" layoutY="96.0" text="Work Order">
-               <font>
-                  <Font name="Courier New" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="barcodeWO" layoutX="151.0" layoutY="94.0" prefHeight="28.0" prefWidth="308.0" text="BARCODE">
-               <font>
-                  <Font name="Courier New" size="24.0" />
-               </font>
-            </Label>
-            <Label fx:id="codiceRICETTA" layoutX="151.0" layoutY="127.0" prefHeight="28.0" prefWidth="308.0" text="CODICE">
-               <font>
-                  <Font name="Courier New" size="24.0" />
-               </font>
-            </Label>
-            <Label layoutX="14.0" layoutY="129.0" text="UdM">
-               <font>
-                  <Font name="Courier New" size="20.0" />
-               </font>
-            </Label>
-            <Label fx:id="labelESITO" alignment="CENTER" contentDisplay="CENTER" layoutX="1044.0" layoutY="7.0" prefHeight="101.0" prefWidth="222.0" style="-fx-background-color: orange; -fx-background-radius: 10;" text="ESITO" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-               <font>
-                  <Font name="Courier New" size="64.0" />
-               </font>
-            </Label>
-            <ImageView fx:id="imageALERTS" fitHeight="228.0" fitWidth="395.0" layoutX="508.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>
    </children>

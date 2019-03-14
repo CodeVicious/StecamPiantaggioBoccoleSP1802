@@ -6,14 +6,20 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
+import stecamSP1802.helper.PasswordMD5Converter;
 import stecamSP1802.schedulers.WatchDog;
 import stecamSP1802.services.StatusManagerListenerImp;
 import stecamSP1802.services.WebQueryService;
@@ -21,6 +27,7 @@ import stecamSP1802.services.*;
 import stecamSP1802.services.barcode.Parte;
 import stecamSP1802.services.barcode.SerialService;
 
+import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,7 +38,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MainController implements Initializable, ControlledScreen {
+public class MainController extends AbstractController implements Initializable, ControlledScreen {
     private static Logger Logger = LogManager.getLogger(MainController.class);
 
     ScreensController myController;
@@ -41,7 +48,10 @@ public class MainController implements Initializable, ControlledScreen {
     Label stecamTime;
 
     @FXML
-    Label barcodeWO;
+    TextField barcodeWO;
+
+    @FXML
+    TextField codiceRICETTA;
 
     @FXML
     Label msgBOX;
@@ -58,8 +68,6 @@ public class MainController implements Initializable, ControlledScreen {
     @FXML
     Label labelESITO;
 
-    @FXML
-    Label codiceRICETTA;
 
     @FXML
     Label lblUtenteLoggato;
@@ -123,8 +131,8 @@ public class MainController implements Initializable, ControlledScreen {
     private String matricola;
     private String nomeOperatore;
     private boolean isConduttoreDiLinea;
-    private boolean isWOListPartEnabled=true;
-    private boolean isUDMVerificaEnabled=true;
+    private boolean isWOListPartEnabled = true;
+    private boolean isUDMVerificaEnabled = true;
 
 
     @Override
@@ -151,9 +159,8 @@ public class MainController implements Initializable, ControlledScreen {
         statusManagerListener = new StatusManagerListenerImp(this);
         statusManager = new StatusManager(); // Gestore degli stati generale e di connessione
         statusManager.addListener(statusManagerListener);
-
-        serialService = new SerialService(this, statusManager); //Gestore Bar Code
         webQueryService = new WebQueryService(statusManager);
+        serialService = new SerialService(this, statusManager, webQueryService); //Gestore Bar Code
         dbService = new DbService(statusManager); //Gestore interfacce DB
         watchDog = new WatchDog(this); // Gestore inattività ed altri alert temporizzati.
 
@@ -252,6 +259,8 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             remoteDBStatus.setText("GLOBAL DB - DISCONNECTED");
             remoteDBStatus.setStyle("-fx-background-color: red");
+
+            //Comunico alla finestra di Login che il db remoto è disconnesso
             ((LoginController) myController.getController(MainStecamPiantaggioBoccoleSP1802.loginID)).onDbDISConnected();
         });
         showMesage("SQL DB SERVER DISCONNECTED ");
@@ -262,6 +271,8 @@ public class MainController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             remoteDBStatus.setText("GLOBAL DB - CONNECTED");
             remoteDBStatus.setStyle("-fx-background-color: green");
+
+            //Comunico alla finestra di Login che il db remoto è disconnesso
             ((LoginController) myController.getController(MainStecamPiantaggioBoccoleSP1802.loginID)).onDbConnected();
         });
         showMesage("SQL DB SERVER CONNECTED ");
@@ -353,29 +364,41 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         //check BarCode
-                        if (isWOListPartEnabled) {
-                            if (!barCode.matches("\\d{7,8}")) {
-                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
-                                barcodeWO.setText(barCode);
-                                barcodeWO.setTextFill(Color.RED);
-                            } else {
-                                barcodeWO.setTextFill(Color.GREEN);
-                                barcodeWO.setText(barCode);
-                                cicloWO.setText(barCode);
+                        if (!barCode.matches("\\d{7,8}")) {
+                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
+                            showMesage("CODICE WO - ERRATO");
+                            barcodeWO.setText(barCode);
+                            barcodeWO.setStyle("-fx-control-inner-background: red");
+                        } else {
+                            barcodeWO.setText(barCode);
+                            barcodeWO.setStyle("-fx-control-inner-background: green");
+                            cicloWO.setText(barCode);
+
+                            if (isWOListPartEnabled) {
                                 String ricetta = webQueryService.VerificaListaPartiWO(barCode);
                                 plcService.sendCodiceRicetta(ricetta);
-                            }
-                        } else {
-                            if (!barCode.matches("\\d{8}[A-Z]?")) {
-                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO");
-                                barcodeWO.setText(barCode);
-                                barcodeWO.setTextFill(Color.RED);
                             } else {
-                                barcodeWO.setTextFill(Color.GREEN);
-                                barcodeWO.setText(barCode);
-                                cicloWO.setText("disabled"); //Chiedo il caricamento della ricetta direttamente al PLC
-                                plcService.sendCodiceRicetta(barCode);
+                                showMesage("Inserire il Codice Ricetta");
+                                statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_CODICE_RICETTA);
                             }
+                        }
+                    }
+                });
+                break;
+            case WAITING_CODICE_RICETTA:
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        if (!barCode.matches("\\d{8}[A-Z]?")) {
+                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO");
+                            showMesage("CODICE WO - ERRATO");
+                            codiceRICETTA.setText(barCode);
+                            codiceRICETTA.setStyle("-fx-control-inner-background: red");
+
+                        } else {
+                            codiceRICETTA.setText(barCode);
+                            codiceRICETTA.setStyle("-fx-control-inner-background: green");
+                            codiceRICETTA.setText("disabled"); //Chiedo il caricamento della ricetta direttamente al PLC
+                            plcService.sendCodiceRicetta(barCode);
                         }
                     }
                 });
@@ -384,31 +407,51 @@ public class MainController implements Initializable, ControlledScreen {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         //check BarCode
-                        if (isUDMVerificaEnabled) {
-                            if (!barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}")) {
-                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
-                                codiceRICETTA.setText(barCode);
-                                codiceRICETTA.setTextFill(Color.RED);
-                            } else {
-                                codiceRICETTA.setTextFill(Color.GREEN);
-                                codiceRICETTA.setText(barCode);
-                            }
-                            if (webQueryService.VerificaUDM(barCode, isWOListPartEnabled))
-                                refreshTabellaWO();
-                            if (plcService.checkPiantaggio()) {
-                                statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
-                                plcService.iniziaCicloMacchina();
-                            }
+                        if (!barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}")) {
+                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
+                            showMesage("CODICE UdM - ERRATO");
                         } else {
-                            if (!barCode.matches("\\d{8}[A-Z]?")) {
-                                Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO UDM");
-                                codiceRICETTA.setText(barCode);
-                                codiceRICETTA.setTextFill(Color.RED);
+                            if (isUDMVerificaEnabled) {
+                                if (webQueryService.VerificaUDM(barCode, isWOListPartEnabled)) {
+                                    refreshTabellaWO();
+                                    if (webQueryService.checkValidazioneUDM()) {
+                                        statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
+                                        plcService.iniziaCicloMacchina();
+                                    }
+                                    addTabellaWO(barCode);
+                                } else {
+                                    Logger.error("Il BarCode " + barCode + " NON E' NELLA LISTA COMPONENTI");
+                                    showMesage("COMPONENTE NON PRESENTE NELLA LISTA");
+                                }
                             } else {
-                                codiceRICETTA.setTextFill(Color.GREEN);
-                                codiceRICETTA.setText(barCode);
+                                showMesage("Inserire il Codice Componente");
+                                statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_CODICE_COMPONENTE);
                             }
-                            addTabellaWO(barCode);
+                        }
+                    }
+                });
+                break;
+            case WAITING_CODICE_COMPONENTE:
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        //check BarCode
+                        if (!barCode.matches("\\d{8}[A-Z]?")) {
+                            Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE COMPONENTE");
+                            showMesage("CODICE COMPONENTE- ERRATO");
+                        } else {
+                            if (VerificaCodice(barCode)) {
+                                refreshTabellaWO();
+                                if (checkValidazioneUDM()) {
+                                    statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
+                                    plcService.iniziaCicloMacchina();
+                                } else {
+                                    showMesage("Inserire il Codice UdM");
+                                    statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
+                                }
+                            } else {
+                                Logger.error("Il BarCode " + barCode + " NON E' NELLA LISTA COMPONENTI");
+                                showMesage("COMPONENTE NON PRESENTE NELLA LISTA");
+                            }
                         }
                     }
                 });
@@ -416,6 +459,14 @@ public class MainController implements Initializable, ControlledScreen {
 
         }
 
+    }
+
+    private boolean checkValidazioneUDM() {
+        return true;
+    }
+
+    private boolean VerificaCodice(String barCode) {
+        return true;
     }
 
     private void refreshTabellaWO() {
@@ -428,7 +479,7 @@ public class MainController implements Initializable, ControlledScreen {
         woTblPiantaggio.refresh();
     }
 
-    private void addTabellaWO(String code){
+    private void addTabellaWO(String code) {
 
         tblWoData.add(new WOTable(code, "codiceDett da barcode", true));
 
@@ -459,7 +510,8 @@ public class MainController implements Initializable, ControlledScreen {
 
     public void onCaricaParametri(ActionEvent event) {
         watchDog.resetSchedule();
-        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
+        if (getPopUpPassword() == loggedUser.getPassword())
+            myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
     }
 
 
@@ -509,12 +561,12 @@ public class MainController implements Initializable, ControlledScreen {
 
     public void onControlloWO(ActionEvent event) {
         isWOListPartEnabled = controlloWO.isSelected();
-        webQueryService.checkSendUDM(isWOListPartEnabled,isUDMVerificaEnabled);
+        webQueryService.checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
     }
 
     public void onControlloUDM(ActionEvent event) {
         isUDMVerificaEnabled = controlloUDM.isSelected();
-        webQueryService.checkSendUDM(isWOListPartEnabled,isUDMVerificaEnabled);
+        webQueryService.checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
     }
 
     public void onSynckUsers(ActionEvent actionEvent) {
@@ -581,5 +633,41 @@ public class MainController implements Initializable, ControlledScreen {
         RicetteController ric = (RicetteController) myController.getController(MainStecamPiantaggioBoccoleSP1802.ricetteID);
         ric.loadDataFromDB();
         myController.setScreen(MainStecamPiantaggioBoccoleSP1802.ricetteID);
+    }
+
+
+    private String getPopUpPassword() {
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/popUpLogin.fxml"));
+        // initializing the controller
+        LoginPopUpController popupController = new LoginPopUpController();
+
+        Parent layout;
+        try {
+            layout = loader.load();
+            Scene scene = new Scene(layout);
+            // this is the popup stage
+            Stage popupStage = new Stage();
+            // Giving the popup controller access to the popup stage (to allow the controller to close the stage)
+            popupController.setStage(popupStage);
+            if (this.main != null) {
+                popupStage.initOwner(main.getPrimaryStage());
+            }
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.setScene(scene);
+            popupStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return popupController.getPassword();
+    }
+
+    public void onBarcodeTyped(ActionEvent event) {
+        onNewBarCode(barcodeWO.getText());
+    }
+
+    public void onRicettaTyped(ActionEvent event) {
+        onNewBarCode(codiceRICETTA.getText());
     }
 }

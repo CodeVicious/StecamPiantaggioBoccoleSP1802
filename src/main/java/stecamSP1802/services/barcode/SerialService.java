@@ -7,6 +7,7 @@ import stecamSP1802.ConfigurationManager;
 
 import stecamSP1802.controllers.MainController;
 import stecamSP1802.services.StatusManager;
+import stecamSP1802.services.WebQueryService;
 
 //Serial Service SINGLETON communication
 
@@ -14,11 +15,11 @@ public class SerialService {
     private final MainController mainController;
     final SerialPort comPort;
 
-    public SerialService(final MainController mainController, final StatusManager statusManager) {
+    public SerialService(final MainController mainController, final StatusManager statusManager, final WebQueryService webQueryService) {
         this.mainController = mainController;
         comPort = SerialPort.getCommPort(ConfigurationManager.getInstance().getCOMPort());
 
-        comPort.addDataListener(new BarCodeListener(comPort,mainController,statusManager));
+        comPort.addDataListener(new BarCodeListener(comPort,mainController,statusManager,webQueryService));
     }
 
 
