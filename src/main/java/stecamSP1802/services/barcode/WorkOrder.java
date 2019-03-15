@@ -1,36 +1,29 @@
 package stecamSP1802.services.barcode;
 
 import com.google.common.collect.Maps;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-public class WorkOrder {
+public class WorkOrder { //Singleton
+    private static Logger Logger = LogManager.getLogger(WorkOrder.class);
+    private static WorkOrder ourInstance = new WorkOrder();
+    public static WorkOrder getInstance() {
+        return ourInstance;
+    }
+    private WorkOrder() {}
+
     private String descrizione;
     private String barCodeWO;
     private String codiceRicetta;
     private Map<String, Parte> listaParti = Maps.newHashMap();
 
-    public WorkOrder(String barCodeWO, String codiceRicetta, Map<String, Parte> listaParti) {
-        this.barCodeWO = barCodeWO;
-        this.codiceRicetta = codiceRicetta;
-        this.listaParti = listaParti;
+    public void addParte(String codiceUdM, String parte, String descrizione, Boolean verificata) {
+        this.listaParti.put(parte, new Parte(codiceUdM, parte, descrizione, verificata));
     }
 
-    public WorkOrder(String barCodeWO, String codiceRicetta, String descrizione) {
-        this.barCodeWO = barCodeWO;
-        this.codiceRicetta = codiceRicetta;
-        this.descrizione = descrizione;
-    }
-
-    public WorkOrder() {
-
-    }
-
-    public void addParte(String parte, String descrizione, Boolean verificata) {
-        this.listaParti.put(parte, new Parte(parte, descrizione, verificata));
-    }
-
-    public void setVerificata(String parte) {
+    public synchronized void setVerificata(String parte) {
         this.listaParti.get(parte).setVerificato(true);
     }
 
@@ -41,7 +34,7 @@ public class WorkOrder {
         return lavorabile;
     }
 
-    public void setDescrizione(String descrizione) {
+    public synchronized void setDescrizione(String descrizione) {
         this.descrizione = descrizione;
     }
 
@@ -53,7 +46,7 @@ public class WorkOrder {
         return barCodeWO;
     }
 
-    public void setBarCodeWO(String barCodeWO) {
+    public synchronized void setBarCodeWO(String barCodeWO) {
         this.barCodeWO = barCodeWO;
     }
 
@@ -61,7 +54,7 @@ public class WorkOrder {
         return codiceRicetta;
     }
 
-    public void setCodiceRicetta(String codiceRicetta) {
+    public synchronized void setCodiceRicetta(String codiceRicetta) {
         this.codiceRicetta = codiceRicetta;
     }
 
@@ -69,9 +62,15 @@ public class WorkOrder {
         return listaParti;
     }
 
-    public void setListaParti(Map<String, Parte> listaParti) {
+    public synchronized void setListaParti(Map<String, Parte> listaParti) {
         this.listaParti = listaParti;
     }
 
 
+    public synchronized void cleanUP() {
+        getListaParti().clear();
+        setDescrizione("");
+        setCodiceRicetta("");
+        setBarCodeWO("");
+    }
 }

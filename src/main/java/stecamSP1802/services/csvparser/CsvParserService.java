@@ -6,6 +6,7 @@ import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import stecamSP1802.services.barcode.WorkOrder;
 import sun.rmi.runtime.Log;
 
@@ -65,12 +66,14 @@ public class CsvParserService {
         return "";
     }
 
-    public WorkOrder getWO() {
+    public void fillWO() {
         Preconditions.checkNotNull(beans);
-        WorkOrder wo = new WorkOrder(beans.get(0).getWo(),beans.get(0).getArticolo(),beans.get(0).getDescrizione());
+        WorkOrder wo = WorkOrder.getInstance();
+        wo.setBarCodeWO(beans.get(0).getWo());
+        wo.setCodiceRicetta(beans.get(0).getArticolo());
+        wo.setDescrizione(beans.get(0).getDescrizione());
         for(int i = 1;i < beans.size(); i++){
-            wo.addParte(beans.get(i).getArticolo(),beans.get(i).getDescrizione(),false);
+            wo.addParte("",beans.get(i).getArticolo(),beans.get(i).getDescrizione(),false);
         }
-        return wo;
     }
 }

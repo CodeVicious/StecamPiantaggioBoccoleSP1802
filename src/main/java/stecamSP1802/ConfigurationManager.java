@@ -10,9 +10,13 @@ import java.net.URL;
 import java.util.Properties;
 
 
-public class ConfigurationManager {
-    private static ConfigurationManager ourInstance = new ConfigurationManager();
+public class ConfigurationManager { //Singleton
     private static Logger Logger = LogManager.getLogger(ConfigurationManager.class);
+    private static ConfigurationManager ourInstance = new ConfigurationManager();
+    public static ConfigurationManager getInstance() {
+        return ourInstance;
+    }
+    private ConfigurationManager() {}
 
     private String verificaListaPartiWOURL;
     private String verificaListaPartiUDM;
@@ -25,10 +29,6 @@ public class ConfigurationManager {
     private String utenteLocale;
     private int logoffTimeout;
 
-    public static ConfigurationManager getInstance() {
-        return ourInstance;
-    }
-    private ConfigurationManager() {}
 
     final Properties prop = new Properties();
 

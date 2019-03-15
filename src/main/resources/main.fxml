@@ -101,9 +101,10 @@
                   </Label>
                   <TableView fx:id="woTblPiantaggio" layoutY="82.0" prefHeight="228.0" prefWidth="697.0">
                     <columns>
+                        <TableColumn fx:id="tblUdM" prefWidth="202.0" text="UdM" />
                       <TableColumn fx:id="tblArticolo" prefWidth="202.0" text="Articolo" />
-                      <TableColumn fx:id="tblDescrizione" prefWidth="409.0" text="Descrizione" />
-                        <TableColumn fx:id="tblCheck" maxWidth="233.0" prefWidth="85.0" text="CHECK" />
+                      <TableColumn fx:id="tblDescrizione" prefWidth="236.0" text="Descrizione" />
+                        <TableColumn fx:id="tblCheck" maxWidth="410.0" prefWidth="56.0" text="CHECK" />
                     </columns>
                   </TableView>
                </children>
@@ -137,22 +138,42 @@
                   <Font name="Courier New" size="20.0" />
                </font>
             </Label>
-            <Label fx:id="labelESITO" alignment="CENTER" contentDisplay="CENTER" layoutX="1044.0" layoutY="7.0" prefHeight="101.0" prefWidth="222.0" style="-fx-background-color: orange; -fx-background-radius: 10;" text="ESITO" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+            <Label fx:id="labelESITO" alignment="CENTER" contentDisplay="CENTER" layoutX="1044.0" layoutY="22.0" prefHeight="101.0" prefWidth="222.0" style="-fx-background-color: orange; -fx-background-radius: 10;" text="ESITO" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
                   <Font name="Courier New" size="64.0" />
                </font>
             </Label>
-            <ImageView fx:id="imageALERTS" fitHeight="228.0" fitWidth="395.0" layoutX="508.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
-            <TextField fx:id="barcodeWO" layoutX="151.0" layoutY="4.0" onAction="#onBarcodeTyped" prefHeight="44.0" prefWidth="308.0" promptText="BARCODE">
+            <ImageView fx:id="imageALERTS" fitHeight="138.0" fitWidth="174.0" layoutX="848.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
+            <TextField fx:id="barcodeWO" layoutX="151.0" layoutY="4.0" onAction="#onBarcodeTyped" prefHeight="44.0" prefWidth="212.0" promptText="BARCODE">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
             </TextField>
-            <TextField fx:id="codiceRICETTA" layoutX="151.0" layoutY="50.0" onAction="#onRicettaTyped" prefHeight="25.0" prefWidth="308.0" promptText="CODICE">
+            <TextField fx:id="codiceRICETTA" layoutX="151.0" layoutY="50.0" onAction="#onRicettaTyped" prefHeight="44.0" prefWidth="212.0" promptText="CODICE">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
             </TextField>
+            <TextField fx:id="lastUdM" layoutX="530.0" layoutY="4.0" onAction="#onRicettaTyped" prefHeight="25.0" prefWidth="308.0" promptText="UdM">
+               <font>
+                  <Font name="Courier New" size="24.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="lastCodProdotto" layoutX="530.0" layoutY="51.0" onAction="#onRicettaTyped" prefHeight="25.0" prefWidth="308.0" promptText="Codice Prodotto">
+               <font>
+                  <Font name="Courier New" size="24.0" />
+               </font>
+            </TextField>
+            <Label layoutX="423.0" layoutY="14.0" text="Last UdM">
+               <font>
+                  <Font name="Courier New" size="20.0" />
+               </font>
+            </Label>
+            <Label layoutX="423.0" layoutY="61.0" text="Last Cod">
+               <font>
+                  <Font name="Courier New" size="20.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
       <AnchorPane layoutX="-3.0" layoutY="696.0" prefHeight="72.0" prefWidth="1287.0">

@@ -12,20 +12,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
-import stecamSP1802.helper.PasswordMD5Converter;
 import stecamSP1802.schedulers.WatchDog;
 import stecamSP1802.services.StatusManagerListenerImp;
 import stecamSP1802.services.WebQueryService;
 import stecamSP1802.services.*;
 import stecamSP1802.services.barcode.Parte;
 import stecamSP1802.services.barcode.SerialService;
+import stecamSP1802.services.barcode.WorkOrder;
 
 import java.io.IOException;
 import java.net.URL;
@@ -68,6 +67,8 @@ public class MainController extends AbstractController implements Initializable,
     @FXML
     Label labelESITO;
 
+    @FXML
+    Button btnRicette;
 
     @FXML
     Label lblUtenteLoggato;
@@ -97,6 +98,9 @@ public class MainController extends AbstractController implements Initializable,
     private TableView woTblPiantaggio;
 
     @FXML
+    private TableColumn tblUdM;
+
+    @FXML
     private TableColumn tblArticolo;
 
     @FXML
@@ -104,6 +108,12 @@ public class MainController extends AbstractController implements Initializable,
 
     @FXML
     private TableColumn tblCheck;
+
+    @FXML
+    private TextField lastUdM;
+
+    @FXML
+    private TextField lastCodProdotto;
 
 
     final ObservableList<WOTable> tblWoData = FXCollections.observableArrayList();
@@ -148,6 +158,7 @@ public class MainController extends AbstractController implements Initializable,
         woTblPiantaggio.setItems(tblWoData);
         woTblPiantaggio.setEditable(false);
 
+        tblUdM.setCellValueFactory(new PropertyValueFactory<WOTable, String>("uDm"));
         tblArticolo.setCellValueFactory(new PropertyValueFactory<WOTable, String>("articolo"));
         tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizioneDett"));
         tblCheck.setCellValueFactory(new PropertyValueFactory<WOTable, String>("check"));
@@ -159,7 +170,7 @@ public class MainController extends AbstractController implements Initializable,
         statusManagerListener = new StatusManagerListenerImp(this);
         statusManager = new StatusManager(); // Gestore degli stati generale e di connessione
         statusManager.addListener(statusManagerListener);
-        webQueryService = new WebQueryService(statusManager);
+        webQueryService = new WebQueryService(statusManager, this);
         serialService = new SerialService(this, statusManager, webQueryService); //Gestore Bar Code
         dbService = new DbService(statusManager); //Gestore interfacce DB
         watchDog = new WatchDog(this); // Gestore inattività ed altri alert temporizzati.
@@ -305,15 +316,16 @@ public class MainController extends AbstractController implements Initializable,
 
         Logger.warn("RICETTA CARICATA! ");
         Platform.runLater(() -> {
-            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta());
+            WorkOrder wo = WorkOrder.getInstance();
+            codiceRICETTA.setText(wo.getCodiceRicetta());
             codiceRICETTA.setStyle("-fx-background-color: green");
-            cicloWO.setText(webQueryService.getWO().getBarCodeWO());
-            cicloPRG.setText(webQueryService.getWO().getCodiceRicetta());
-            cicloDESCRIZIONE.setText(webQueryService.getWO().getDescrizione());
+            cicloWO.setText(wo.getBarCodeWO());
+            cicloPRG.setText(wo.getCodiceRicetta());
+            cicloDESCRIZIONE.setText(wo.getDescrizione());
 
-            Map<String, Parte> lista = webQueryService.getParti();
+            Map<String, Parte> lista = wo.getListaParti();
             for (String art : lista.keySet()) {
-                tblWoData.add(new WOTable(lista.get(art).getCodice(), lista.get(art).getDescrizione(), lista.get(art).getVerificato()));
+                tblWoData.add(new WOTable(lista.get(art).getCodiceUdM(), lista.get(art).getCodice(), lista.get(art).getDescrizione(), lista.get(art).getVerificato()));
             }
 
             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
@@ -326,7 +338,7 @@ public class MainController extends AbstractController implements Initializable,
         plcService.unsetRicettaCaricata();
         Logger.warn("RICETTA KO! ");
         Platform.runLater(() -> {
-            codiceRICETTA.setText(webQueryService.getWO().getCodiceRicetta() + " NON PRESENTE ");
+            codiceRICETTA.setText(WorkOrder.getInstance().getCodiceRicetta() + " NON PRESENTE ");
             codiceRICETTA.setStyle("-fx-background-color: red");
             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
@@ -378,6 +390,7 @@ public class MainController extends AbstractController implements Initializable,
                                 String ricetta = webQueryService.VerificaListaPartiWO(barCode);
                                 plcService.sendCodiceRicetta(ricetta);
                             } else {
+                                WorkOrder.getInstance().setBarCodeWO(barCode);
                                 showMesage("Inserire il Codice Ricetta");
                                 statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_CODICE_RICETTA);
                             }
@@ -390,7 +403,7 @@ public class MainController extends AbstractController implements Initializable,
                     public void run() {
                         if (!barCode.matches("\\d{8}[A-Z]?")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO");
-                            showMesage("CODICE WO - ERRATO");
+                            showMesage("CODICE ARTICOLO - ERRATO");
                             codiceRICETTA.setText(barCode);
                             codiceRICETTA.setStyle("-fx-control-inner-background: red");
 
@@ -398,7 +411,12 @@ public class MainController extends AbstractController implements Initializable,
                             codiceRICETTA.setText(barCode);
                             codiceRICETTA.setStyle("-fx-control-inner-background: green");
                             codiceRICETTA.setText("disabled"); //Chiedo il caricamento della ricetta direttamente al PLC
-                            plcService.sendCodiceRicetta(barCode);
+                            WorkOrder.getInstance().setCodiceRicetta(barCode);
+                            if(dbService.loadRicetta())
+                                plcService.sendCodiceRicetta(barCode);
+                            else
+                                onRicettaKO();
+
                         }
                     }
                 });
@@ -410,18 +428,34 @@ public class MainController extends AbstractController implements Initializable,
                         if (!barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
                             showMesage("CODICE UdM - ERRATO");
+
+                            lastUdM.setText(barCode);
+                            lastUdM.setStyle("-fx-control-inner-background: red");
+
                         } else {
+                            lastUdM.setText(barCode);
+                            lastUdM.setStyle("-fx-control-inner-background: green");
+
                             if (isUDMVerificaEnabled) {
-                                if (webQueryService.VerificaUDM(barCode, isWOListPartEnabled)) {
-                                    refreshTabellaWO();
-                                    if (webQueryService.checkValidazioneUDM()) {
+                                EsitoWebQuery esito = webQueryService.VerificaUDM(barCode);
+                                if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
+                                    if (VerificaCodice(esito.getResultQuery())) //Controllo se nella lista componenti
+                                    {
+                                        refreshTabellaWO();
+                                        addTabellaWO(barCode, esito.getResultQuery());
+                                    } else {
+                                        Logger.warn("Il BarCode " + barCode + " UdM NON E' NELLA LISTA COMPONENTI");
+                                        showMesage("UdM " + barCode + " CODICE " + esito.getResultQuery() + " NON E' UN COMPONENTE CORRETTO");
+                                    }
+
+                                    if (WorkOrder.getInstance().checkLavorabile()) {
                                         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
                                         plcService.iniziaCicloMacchina();
                                     }
-                                    addTabellaWO(barCode);
+
                                 } else {
-                                    Logger.error("Il BarCode " + barCode + " NON E' NELLA LISTA COMPONENTI");
-                                    showMesage("COMPONENTE NON PRESENTE NELLA LISTA");
+                                    Logger.warn("Il BarCode " + barCode + " UdM RIGETTATO DAL SERVER");
+                                    showMesage("UdM " + barCode + " RIGETTATO DA SERVER " + esito.getResultQuery());
                                 }
                             } else {
                                 showMesage("Inserire il Codice Componente");
@@ -438,10 +472,19 @@ public class MainController extends AbstractController implements Initializable,
                         if (!barCode.matches("\\d{8}[A-Z]?")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE COMPONENTE");
                             showMesage("CODICE COMPONENTE- ERRATO");
+
+                            lastCodProdotto.setText(barCode);
+                            lastCodProdotto.setStyle("-fx-control-inner-background: red");
+
                         } else {
+                            lastCodProdotto.setText(barCode);
+                            lastCodProdotto.setStyle("-fx-control-inner-background: green");
+
                             if (VerificaCodice(barCode)) {
                                 refreshTabellaWO();
-                                if (checkValidazioneUDM()) {
+                                addTabellaWO(lastUdM.getText(), barCode); //Aggiungo l'UdM
+
+                                if (WorkOrder.getInstance().checkLavorabile()) {
                                     statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
                                     plcService.iniziaCicloMacchina();
                                 } else {
@@ -461,28 +504,31 @@ public class MainController extends AbstractController implements Initializable,
 
     }
 
-    private boolean checkValidazioneUDM() {
-        return true;
+    private void addTabellaWO(String uDM, String codice) {
+        tblWoData.add(new WOTable(uDM, codice, "codiceDett da barcode", true));
+
+        woTblPiantaggio.refresh();
     }
 
-    private boolean VerificaCodice(String barCode) {
-        return true;
+
+    private boolean VerificaCodice(String codice) {
+        if (WorkOrder.getInstance().getListaParti().containsKey(codice)) {
+            Parte parte = WorkOrder.getInstance().getListaParti().get(codice);
+            parte.setVerificato(true);
+            Logger.info("UDM OK - CODE " + codice);
+            return true;
+        }
+        return false;
     }
+
 
     private void refreshTabellaWO() {
         Iterator<WOTable> it = tblWoData.iterator();
-        Map<String, Parte> lista = webQueryService.getParti();
+        Map<String, Parte> lista = WorkOrder.getInstance().getListaParti();
         while (it.hasNext()) {
             WOTable s = it.next();
             s.setCheck(lista.get(s.getArticolo()).getVerificato());
         }
-        woTblPiantaggio.refresh();
-    }
-
-    private void addTabellaWO(String code) {
-
-        tblWoData.add(new WOTable(code, "codiceDett da barcode", true));
-
         woTblPiantaggio.refresh();
     }
 
@@ -494,10 +540,6 @@ public class MainController extends AbstractController implements Initializable,
         plcService.cleanUpDB();
     }
 
-    private boolean checkUDMCode(String barCode) {
-        return (barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}"));
-
-    }
 
     public void disableWORequest(ActionEvent event) {
         webQueryService.sendDisabilitaUDM();
@@ -547,12 +589,18 @@ public class MainController extends AbstractController implements Initializable,
             controlloWO.setDisable(false);
             controlloUDM.setDisable(false);
             interfacciaParametri.setDisable(false);
+            btnRicette.setDisable(false);
+            codiceRICETTA.setDisable(false);
+            barcodeWO.setDisable(false);
             synckUSERS.setDisable(false);
 
 
         } else {
             controlloWO.setDisable(true);
             controlloUDM.setDisable(true);
+            btnRicette.setDisable(true);
+            codiceRICETTA.setDisable(true);
+            barcodeWO.setDisable(true);
             interfacciaParametri.setDisable(true);
             synckUSERS.setDisable(true);
         }
@@ -669,5 +717,13 @@ public class MainController extends AbstractController implements Initializable,
 
     public void onRicettaTyped(ActionEvent event) {
         onNewBarCode(codiceRICETTA.getText());
+    }
+
+    public void setControlloOFFLine() {
+        isWOListPartEnabled = false;
+        isUDMVerificaEnabled = false;
+
+        controlloWO.setSelected(false);
+        controlloUDM.setSelected(false);
     }
 }

@@ -4,33 +4,31 @@ import com.google.common.base.Preconditions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
+import stecamSP1802.controllers.MainController;
 import stecamSP1802.services.barcode.Parte;
 import stecamSP1802.services.barcode.WorkOrder;
 import stecamSP1802.services.csvparser.CsvParserService;
 
 import java.io.*;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 public class WebQueryService {
     final static Logger Logger = LogManager.getLogger(WebQueryService.class);
     ConfigurationManager conf = ConfigurationManager.getInstance();
 
     private CsvParserService csvParserService;
-
-
-    private WorkOrder WO;
     private StatusManager statusManager;
+    private MainController mainController;
     private boolean isWebOffline = false;
 
-    public WebQueryService(StatusManager statusManager) {
+    public WebQueryService(StatusManager statusManager, MainController mainController) {
         Preconditions.checkNotNull(statusManager);
         csvParserService = new CsvParserService();
         this.statusManager = statusManager;
+        this.mainController = mainController;
     }
 
 
@@ -44,23 +42,23 @@ public class WebQueryService {
 
             URLConnection yc = urlWO.openConnection();
 
-            isWebOffline = false;
+            setWebOffline(false);
 
             yc.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
             InputStream is = yc.getInputStream();
             Logger.info("Parsing ");
             if (csvParserService.parse(is).matches("OK")) {
-                WO = csvParserService.getWO();
+                csvParserService.fillWO();
                 Logger.info("WAITING OK RICETTA DAL PLC ");
-                return WO.getCodiceRicetta();
+                return WorkOrder.getInstance().getCodiceRicetta();
             }
 
         } catch (MalformedURLException e) {
             Logger.error("l'URL " + conf.getVerificaListaPartiWOURL() + " è sbagliato" + e);
-            isWebOffline = true;
+            setWebOffline(true);
         } catch (IOException e) {
             Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiWOURL() + " " + e);
-            isWebOffline = true;
+            setWebOffline(true);
         }
 
 
@@ -80,7 +78,7 @@ public class WebQueryService {
         return "KO";
     }
 
-    public Boolean VerificaUDM(String barCode, boolean isWOListPartEnabled) {
+    public EsitoWebQuery VerificaUDM(String barCode) {
 
         try {
             URL urlUDM = new URL(conf.getVerificaListaPartiUDM() +
@@ -88,50 +86,30 @@ public class WebQueryService {
             );
             URLConnection con = urlUDM.openConnection();
 
-            isWebOffline = false;
+            setWebOffline(false);
 
             BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line = inputStreamReader.readLine();
 
             if (line.matches("KO")) {
                 Logger.error("KO AS FIRST LINE - FIRST LINE " + line + "");
-                return false;
-            } else if (line.matches("OK")) {
                 line = inputStreamReader.readLine();
-                if (isWOListPartEnabled) {
-                    if (WO.getListaParti().containsKey(line)) {
-                        Parte codice = WO.getListaParti().get(line);
-                        codice.setVerificato(true);
-                        Logger.info("UDM OK - CODE " + line);
-                    }
-                    return true;
-                }
-
-            } else {
-                Logger.info("CODICE NON PRESENTE IN LISTA");
-                return false;
+                return new EsitoWebQuery(EsitoWebQuery.ESITO.KO, line);
+            } else  {
+                line = inputStreamReader.readLine();
+                return new EsitoWebQuery(EsitoWebQuery.ESITO.OK,line);
             }
-
-            return false;
 
         } catch (MalformedURLException e) {
             Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
-            isWebOffline = true;
-            return false;
+            setWebOffline(true);
+            return null;
         } catch (IOException e) {
             Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiUDM() + " " + e);
-            isWebOffline = true;
-            return false;
+            setWebOffline(true);
+            return null;
         }
 
-    }
-
-    public Boolean checkValidazioneUDM() {
-        return WO.checkLavorabile();
-    }
-
-    public WorkOrder getWO() {
-        return WO;
     }
 
 
@@ -143,14 +121,14 @@ public class WebQueryService {
 
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
-            isWebOffline = false;
+            setWebOffline(false);
         } catch (MalformedURLException e) {
             Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
-            isWebOffline = true;
+            setWebOffline(true);
 
         } catch (IOException e) {
             Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiUDM() + " " + e);
-            isWebOffline = true;
+            setWebOffline(true);
 
         }
     }
@@ -164,19 +142,16 @@ public class WebQueryService {
 
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
-            isWebOffline = false;
+            setWebOffline(false);
         } catch (MalformedURLException e) {
-            Logger.error("l'URL "+conf.getVerificaListaPartiUDM()+" è sbagliato" + e );
-            isWebOffline = true;
+            Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
+            setWebOffline(true);
         } catch (IOException e) {
-            Logger.error("Errore di accesso all'URL "+conf.getVerificaListaPartiUDM() +" "+ e );
-            isWebOffline = true;
+            Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiUDM() + " " + e);
+            setWebOffline(true);
         }
     }
 
-    public Map<String, Parte> getParti() {
-        return WO.getListaParti();
-    }
 
     public void checkSendUDM(boolean isWOListPartEnabled, boolean isUDMVerificaEnabled) {
         if (isUDMVerificaEnabled && isWOListPartEnabled) {
@@ -188,13 +163,16 @@ public class WebQueryService {
     }
 
     public void cleanWO() {
-        WO.getListaParti().clear();
-        WO.setDescrizione("");
-        WO.setCodiceRicetta("");
-        WO.setBarCodeWO("");
+        WorkOrder.getInstance().cleanUP();
     }
 
     public boolean isWebOffline() {
         return isWebOffline;
+    }
+
+    public void setWebOffline(boolean webOffline) {
+        if (webOffline)
+            mainController.setControlloOFFLine();
+        isWebOffline = webOffline;
     }
 }

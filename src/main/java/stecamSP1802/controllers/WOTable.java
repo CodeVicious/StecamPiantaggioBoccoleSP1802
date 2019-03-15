@@ -1,14 +1,15 @@
 package stecamSP1802.controllers;
 
 import javafx.beans.property.SimpleStringProperty;
-import stecamSP1802.services.barcode.Parte;
 
 public class WOTable {
+    private SimpleStringProperty uDm;
     private SimpleStringProperty articolo;
     private SimpleStringProperty descrizione;
     private SimpleStringProperty check;
 
-    public WOTable(String art, String descrizione, Boolean ok) {
+    public WOTable(String uDM, String art, String descrizione, Boolean ok) {
+        this.uDm = new SimpleStringProperty(uDM);
         this.articolo = new SimpleStringProperty(art);
         this.descrizione = new SimpleStringProperty(descrizione);
 
@@ -46,5 +47,13 @@ public class WOTable {
             setCheck("OK");
         else
             setCheck("KO");
+    }
+
+    public String getuDm() {
+        return uDm.get();
+    }
+
+    public void setuDm(String uDm) {
+        this.uDm.set(uDm);
     }
 }
