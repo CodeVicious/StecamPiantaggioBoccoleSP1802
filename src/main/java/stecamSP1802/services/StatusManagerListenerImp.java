@@ -37,7 +37,7 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
         }
     }
 
-    public void onGlobalStatusChange(StatusManager.GlobalStatus globalStatus) {
+    public synchronized void onGlobalStatusChange(StatusManager.GlobalStatus globalStatus) {
         switch (globalStatus) {
             case WAITING_UDM:
                 mainController.showMesage("SPARARE I CODICI UDM");
@@ -60,6 +60,8 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
             case CONNECTED:
                 mainController.showMesage("TRACCIAMENTO CONNESSO");
         }
+
+        mainController.setUpControls(globalStatus);
 
     }
 }

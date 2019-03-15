@@ -46,7 +46,7 @@ public class DbService {
     }
 
     public void synckUSERS() {
-        if(statusManager.getGlobalDbStatus()==StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTED) {
+        if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTED) {
             String SQLSELECT = "SELECT * FROM [dbo].[b_OperatoreIMP]";
             String SQLDROP = "TRUNCATE TABLE [dbo].[b_Operatore_SYNK]";
             String SQLINSERT = " INSERT INTO [dbo].[b_Operatore_SYNK]" +
@@ -76,8 +76,7 @@ public class DbService {
             } catch (SQLException e) {
                 Logger.error(e);
             }
-        }
-        else
+        } else
             Logger.warn("DB SPAL DISCONNESSO. SINCRONIZZAZIONE UTENTI IMPOSSIIBLE.");
 
     }
@@ -148,7 +147,7 @@ public class DbService {
             Statement stmt = conLDB.createStatement();
             ResultSet rs = stmt.executeQuery(SQLSELECT);
 
-            WorkOrder wo = new WorkOrder();
+            WorkOrder wo = WorkOrder.getInstance();
             Map<String, Parte> listaParti = Maps.newHashMap();
 
             while (rs.next()) {
@@ -157,8 +156,7 @@ public class DbService {
                     wo.setCodiceRicetta(rs.getString("Articolo"));
                     wo.setDescrizione(rs.getString("Descrizione"));
                 } else {
-                    listaParti.put(rs.getString("Articolo"), new Parte(rs.getString("Articolo"),
-                            rs.getString("Descrizione"), rs.getBoolean("Checked")));
+                    listaParti.put(rs.getString("Articolo"),new Parte("",rs.getString("Articolo"),rs.getString("Descrizione"), rs.getBoolean("checked")));
                 }
 
             }
@@ -279,9 +277,9 @@ public class DbService {
                 " WHERE id = ? ";
 
         PreparedStatement preparedStmt = conLDB.prepareStatement(SQLMODRIC);
-        preparedStmt.setString(1,cod);
-        preparedStmt.setString(2,desc);
-        preparedStmt.setString(3,id);
+        preparedStmt.setString(1, cod);
+        preparedStmt.setString(2, desc);
+        preparedStmt.setString(3, id);
         preparedStmt.execute();
 
     }
@@ -292,9 +290,9 @@ public class DbService {
                 " WHERE id = ? ";
 
         PreparedStatement preparedStmtDettaglio = conLDB.prepareStatement(SQLMODRIC);
-        preparedStmtDettaglio.setString(1,cod);
-        preparedStmtDettaglio.setString(2,desc);
-        preparedStmtDettaglio.setString(3,idDett);
+        preparedStmtDettaglio.setString(1, cod);
+        preparedStmtDettaglio.setString(2, desc);
+        preparedStmtDettaglio.setString(3, idDett);
         preparedStmtDettaglio.execute();
     }
 
@@ -306,7 +304,7 @@ public class DbService {
         try {
             stmt = conLDB.createStatement();
             ResultSet rs = stmt.executeQuery(SQLSELECT);
-            if(rs.getString("value")==PasswordMD5Converter.getMD5(password.toString()))
+            if (rs.getString("value") == PasswordMD5Converter.getMD5(password.toString()))
                 return true;
             else
                 return false;
@@ -323,12 +321,53 @@ public class DbService {
         PreparedStatement preparedStmtDettaglio = null;
         try {
             preparedStmtDettaglio = conLDB.prepareStatement(SQLSELECT);
-            preparedStmtDettaglio.setString(1,chiave);
+            preparedStmtDettaglio.setString(1, chiave);
             ResultSet res = preparedStmtDettaglio.executeQuery();
             return res.getString("value");
         } catch (SQLException e) {
             Logger.error(e);
             return "";
         }
+    }
+
+    public boolean loadRicetta(String barCode) {
+
+        //Carico la ricetta
+
+        String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.ricette where codice=?";
+
+
+        PreparedStatement preparedStmtDettaglio = null;
+        try {
+            preparedStmtDettaglio = conLDB.prepareStatement(SQLSELECT);
+            preparedStmtDettaglio.setString(1, barCode);
+            ResultSet res = preparedStmtDettaglio.executeQuery();
+            if (!res.next())
+                return false;
+
+            ResultSet dett = caricaRicettaDettaglio(res.getString("id"));
+
+            WorkOrder wo = WorkOrder.getInstance();
+
+            wo.setCodiceRicetta(barCode);
+            wo.setDescrizione(res.getString("descrizione"));
+
+            Map<String, Parte> listaParti = Maps.newHashMap();
+
+            while(dett.next()){
+                listaParti.put(dett.getString("codice"),new Parte("",dett.getString("codice"),dett.getString("descrizione"),false));
+            }
+
+            wo.setListaParti(listaParti);
+
+            return true;
+
+
+        } catch (SQLException e) {
+            Logger.error(e);
+        }
+
+
+        return false;
     }
 }

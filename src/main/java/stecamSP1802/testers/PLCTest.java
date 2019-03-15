@@ -72,7 +72,7 @@ public class PLCTest {
             ResultSet rs = stmt.executeQuery(SQLSELECT);
 
 
-            WorkOrder wo = new WorkOrder();
+            WorkOrder wo = WorkOrder.getInstance();
             Map<String, Parte> listaParti = Maps.newHashMap();
 
             while (rs.next()) {
@@ -81,7 +81,7 @@ public class PLCTest {
                     wo.setCodiceRicetta(rs.getString("Articolo"));
                     wo.setDescrizione(rs.getString("Descrizione"));
                 } else {
-                    listaParti.put(rs.getString("Articolo"), new Parte(rs.getString("Articolo"),
+                    listaParti.put(rs.getString("Articolo"), new Parte("",rs.getString("Articolo"),
                             rs.getString("Descrizione"), rs.getBoolean("Checked")));
                 }
 
@@ -102,11 +102,16 @@ public class PLCTest {
         String SQLDROP = "TRUNCATE TABLE [dbo].[cache]";
 
 
-        WorkOrder wo = new WorkOrder("2222222", "67372816", "descrizione");
+        WorkOrder wo = WorkOrder.getInstance();
+
+        wo.setBarCodeWO("2222222");
+        wo.setCodiceRicetta("67372816");
+        wo.setDescrizione("descrizione");
+
         Map<String, Parte> listaParti = Maps.newHashMap();
-        listaParti.put("12312345", new Parte("1231234", "bla bla", true));
-        listaParti.put("12313333", new Parte("1231234", "bla bla", true));
-        listaParti.put("15555555", new Parte("1231234", "bla bla", true));
+        listaParti.put("12312345", new Parte("","1231234", "bla bla", true));
+        listaParti.put("12313333", new Parte("","1231234", "bla bla", true));
+        listaParti.put("15555555", new Parte("","1231234", "bla bla", true));
 
         wo.setListaParti(listaParti);
 

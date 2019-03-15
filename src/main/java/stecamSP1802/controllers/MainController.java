@@ -387,7 +387,7 @@ public class MainController extends AbstractController implements Initializable,
                             cicloWO.setText(barCode);
 
                             if (isWOListPartEnabled) {
-                                String ricetta = webQueryService.VerificaListaPartiWO(barCode);
+                                String ricetta = webQueryService.VerificaListaPartiWO(barCode); //Verifica il WO e carica la lista parti dal server
                                 plcService.sendCodiceRicetta(ricetta);
                             } else {
                                 WorkOrder.getInstance().setBarCodeWO(barCode);
@@ -412,7 +412,7 @@ public class MainController extends AbstractController implements Initializable,
                             codiceRICETTA.setStyle("-fx-control-inner-background: green");
                             codiceRICETTA.setText("disabled"); //Chiedo il caricamento della ricetta direttamente al PLC
                             WorkOrder.getInstance().setCodiceRicetta(barCode);
-                            if(dbService.loadRicetta())
+                            if (dbService.loadRicetta(barCode))
                                 plcService.sendCodiceRicetta(barCode);
                             else
                                 onRicettaKO();
@@ -588,19 +588,19 @@ public class MainController extends AbstractController implements Initializable,
         if (loggedUser.isConduttoreDiLinea()) {
             controlloWO.setDisable(false);
             controlloUDM.setDisable(false);
+
             interfacciaParametri.setDisable(false);
             btnRicette.setDisable(false);
-            codiceRICETTA.setDisable(false);
-            barcodeWO.setDisable(false);
+
             synckUSERS.setDisable(false);
 
 
         } else {
             controlloWO.setDisable(true);
             controlloUDM.setDisable(true);
+
             btnRicette.setDisable(true);
-            codiceRICETTA.setDisable(true);
-            barcodeWO.setDisable(true);
+
             interfacciaParametri.setDisable(true);
             synckUSERS.setDisable(true);
         }
@@ -661,8 +661,16 @@ public class MainController extends AbstractController implements Initializable,
     }
 
     private void resettaStatoGlobale() {
+        barcodeWO.setText("");
         codiceRICETTA.setText("");
-        codiceRICETTA.setStyle("-fx-background-color: green");
+        lastUdM.setText("");
+        lastCodProdotto.setText("");
+
+        barcodeWO.setStyle("-fx-background-color: white");
+        codiceRICETTA.setStyle("-fx-background-color: white");
+        lastUdM.setStyle("-fx-background-color: white");
+        lastCodProdotto.setStyle("-fx-background-color: white");
+
         cicloWO.setText("");
         cicloPRG.setText("");
         cicloDESCRIZIONE.setText("");
@@ -725,5 +733,48 @@ public class MainController extends AbstractController implements Initializable,
 
         controlloWO.setSelected(false);
         controlloUDM.setSelected(false);
+    }
+
+    public void setUpControls(StatusManager.GlobalStatus globalStatus) {
+
+        switch (globalStatus) {
+            case WAITING_WO:
+                barcodeWO.setDisable(false);
+                codiceRICETTA.setDisable(true);
+                lastUdM.setDisable(true);
+                lastCodProdotto.setDisable(true);
+                break;
+            case WAITING_CODICE_RICETTA:
+                barcodeWO.setDisable(true);
+                codiceRICETTA.setDisable(false);
+                lastUdM.setDisable(true);
+                lastCodProdotto.setDisable(true);
+                break;
+            case WAITING_UDM:
+                barcodeWO.setDisable(true);
+                codiceRICETTA.setDisable(true);
+                lastUdM.setDisable(false);
+                lastCodProdotto.setDisable(true);
+                break;
+            case WAITING_CODICE_COMPONENTE:
+                barcodeWO.setDisable(true);
+                codiceRICETTA.setDisable(true);
+                lastUdM.setDisable(true);
+                lastCodProdotto.setDisable(false);
+                break;
+            case WORKING:
+                barcodeWO.setDisable(true);
+                codiceRICETTA.setDisable(true);
+                lastUdM.setDisable(true);
+                lastCodProdotto.setDisable(true);
+                break;
+            default:
+                barcodeWO.setDisable(true);
+                codiceRICETTA.setDisable(true);
+                lastUdM.setDisable(true);
+                lastCodProdotto.setDisable(true);
+
+
+        }
     }
 }
