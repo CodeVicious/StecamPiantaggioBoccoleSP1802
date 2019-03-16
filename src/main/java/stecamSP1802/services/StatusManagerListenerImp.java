@@ -5,9 +5,11 @@ import stecamSP1802.controllers.MainController;
 public class StatusManagerListenerImp implements stecamSP1802.services.StatusManagerListener {
 
     final MainController mainController;
+    private final PlcService plcService;
 
-    public StatusManagerListenerImp(final MainController mainController) {
+    public StatusManagerListenerImp(final MainController mainController, PlcService plcService) {
         this.mainController = mainController;
+        this.plcService = plcService;
     }
 
     public void onPLCStatusChange(StatusManager.PlcStatus plcStatus) {

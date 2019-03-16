@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.controllers.MainController;
-import stecamSP1802.services.barcode.Parte;
 import stecamSP1802.services.barcode.WorkOrder;
 import stecamSP1802.services.csvparser.CsvParserService;
 
@@ -32,7 +31,7 @@ public class WebQueryService {
     }
 
 
-    synchronized public String VerificaListaPartiWO(String barCode) {
+    synchronized public EsitoWebQuery VerificaListaPartiWO(String barCode) {
 
         URL urlWO = null;
         try {
@@ -44,38 +43,33 @@ public class WebQueryService {
 
             setWebOffline(false);
 
-            yc.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
+            //yc.setRequestProperty("Accept-Charset", StandardCharsets.UTF_8.name());
             InputStream is = yc.getInputStream();
-            Logger.info("Parsing ");
-            if (csvParserService.parse(is).matches("OK")) {
-                csvParserService.fillWO();
-                Logger.info("WAITING OK RICETTA DAL PLC ");
-                return WorkOrder.getInstance().getCodiceRicetta();
+
+            BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(is));
+            String line = inputStreamReader.readLine();
+            if (!line.matches("OK")) {
+                line = inputStreamReader.readLine();
+                Logger.error("VerificaListapartiWO - KO " + line);
+                return new EsitoWebQuery(EsitoWebQuery.ESITO.KO, line);
             }
+            csvParserService.parse(inputStreamReader);
+            csvParserService.fillWO();
+            Logger.info("ESITO LIST WO OK ");
+            return new EsitoWebQuery(EsitoWebQuery.ESITO.OK, WorkOrder.getInstance().getCodiceRicetta());
 
         } catch (MalformedURLException e) {
             Logger.error("l'URL " + conf.getVerificaListaPartiWOURL() + " è sbagliato" + e);
             setWebOffline(true);
+            return new EsitoWebQuery(EsitoWebQuery.ESITO.KO, "Problemi nell'URL");
+
+
         } catch (IOException e) {
             Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiWOURL() + " " + e);
             setWebOffline(true);
+            return new EsitoWebQuery(EsitoWebQuery.ESITO.KO, "Problemi di comunicazione");
         }
 
-
-        //iFile = getClass().getResourceAsStream("/WO2.csv");
-
-        // Once you have the Input Stream, it's just plain old Java IO stuff.
-
-        // For this case, since you are interested in getting plain-text web page
-        // I'll use a reader and output the text content to System.out.
-
-        // For binary content, it's better to directly read the bytes from stream and write
-        // to the target file.
-
-        //
-
-
-        return "KO";
     }
 
     public EsitoWebQuery VerificaUDM(String barCode) {
@@ -95,9 +89,9 @@ public class WebQueryService {
                 Logger.error("KO AS FIRST LINE - FIRST LINE " + line + "");
                 line = inputStreamReader.readLine();
                 return new EsitoWebQuery(EsitoWebQuery.ESITO.KO, line);
-            } else  {
+            } else {
                 line = inputStreamReader.readLine();
-                return new EsitoWebQuery(EsitoWebQuery.ESITO.OK,line);
+                return new EsitoWebQuery(EsitoWebQuery.ESITO.OK, line);
             }
 
         } catch (MalformedURLException e) {
@@ -115,7 +109,7 @@ public class WebQueryService {
 
     public void sendAbilitaUDM() {
         try {
-            URL urlVERICFICA = new URL(conf.getuRLVerificaUID() +
+            URL urlVERICFICA = new URL(conf.getuRLDisabilitaUDM() +
                     "?NomeStazione=" + conf.getNomeStazione() +
                     "&DisabilitaConvertiUDM=NO");
 
@@ -123,11 +117,11 @@ public class WebQueryService {
             InputStream is = con.getInputStream();
             setWebOffline(false);
         } catch (MalformedURLException e) {
-            Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
+            Logger.error("l'URL " + conf.getuRLDisabilitaUDM() + " è sbagliato" + e);
             setWebOffline(true);
 
         } catch (IOException e) {
-            Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiUDM() + " " + e);
+            Logger.error("Errore di accesso all'URL " + conf.getuRLDisabilitaUDM() + " " + e);
             setWebOffline(true);
 
         }
@@ -136,7 +130,7 @@ public class WebQueryService {
     public void sendDisabilitaUDM() {
 
         try {
-            URL urlVERICFICA = new URL(conf.getuRLVerificaUID() +
+            URL urlVERICFICA = new URL(conf.getuRLDisabilitaUDM() +
                     "?NomeStazione=" + conf.getNomeStazione() +
                     "&DisabilitaConvertiUDM=SI");
 
@@ -144,10 +138,10 @@ public class WebQueryService {
             InputStream is = con.getInputStream();
             setWebOffline(false);
         } catch (MalformedURLException e) {
-            Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
+            Logger.error("l'URL " + conf.getuRLDisabilitaUDM() + " è sbagliato" + e);
             setWebOffline(true);
         } catch (IOException e) {
-            Logger.error("Errore di accesso all'URL " + conf.getVerificaListaPartiUDM() + " " + e);
+            Logger.error("Errore di accesso all'URL " + conf.getuRLDisabilitaUDM() + " " + e);
             setWebOffline(true);
         }
     }

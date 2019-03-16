@@ -8,12 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import stecamSP1802.services.barcode.WorkOrder;
-import sun.rmi.runtime.Log;
 
 import java.io.*;
 import java.util.List;
-
-import static sun.java2d.cmm.ColorTransform.In;
 
 public class CsvParserService {
     final static Logger Logger = LogManager.getLogger(CsvParserService.class);
@@ -46,24 +43,9 @@ public class CsvParserService {
         // to the RowProcessor you defined
     }
 
-    synchronized public String parse(InputStream inputStream){
-
-        this.inputStreamReader = new BufferedReader(new InputStreamReader(inputStream));
-        try {
-            String line =this.inputStreamReader.readLine();
-            if(!line.matches("OK")){
-                Logger.error("MISSING OK AS FIRST LINE - FIRST LINE "+line+"");
-            }
-            else{
-                Logger.info("SKIPPING OK AND START PARSING");
-                parser.parse(inputStreamReader);
-                beans = rowProcessor.getBeans();
-            }
-            return line;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
+    synchronized public void parse(BufferedReader inputStream) {
+        parser.parse(inputStream);
+        beans = rowProcessor.getBeans();
     }
 
     public void fillWO() {
@@ -72,8 +54,8 @@ public class CsvParserService {
         wo.setBarCodeWO(beans.get(0).getWo());
         wo.setCodiceRicetta(beans.get(0).getArticolo());
         wo.setDescrizione(beans.get(0).getDescrizione());
-        for(int i = 1;i < beans.size(); i++){
-            wo.addParte("",beans.get(i).getArticolo(),beans.get(i).getDescrizione(),false);
+        for (int i = 1; i < beans.size(); i++) {
+            wo.addParte("", beans.get(i).getArticolo(), beans.get(i).getDescrizione(), false);
         }
     }
 }

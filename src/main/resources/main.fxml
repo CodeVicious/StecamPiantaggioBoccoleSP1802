@@ -144,7 +144,7 @@
                </font>
             </Label>
             <ImageView fx:id="imageALERTS" fitHeight="138.0" fitWidth="174.0" layoutX="848.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
-            <TextField fx:id="barcodeWO" layoutX="151.0" layoutY="4.0" onAction="#onBarcodeTyped" prefHeight="44.0" prefWidth="212.0" promptText="BARCODE">
+            <TextField fx:id="barcodeWO" layoutX="151.0" layoutY="4.0" onAction="#onWOTyped" prefHeight="44.0" prefWidth="212.0" promptText="BARCODE">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
@@ -154,12 +154,12 @@
                   <Font name="Courier New" size="24.0" />
                </font>
             </TextField>
-            <TextField fx:id="lastUdM" layoutX="530.0" layoutY="4.0" onAction="#onRicettaTyped" prefHeight="25.0" prefWidth="308.0" promptText="UdM">
+            <TextField fx:id="lastUdM" layoutX="530.0" layoutY="4.0" onAction="#onUdmTyped" prefHeight="25.0" prefWidth="308.0" promptText="UdM">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
             </TextField>
-            <TextField fx:id="lastCodProdotto" layoutX="530.0" layoutY="51.0" onAction="#onRicettaTyped" prefHeight="25.0" prefWidth="308.0" promptText="Codice Prodotto">
+            <TextField fx:id="lastCodProdotto" layoutX="530.0" layoutY="51.0" onAction="#onCodProdottoTyped" prefHeight="25.0" prefWidth="308.0" promptText="Codice Prodotto">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>

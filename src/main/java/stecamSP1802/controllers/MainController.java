@@ -167,7 +167,7 @@ public class MainController extends AbstractController implements Initializable,
         //Setup Thread Pool for PLC Service
         executors = Executors.newCachedThreadPool();
 
-        statusManagerListener = new StatusManagerListenerImp(this);
+        statusManagerListener = new StatusManagerListenerImp(this, plcService);
         statusManager = new StatusManager(); // Gestore degli stati generale e di connessione
         statusManager.addListener(statusManagerListener);
         webQueryService = new WebQueryService(statusManager, this);
@@ -263,6 +263,7 @@ public class MainController extends AbstractController implements Initializable,
             if (statusManager.getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_CONNECTED)
                 statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
+        plcService.cleanUpDB();
     }
 
     public void gDbDisconnected() {
@@ -353,7 +354,8 @@ public class MainController extends AbstractController implements Initializable,
         Logger.warn("PIANTAGGIO BUONO! ");
         showMesage("PIANTAGGIO BUONO! ");
 
-        dbService.storePiantaggio(loggedUser.getMatricola(), codiceRICETTA.getText(), barcodeWO.getText(), "OK");
+        dbService.storePiantaggio(loggedUser.getMatricola(), WorkOrder.getInstance().getCodiceRicetta(),
+                WorkOrder.getInstance().getBarCodeWO(), "OK");
     }
 
     public void piantaggioSCARTO() {
@@ -365,7 +367,8 @@ public class MainController extends AbstractController implements Initializable,
         Logger.warn("PIANTAGGIO SCARTO! ");
         showMesage("PIANTAGGIO SCARTO! ");
 
-        dbService.storePiantaggio(loggedUser.getMatricola(), codiceRICETTA.getText(), barcodeWO.getText(), "KO");
+        dbService.storePiantaggio(loggedUser.getMatricola(), WorkOrder.getInstance().getCodiceRicetta(),
+                WorkOrder.getInstance().getBarCodeWO(), "KO");
     }
 
     public void onNewBarCode(String barCode) {
@@ -378,7 +381,6 @@ public class MainController extends AbstractController implements Initializable,
                         //check BarCode
                         if (!barCode.matches("\\d{7,8}")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
-                            showMesage("CODICE WO - ERRATO");
                             barcodeWO.setText(barCode);
                             barcodeWO.setStyle("-fx-control-inner-background: red");
                         } else {
@@ -387,8 +389,15 @@ public class MainController extends AbstractController implements Initializable,
                             cicloWO.setText(barCode);
 
                             if (isWOListPartEnabled) {
-                                String ricetta = webQueryService.VerificaListaPartiWO(barCode); //Verifica il WO e carica la lista parti dal server
-                                plcService.sendCodiceRicetta(ricetta);
+                                EsitoWebQuery esito = webQueryService.VerificaListaPartiWO(barCode); //Verifica il WO e carica la lista parti dal server
+
+                                if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
+                                    codiceRICETTA.setText(esito.getResultQuery());
+                                    plcService.sendCodiceRicetta(esito.getResultQuery());
+                                } else {
+                                    Logger.warn("Query WO " + barCode + " RIGETTATA DAL SERVER");
+                                    showMesage("WO " + barCode + "KO! " + esito.getResultQuery());
+                                }
                             } else {
                                 WorkOrder.getInstance().setBarCodeWO(barCode);
                                 showMesage("Inserire il Codice Ricetta");
@@ -537,7 +546,7 @@ public class MainController extends AbstractController implements Initializable,
         Platform.runLater(() -> {
             msgBOX.setText(msg);
         });
-        plcService.cleanUpDB();
+
     }
 
 
@@ -719,13 +728,6 @@ public class MainController extends AbstractController implements Initializable,
         return popupController.getPassword();
     }
 
-    public void onBarcodeTyped(ActionEvent event) {
-        onNewBarCode(barcodeWO.getText());
-    }
-
-    public void onRicettaTyped(ActionEvent event) {
-        onNewBarCode(codiceRICETTA.getText());
-    }
 
     public void setControlloOFFLine() {
         isWOListPartEnabled = false;
@@ -776,5 +778,21 @@ public class MainController extends AbstractController implements Initializable,
 
 
         }
+    }
+
+    public void onWOTyped(ActionEvent actionEvent) {
+        onNewBarCode(barcodeWO.getText());
+    }
+
+    public void onUdmTyped(ActionEvent actionEvent) {
+        onNewBarCode(lastUdM.getText());
+    }
+
+    public void onCodProdottoTyped(ActionEvent actionEvent) {
+        onNewBarCode(lastCodProdotto.getText());
+    }
+
+    public void onRicettaTyped(ActionEvent event) {
+        onNewBarCode(codiceRICETTA.getText());
     }
 }
