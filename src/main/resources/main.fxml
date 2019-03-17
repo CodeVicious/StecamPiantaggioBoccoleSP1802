@@ -101,10 +101,10 @@
                   </Label>
                   <TableView fx:id="woTblPiantaggio" layoutY="82.0" prefHeight="228.0" prefWidth="697.0">
                     <columns>
-                        <TableColumn fx:id="tblUdM" prefWidth="202.0" text="UdM" />
-                      <TableColumn fx:id="tblArticolo" prefWidth="202.0" text="Articolo" />
-                      <TableColumn fx:id="tblDescrizione" prefWidth="236.0" text="Descrizione" />
-                        <TableColumn fx:id="tblCheck" maxWidth="410.0" prefWidth="56.0" text="CHECK" />
+                        <TableColumn fx:id="tblUdM" editable="false" prefWidth="202.0" text="UdM" />
+                      <TableColumn fx:id="tblArticolo" editable="false" prefWidth="202.0" text="Articolo" />
+                      <TableColumn fx:id="tblDescrizione" editable="false" prefWidth="236.0" text="Descrizione" />
+                        <TableColumn fx:id="tblCheck" editable="false" maxWidth="410.0" prefWidth="56.0" text="CHECK" />
                     </columns>
                   </TableView>
                </children>

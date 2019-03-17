@@ -546,10 +546,12 @@ public class PLC implements Runnable {
                 this.connected = true;
                 this.LastError = this.moka.LastError;
 
+                if((statusManager!=null) && (statusManager.getPlcStatus() == StatusManager.PlcStatus.PLC_CONNECTING))
+                    statusManager.setPlcStatus(StatusManager.PlcStatus.PLC_CONNECTED);
+
                 if (this.firstConnect == true) {
                     logger.info("Connected to PLC " + this.PLCName);
-                    if(statusManager!=null)
-                        statusManager.setPlcStatus(StatusManager.PlcStatus.PLC_CONNECTED);
+
                     // read current db state, so we don't override it with zeroes
                     this.moka.ReadArea(this.pcToPlcAreaType, this.pcToPlcDb, 0, this.pcToPlc.length, this.pcToPlc);
                     this.firstConnect = false;

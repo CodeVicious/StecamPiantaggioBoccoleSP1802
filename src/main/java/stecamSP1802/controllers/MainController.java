@@ -116,7 +116,7 @@ public class MainController extends AbstractController implements Initializable,
     private TextField lastCodProdotto;
 
 
-    final ObservableList<WOTable> tblWoData = FXCollections.observableArrayList();
+    final ObservableList<WOTable> tblWoData = FXCollections.observableArrayList(WOTable.extractor());
 
     //Servizi
     ExecutorService executors;
@@ -162,6 +162,23 @@ public class MainController extends AbstractController implements Initializable,
         tblArticolo.setCellValueFactory(new PropertyValueFactory<WOTable, String>("articolo"));
         tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizioneDett"));
         tblCheck.setCellValueFactory(new PropertyValueFactory<WOTable, String>("check"));
+
+        tblCheck.setCellFactory(e-> new TableCell<ObservableList<String>,String>(){
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if(item == null || empty){
+                    setText(null);
+                } else {
+                    setText(item);
+                    if(item.matches("OK"))
+                        this.setStyle("-fx-background-color: green;");
+                    else
+                        this.setStyle("-fx-background-color: red;");
+
+                }
+            }
+        });
 
 
         //Setup Thread Pool for PLC Service
@@ -238,6 +255,7 @@ public class MainController extends AbstractController implements Initializable,
 
     public void CloseApp() {
         plcService.closeConnection();
+        dbService.saveWO();
         //dbService.close();
         //serialService.close();
         Platform.exit();
@@ -396,7 +414,8 @@ public class MainController extends AbstractController implements Initializable,
                                     plcService.sendCodiceRicetta(esito.getResultQuery());
                                 } else {
                                     Logger.warn("Query WO " + barCode + " RIGETTATA DAL SERVER");
-                                    showMesage("WO " + barCode + "KO! " + esito.getResultQuery());
+                                    barcodeWO.setStyle("-fx-control-inner-background: red");
+                                    showMesage("WO " + barCode + " KO! " + esito.getResultQuery());
                                 }
                             } else {
                                 WorkOrder.getInstance().setBarCodeWO(barCode);
@@ -419,13 +438,15 @@ public class MainController extends AbstractController implements Initializable,
                         } else {
                             codiceRICETTA.setText(barCode);
                             codiceRICETTA.setStyle("-fx-control-inner-background: green");
-                            codiceRICETTA.setText("disabled"); //Chiedo il caricamento della ricetta direttamente al PLC
+                            codiceRICETTA.setText("checking"); //Chiedo il caricamento della ricetta direttamente al PLC
                             WorkOrder.getInstance().setCodiceRicetta(barCode);
                             if (dbService.loadRicetta(barCode))
                                 plcService.sendCodiceRicetta(barCode);
-                            else
+                            else {
+                                Logger.warn("RCETTA "+barCode+" NON PRESENTE NEL DB!");
+                                codiceRICETTA.setStyle("-fx-control-inner-background: red");
                                 onRicettaKO();
-
+                            }
                         }
                     }
                 });
@@ -448,12 +469,13 @@ public class MainController extends AbstractController implements Initializable,
                             if (isUDMVerificaEnabled) {
                                 EsitoWebQuery esito = webQueryService.VerificaUDM(barCode);
                                 if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
-                                    if (VerificaCodice(esito.getResultQuery())) //Controllo se nella lista componenti
+                                    if (VerificaCodice(esito.getResultQuery())) //Controllo se nella lista componenti e setto il check
                                     {
-                                        refreshTabellaWO();
-                                        addTabellaWO(barCode, esito.getResultQuery());
+                                        refreshTabellaWO(barCode, esito.getResultQuery());
+
                                     } else {
                                         Logger.warn("Il BarCode " + barCode + " UdM NON E' NELLA LISTA COMPONENTI");
+                                        lastUdM.setStyle("-fx-control-inner-background: red");
                                         showMesage("UdM " + barCode + " CODICE " + esito.getResultQuery() + " NON E' UN COMPONENTE CORRETTO");
                                     }
 
@@ -464,6 +486,7 @@ public class MainController extends AbstractController implements Initializable,
 
                                 } else {
                                     Logger.warn("Il BarCode " + barCode + " UdM RIGETTATO DAL SERVER");
+                                    lastUdM.setStyle("-fx-control-inner-background: red");
                                     showMesage("UdM " + barCode + " RIGETTATO DA SERVER " + esito.getResultQuery());
                                 }
                             } else {
@@ -490,8 +513,8 @@ public class MainController extends AbstractController implements Initializable,
                             lastCodProdotto.setStyle("-fx-control-inner-background: green");
 
                             if (VerificaCodice(barCode)) {
-                                refreshTabellaWO();
-                                addTabellaWO(lastUdM.getText(), barCode); //Aggiungo l'UdM
+                                refreshTabellaWO(lastUdM.getText(), barCode); //Aggiungo l'UdM
+
 
                                 if (WorkOrder.getInstance().checkLavorabile()) {
                                     statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
@@ -502,6 +525,7 @@ public class MainController extends AbstractController implements Initializable,
                                 }
                             } else {
                                 Logger.error("Il BarCode " + barCode + " NON E' NELLA LISTA COMPONENTI");
+                                lastCodProdotto.setStyle("-fx-control-inner-background: red");
                                 showMesage("COMPONENTE NON PRESENTE NELLA LISTA");
                             }
                         }
@@ -511,12 +535,6 @@ public class MainController extends AbstractController implements Initializable,
 
         }
 
-    }
-
-    private void addTabellaWO(String uDM, String codice) {
-        tblWoData.add(new WOTable(uDM, codice, "codiceDett da barcode", true));
-
-        woTblPiantaggio.refresh();
     }
 
 
@@ -531,14 +549,17 @@ public class MainController extends AbstractController implements Initializable,
     }
 
 
-    private void refreshTabellaWO() {
-        Iterator<WOTable> it = tblWoData.iterator();
+    private void refreshTabellaWO(String UdM, String codProdotto) {
         Map<String, Parte> lista = WorkOrder.getInstance().getListaParti();
+        lista.get(codProdotto).setCodiceUdM(UdM);
+
+        Iterator<WOTable> it = tblWoData.iterator();
+
         while (it.hasNext()) {
             WOTable s = it.next();
             s.setCheck(lista.get(s.getArticolo()).getVerificato());
+            s.setuDm(lista.get(s.getArticolo()).getCodiceUdM());
         }
-        woTblPiantaggio.refresh();
     }
 
 
@@ -683,11 +704,12 @@ public class MainController extends AbstractController implements Initializable,
         cicloWO.setText("");
         cicloPRG.setText("");
         cicloDESCRIZIONE.setText("");
+        tblWoData.clear();
+
 
         webQueryService.cleanWO();
-        tblWoData.removeAll();
 
-        woTblPiantaggio.refresh();
+        woTblPiantaggio.setItems(tblWoData);
 
 
         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);

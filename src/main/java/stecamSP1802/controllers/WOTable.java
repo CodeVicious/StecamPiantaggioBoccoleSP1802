@@ -1,6 +1,8 @@
 package stecamSP1802.controllers;
 
+import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.util.Callback;
 
 public class WOTable {
     private SimpleStringProperty uDm;
@@ -18,6 +20,7 @@ public class WOTable {
         else
             check = new SimpleStringProperty("KO");
     }
+
     public String getArticolo() {
         return articolo.get();
     }
@@ -55,5 +58,33 @@ public class WOTable {
 
     public void setuDm(String uDm) {
         this.uDm.set(uDm);
+    }
+
+    public SimpleStringProperty uDmProperty() {
+        if (uDm == null)
+            return new SimpleStringProperty();
+        return uDm;
+    }
+
+    public SimpleStringProperty articoloProperty() {
+        if (articolo == null)
+            new SimpleStringProperty();
+        return articolo;
+    }
+
+    public SimpleStringProperty descrizioneProperty() {
+        if (descrizione == null)
+            return new SimpleStringProperty();
+        return descrizione;
+    }
+
+    public SimpleStringProperty checkProperty() {
+        if (check == null)
+            return new SimpleStringProperty();
+        return check;
+    }
+
+    public static Callback<WOTable, Observable[]> extractor() {
+        return (WOTable p) -> new Observable[]{p.uDmProperty(), p.articoloProperty(), p.descrizioneProperty(), p.checkProperty()};
     }
 }
