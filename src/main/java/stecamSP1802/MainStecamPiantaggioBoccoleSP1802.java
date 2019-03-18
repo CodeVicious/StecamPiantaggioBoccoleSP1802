@@ -81,13 +81,13 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
             if (m.getStatusManager().getLocalDbStatus() == StatusManager.LocalDbStatus.LOCAL_DB_DISCONNECTED) {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Dabase Locale non accessibile. Impossible procedere!", ButtonType.OK);
                 alert.setWidth(250);
-                alert.setHeight(100);
+                alert.setHeight(250);
                 alert.showAndWait();
                 closeProgram();
             } else if(m.getStatusManager().getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
-                Alert alert = new Alert(Alert.AlertType.WARNING, "Attenzione, DATABASE SPAL OFF LINE. INSERIRE PASSWORD AMMINISTRATORE LOCALE!", ButtonType.OK);
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Attenzione, DATABASE SPAL OFF LINE. INSERIRE CREDENZIALI LOCALI!", ButtonType.OK);
                 alert.setWidth(250);
-                alert.setHeight(100);
+                alert.setHeight(250);
                 alert.showAndWait();
                 lc.setOFFLINEControls();
             }

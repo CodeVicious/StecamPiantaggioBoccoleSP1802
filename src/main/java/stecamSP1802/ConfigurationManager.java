@@ -3,6 +3,7 @@ package stecamSP1802;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import stecamSP1802.helper.PasswordMD5Converter;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -13,6 +14,10 @@ import java.util.Properties;
 public class ConfigurationManager { //Singleton
     private static Logger Logger = LogManager.getLogger(ConfigurationManager.class);
     private static ConfigurationManager ourInstance = new ConfigurationManager();
+    private String localAdminUser;
+    private String localUser;
+    private String localAdminPassword;
+
     public static ConfigurationManager getInstance() {
         return ourInstance;
     }
@@ -80,6 +85,10 @@ public class ConfigurationManager { //Singleton
         passwordAmministrativa = prop.getProperty("PasswordAmministrativa");
         utenteLocale = prop.getProperty("utenteLocale");
         logoffTimeout = Integer.parseInt(prop.getProperty("LogoffTimeout"));
+
+        localAdminUser = prop.getProperty("utente-Amministratore");
+        localUser = prop.getProperty("utente-Locale");
+        localAdminPassword = prop.getProperty("password-Amministratore");
 
     }
 
@@ -159,7 +168,17 @@ public class ConfigurationManager { //Singleton
         return prop;
     }
 
+    public String getLocalAdminUser() {
+        return localAdminUser;
+    }
 
+    public String getLocalAdminPassword() {
+        return localAdminPassword;
+    }
+
+    public String getLocalUser() {
+        return localUser;
+    }
 
     public void saveProperties() {
         URL resourceUrl = getClass().getResource("/config.properties");
@@ -173,5 +192,23 @@ public class ConfigurationManager { //Singleton
             Logger.error(e);
         }
 
+    }
+
+    public boolean checkMatricola(String matricola) {
+        if(localAdminUser.matches(matricola) || localUser.matches(matricola))
+            return true;
+        return false;
+    }
+
+    public boolean isLocalAdmin(String matricola) {
+        if(localAdminUser.matches(matricola))
+            return true;
+        return false;
+    }
+
+    public boolean checkPassword(String password) {
+        if (localAdminPassword.matches(PasswordMD5Converter.getMD5(password)))
+            return true;
+        return false;
     }
 }

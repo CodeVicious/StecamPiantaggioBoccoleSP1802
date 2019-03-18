@@ -12,6 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -115,6 +117,9 @@ public class MainController extends AbstractController implements Initializable,
     @FXML
     private TextField lastCodProdotto;
 
+    @FXML
+    private ImageView imageALERTS;
+
 
     final ObservableList<WOTable> tblWoData = FXCollections.observableArrayList(WOTable.extractor());
 
@@ -163,15 +168,15 @@ public class MainController extends AbstractController implements Initializable,
         tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizioneDett"));
         tblCheck.setCellValueFactory(new PropertyValueFactory<WOTable, String>("check"));
 
-        tblCheck.setCellFactory(e-> new TableCell<ObservableList<String>,String>(){
+        tblCheck.setCellFactory(e -> new TableCell<ObservableList<String>, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if(item == null || empty){
+                if (item == null || empty) {
                     setText(null);
                 } else {
                     setText(item);
-                    if(item.matches("OK"))
+                    if (item.matches("OK"))
                         this.setStyle("-fx-background-color: green;");
                     else
                         this.setStyle("-fx-background-color: red;");
@@ -443,7 +448,7 @@ public class MainController extends AbstractController implements Initializable,
                             if (dbService.loadRicetta(barCode))
                                 plcService.sendCodiceRicetta(barCode);
                             else {
-                                Logger.warn("RCETTA "+barCode+" NON PRESENTE NEL DB!");
+                                Logger.warn("RCETTA " + barCode + " NON PRESENTE NEL DB!");
                                 codiceRICETTA.setStyle("-fx-control-inner-background: red");
                                 onRicettaKO();
                             }
@@ -757,6 +762,14 @@ public class MainController extends AbstractController implements Initializable,
 
         controlloWO.setSelected(false);
         controlloUDM.setSelected(false);
+
+
+        Image offline = new Image(getClass().getResourceAsStream("/HMI/offline-icon.png"));
+        imageALERTS.setImage(offline);
+        LoginController lc = (LoginController) myController.getController(MainStecamPiantaggioBoccoleSP1802.loginID);
+
+        lc.setOFFLINEControls();
+
     }
 
     public void setUpControls(StatusManager.GlobalStatus globalStatus) {
