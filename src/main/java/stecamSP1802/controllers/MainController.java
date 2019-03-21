@@ -224,6 +224,7 @@ public class MainController extends AbstractController implements Initializable,
         serialService.open();
     }
 
+
     private void launchTime() {
 
         Task task = new Task<Void>() {
@@ -370,6 +371,7 @@ public class MainController extends AbstractController implements Initializable,
     }
 
     public void piantaggioBUONO() {
+        watchDog.resetSchedule();
         Platform.runLater(() -> {
             labelESITO.setText("BUONO");
             labelESITO.setStyle("-fx-background-color: green");
@@ -382,6 +384,7 @@ public class MainController extends AbstractController implements Initializable,
     }
 
     public void piantaggioSCARTO() {
+        watchDog.resetSchedule();
         Platform.runLater(() -> {
             labelESITO.setText("SCARTO");
             labelESITO.setStyle("-fx-background-color: red");
@@ -586,7 +589,6 @@ public class MainController extends AbstractController implements Initializable,
 
 
     public void onCaricaParametri(ActionEvent event) {
-        watchDog.resetSchedule();
         if (getPopUpPassword() == loggedUser.getPassword())
             myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
     }
@@ -763,12 +765,24 @@ public class MainController extends AbstractController implements Initializable,
         controlloWO.setSelected(false);
         controlloUDM.setSelected(false);
 
-
         Image offline = new Image(getClass().getResourceAsStream("/HMI/offline-icon.png"));
         imageALERTS.setImage(offline);
         LoginController lc = (LoginController) myController.getController(MainStecamPiantaggioBoccoleSP1802.loginID);
 
         lc.setOFFLINEControls();
+
+        if (!loggedUser.isConduttoreDiLinea()) {
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                    "PER CONTINUARE OFF-LINE E' NECESSARIO IL LOGIN DA PARTE DI UN CONDUTTORE DI LINEA", ButtonType.OK);
+            alert.showAndWait();
+            resetLoggedUser();
+        } else {
+            
+
+        }
+
+
 
     }
 
