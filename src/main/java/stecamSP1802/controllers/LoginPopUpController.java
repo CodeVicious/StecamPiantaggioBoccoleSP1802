@@ -42,13 +42,12 @@ public class LoginPopUpController extends AbstractController  {
     @FXML
     private Button tasto3;
 
-
     private Stage stage;
 
     StringBuilder password = new StringBuilder("");
 
     public void setStage(Stage popupStage) {
-        this.stage = stage;
+        this.stage = popupStage;
     }
 
     public void onKeyPressed(ActionEvent event) {
@@ -56,11 +55,13 @@ public class LoginPopUpController extends AbstractController  {
     }
 
     public void onOKPressed(ActionEvent event) {
+
         closeStage();
     }
 
     public void onRESETPressed(ActionEvent event) {
         password.setLength(0);
+        password.append("CANCEL");
         closeStage();
     }
 

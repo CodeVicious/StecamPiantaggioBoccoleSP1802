@@ -16,7 +16,17 @@ import java.nio.charset.StandardCharsets;
 
 public class WebQueryService {
     final static Logger Logger = LogManager.getLogger(WebQueryService.class);
+    private static WebQueryService ourInstance = new WebQueryService();
+    public static WebQueryService getInstance() {
+        return ourInstance;
+    }
+    private WebQueryService() {}
+
+
+
     ConfigurationManager conf = ConfigurationManager.getInstance();
+
+
 
     private CsvParserService csvParserService;
     private StatusManager statusManager;
@@ -168,5 +178,13 @@ public class WebQueryService {
         if (webOffline)
             mainController.setControlloOFFLine();
         isWebOffline = webOffline;
+    }
+
+    public void setStatusManager(StatusManager statusManager) {
+        this.statusManager = statusManager;
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
     }
 }

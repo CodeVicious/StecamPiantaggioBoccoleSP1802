@@ -9,10 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import stecamSP1802.controllers.LoginController;
-import stecamSP1802.controllers.MainController;
-import stecamSP1802.controllers.RicetteController;
-import stecamSP1802.controllers.ScreensController;
+import stecamSP1802.controllers.*;
 import stecamSP1802.services.StatusManager;
 
 import java.io.RandomAccessFile;
@@ -70,6 +67,7 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
 
         primaryStage.setOnShown(event -> {
             MainController m = (MainController) mainContainer.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
+
             lc.setStatusManager(m.getStatusManager());
             lc.setDbService(m.getDBService());
             ric.setDbService(m.getDBService());

@@ -12,25 +12,23 @@ public class PlcService {
     final Logger Logger = LogManager.getLogger(PlcService.class);
     final PLC plcMASTER;
     final ExecutorService service;
-    private final WebQueryService webQueryService;
+
     private final int pcToPlcDb;
     private final int plcToPcDb;
 
     public PlcService(
             String name,
             String ip, byte[] plcToPc, byte[] pcToPlc, int plcToPcDb, int pcToPlcDb, double[] booleans,
-                      final PLCListener listener, StatusManager statusManager, WebQueryService webQueryService, final ExecutorService service) {
+            final PLCListener listener, StatusManager statusManager, final ExecutorService service) {
 
         //never start without Executor nor listeners
         Preconditions.checkNotNull(listener);
         Preconditions.checkNotNull(service);
-        Preconditions.checkNotNull(webQueryService);
         
         this.plcToPcDb = plcToPc.length;
         this.pcToPlcDb = pcToPlc.length;
 
 
-        this.webQueryService = webQueryService;
         plcMASTER = new PLC(
                 name,
                 ip,

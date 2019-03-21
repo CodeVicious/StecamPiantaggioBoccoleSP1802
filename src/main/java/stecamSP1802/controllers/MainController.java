@@ -132,7 +132,6 @@ public class MainController extends AbstractController implements Initializable,
     DbService dbService;
     SerialService serialService;
     PlcService plcService;
-    WebQueryService webQueryService;
     WatchDog watchDog;
 
     // Observers
@@ -192,8 +191,10 @@ public class MainController extends AbstractController implements Initializable,
         statusManagerListener = new StatusManagerListenerImp(this, plcService);
         statusManager = new StatusManager(); // Gestore degli stati generale e di connessione
         statusManager.addListener(statusManagerListener);
-        webQueryService = new WebQueryService(statusManager, this);
-        serialService = new SerialService(this, statusManager, webQueryService); //Gestore Bar Code
+        WebQueryService.getInstance().setStatusManager(statusManager);
+        WebQueryService.getInstance().setMainController(this);
+
+        serialService = new SerialService(this, statusManager); //Gestore Bar Code
         dbService = new DbService(statusManager); //Gestore interfacce DB
         watchDog = new WatchDog(this); // Gestore inattività ed altri alert temporizzati.
 
@@ -208,7 +209,6 @@ public class MainController extends AbstractController implements Initializable,
                 conf.getBitMonitor(),
                 plcListener,
                 statusManager,
-                webQueryService,
                 executors
         ); // Gestore interfaccia PLC
 
@@ -415,7 +415,7 @@ public class MainController extends AbstractController implements Initializable,
                             cicloWO.setText(barCode);
 
                             if (isWOListPartEnabled) {
-                                EsitoWebQuery esito = webQueryService.VerificaListaPartiWO(barCode); //Verifica il WO e carica la lista parti dal server
+                                EsitoWebQuery esito = WebQueryService.getInstance().VerificaListaPartiWO(barCode); //Verifica il WO e carica la lista parti dal server
 
                                 if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
                                     codiceRICETTA.setText(esito.getResultQuery());
@@ -475,7 +475,7 @@ public class MainController extends AbstractController implements Initializable,
                             lastUdM.setStyle("-fx-control-inner-background: green");
 
                             if (isUDMVerificaEnabled) {
-                                EsitoWebQuery esito = webQueryService.VerificaUDM(barCode);
+                                EsitoWebQuery esito = WebQueryService.getInstance().VerificaUDM(barCode);
                                 if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
                                     if (VerificaCodice(esito.getResultQuery())) //Controllo se nella lista componenti e setto il check
                                     {
@@ -580,17 +580,26 @@ public class MainController extends AbstractController implements Initializable,
 
 
     public void disableWORequest(ActionEvent event) {
-        webQueryService.sendDisabilitaUDM();
+        WebQueryService.getInstance().sendDisabilitaUDM();
     }
 
     public void enableWORequest(ActionEvent event) {
-        webQueryService.sendAbilitaUDM();
+        WebQueryService.getInstance().sendAbilitaUDM();
     }
 
 
     public void onCaricaParametri(ActionEvent event) {
-        if (getPopUpPassword() == loggedUser.getPassword())
-            myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
+
+        String res = getPopUpPassword();
+        if (!res.matches("CANCEL")) {
+            if (res.matches(loggedUser.getPassword()))
+                myController.setScreen(MainStecamPiantaggioBoccoleSP1802.propertiesID);
+            else {
+                Alert alert = new Alert(Alert.AlertType.ERROR,
+                        "PASSWORD SBAGLIATA", ButtonType.OK);
+                alert.showAndWait();
+            }
+        }
     }
 
 
@@ -602,8 +611,9 @@ public class MainController extends AbstractController implements Initializable,
         return dbService;
     }
 
-    public void setLoggedUser(String matricola, String nomeOperatore, boolean isConduttoreDiLinea, boolean isOnLine) {
+    public void setLoggedUser(String matricola, String password, String nomeOperatore, boolean isConduttoreDiLinea, boolean isOnLine) {
         watchDog.scheduleTimer();
+
         this.matricola = matricola;
         this.nomeOperatore = nomeOperatore;
         this.isConduttoreDiLinea = isConduttoreDiLinea;
@@ -611,6 +621,7 @@ public class MainController extends AbstractController implements Initializable,
         loggedUser.setLoggedIN(true);
         loggedUser.setConduttoreDiLinea(isConduttoreDiLinea);
         loggedUser.setMatricola(matricola);
+        loggedUser.setPassword(password);
         loggedUser.setNomeOperatore(nomeOperatore);
 
         Platform.runLater(() -> {
@@ -646,12 +657,12 @@ public class MainController extends AbstractController implements Initializable,
 
     public void onControlloWO(ActionEvent event) {
         isWOListPartEnabled = controlloWO.isSelected();
-        webQueryService.checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
+        WebQueryService.getInstance().checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
     }
 
     public void onControlloUDM(ActionEvent event) {
         isUDMVerificaEnabled = controlloUDM.isSelected();
-        webQueryService.checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
+        WebQueryService.getInstance().checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
     }
 
     public void onSynckUsers(ActionEvent actionEvent) {
@@ -689,9 +700,6 @@ public class MainController extends AbstractController implements Initializable,
         }
     }
 
-    public void checkControlForConduttoreDiLinea(boolean isConduttoreDiLinea) {
-
-    }
 
     public void onNewWO(ActionEvent actionEvent) {
         resettaStatoGlobale();
@@ -714,7 +722,7 @@ public class MainController extends AbstractController implements Initializable,
         tblWoData.clear();
 
 
-        webQueryService.cleanWO();
+        WebQueryService.getInstance().cleanWO();
 
         woTblPiantaggio.setItems(tblWoData);
 
@@ -735,11 +743,13 @@ public class MainController extends AbstractController implements Initializable,
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("/popUpLogin.fxml"));
         // initializing the controller
-        LoginPopUpController popupController = new LoginPopUpController();
+
+        LoginPopUpController popupController;
 
         Parent layout;
         try {
             layout = loader.load();
+            popupController = (LoginPopUpController) loader.getController();
             Scene scene = new Scene(layout);
             // this is the popup stage
             Stage popupStage = new Stage();
@@ -751,10 +761,12 @@ public class MainController extends AbstractController implements Initializable,
             popupStage.initModality(Modality.WINDOW_MODAL);
             popupStage.setScene(scene);
             popupStage.showAndWait();
+            return popupController.getPassword();
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error(e);
+            return "";
         }
-        return popupController.getPassword();
+
     }
 
 
@@ -778,12 +790,13 @@ public class MainController extends AbstractController implements Initializable,
             alert.showAndWait();
             resetLoggedUser();
         } else {
-            
-
+            String res = getPopUpPassword();
+            if (!res.matches("CANCEL")) {
+                if (!res.matches(loggedUser.getPassword())) {
+                    resetLoggedUser();
+                }
+            }
         }
-
-
-
     }
 
     public void setUpControls(StatusManager.GlobalStatus globalStatus) {

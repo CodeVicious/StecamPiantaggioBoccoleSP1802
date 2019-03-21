@@ -14,14 +14,16 @@ import java.util.Properties;
 public class ConfigurationManager { //Singleton
     private static Logger Logger = LogManager.getLogger(ConfigurationManager.class);
     private static ConfigurationManager ourInstance = new ConfigurationManager();
-    private String localAdminUser;
-    private String localUser;
-    private String localAdminPassword;
-
     public static ConfigurationManager getInstance() {
         return ourInstance;
     }
     private ConfigurationManager() {}
+
+
+    private String localAdminUser;
+    private String localUser;
+    private String localAdminPassword;
+
 
     private String verificaListaPartiWOURL;
     private String verificaListaPartiUDM;

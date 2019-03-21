@@ -17,13 +17,12 @@ public class BarCodeListener implements SerialPortDataListener {
     private final SerialPort comPort;
     private final MainController mainController;
     private final StatusManager statusManager;
-    private final WebQueryService webQueryService;
 
-    public BarCodeListener(final SerialPort comPort, final MainController mainController, StatusManager statusManager, WebQueryService webQueryService) {
+
+    public BarCodeListener(final SerialPort comPort, final MainController mainController, StatusManager statusManager) {
         this.comPort = comPort;
         this.mainController = mainController;
         this.statusManager = statusManager;
-        this.webQueryService = webQueryService;
     }
 
     public int getListeningEvents() {
@@ -35,8 +34,8 @@ public class BarCodeListener implements SerialPortDataListener {
 
         if (
                 ((statusManager.getGlobalStatus() == StatusManager.GlobalStatus.CONNECTING) &&
-                        !webQueryService.isWebOffline())) {
-            Logger.warn("STATUS NOT READY FOR BARCODE. DISCARDED. GLOBAL STATUS " + statusManager.getGlobalStatus() + "AND IsOffLine:"+webQueryService.isWebOffline());
+                        !WebQueryService.getInstance().isWebOffline())) {
+            Logger.warn("STATUS NOT READY FOR BARCODE. DISCARDED. GLOBAL STATUS " + statusManager.getGlobalStatus() + "AND IsOffLine:"+WebQueryService.getInstance().isWebOffline());
             return;
         }
 

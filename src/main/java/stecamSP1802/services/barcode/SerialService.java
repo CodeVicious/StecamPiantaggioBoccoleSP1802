@@ -15,11 +15,11 @@ public class SerialService {
     private final MainController mainController;
     final SerialPort comPort;
 
-    public SerialService(final MainController mainController, final StatusManager statusManager, final WebQueryService webQueryService) {
+    public SerialService(final MainController mainController, final StatusManager statusManager) {
         this.mainController = mainController;
         comPort = SerialPort.getCommPort(ConfigurationManager.getInstance().getCOMPort());
 
-        comPort.addDataListener(new BarCodeListener(comPort,mainController,statusManager,webQueryService));
+        comPort.addDataListener(new BarCodeListener(comPort,mainController,statusManager));
     }
 
 

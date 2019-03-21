@@ -5,7 +5,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,7 @@ import stecamSP1802.ConfigurationManager;
 import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
 import stecamSP1802.services.DbService;
 import stecamSP1802.services.StatusManager;
+import stecamSP1802.services.WebQueryService;
 
 import java.net.URL;
 import java.sql.ResultSet;
@@ -201,11 +204,20 @@ public class LoginController implements Initializable, ControlledScreen {
 
     private void loggedIn(String nomeOperatore, boolean isConduttoreDiLinea, boolean isOnLine) {
         MainController m = (MainController) myController.getController(MainStecamPiantaggioBoccoleSP1802.mainID);
-        m.setLoggedUser(matricola.toString(), nomeOperatore, isConduttoreDiLinea, isOnLine);
-        cleanUP();
-        setMsg("");
-        m.startBarCodeService(); //Inizializzo il BarCode solo a Login ok
-        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
+
+        if(!isConduttoreDiLinea && WebQueryService.getInstance().isWebOffline()){
+            Alert alert = new Alert(Alert.AlertType.WARNING,
+                    "ATTENZIONE SISTEMA OFFLINE INSERIRE ACCOUNT AMMINISTRATORE", ButtonType.OK);
+            alert.showAndWait();
+            cleanUP();
+            setMsg("");
+        } else{
+            m.setLoggedUser(matricola.toString(), password.toString(), nomeOperatore, isConduttoreDiLinea, isOnLine);
+            cleanUP();
+            setMsg("");
+            m.startBarCodeService(); //Inizializzo il BarCode solo a Login ok
+            myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
+        }
     }
 
     public void onRESETPressed(ActionEvent event) {
