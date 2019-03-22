@@ -207,7 +207,7 @@ public class LoginController implements Initializable, ControlledScreen {
 
         if(!isConduttoreDiLinea && WebQueryService.getInstance().isWebOffline()){
             Alert alert = new Alert(Alert.AlertType.WARNING,
-                    "ATTENZIONE SISTEMA OFFLINE INSERIRE ACCOUNT AMMINISTRATORE", ButtonType.OK);
+                    "ATTENZIONE WEB OFFLINE INSERIRE ACCOUNT AMMINISTRATORE", ButtonType.OK);
             alert.showAndWait();
             cleanUP();
             setMsg("");
@@ -253,7 +253,7 @@ public class LoginController implements Initializable, ControlledScreen {
 
     public void setOFFLINEControls() {
         isMastricolaStage = true;
-        setMsg("INSERIRE CREDENZIALI LOCALI");
+        setMsg("INSERIRE CREDENZIALI ");
     }
 
     public String getPassword() {
