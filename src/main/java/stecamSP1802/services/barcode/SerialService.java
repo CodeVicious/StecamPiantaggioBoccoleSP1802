@@ -1,13 +1,10 @@
 package stecamSP1802.services.barcode;
 
 import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-import com.fazecast.jSerialComm.SerialPortEvent;
-import stecamSP1802.ConfigurationManager;
 
+import stecamSP1802.ConfigurationManager;
 import stecamSP1802.controllers.MainController;
 import stecamSP1802.services.StatusManager;
-import stecamSP1802.services.WebQueryService;
 
 //Serial Service SINGLETON communication
 

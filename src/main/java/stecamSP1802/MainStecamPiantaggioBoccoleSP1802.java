@@ -39,9 +39,8 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-
         Logger.info("START STECAMSP1802");
-        conf.getConfiguration();
+        conf.getFileConfiguration();
 
         mainContainer = new ScreensController();
         mainContainer.loadScreen(MainStecamPiantaggioBoccoleSP1802.mainID, MainStecamPiantaggioBoccoleSP1802.mainFile);

@@ -23,8 +23,7 @@ public class PLCListenerImp implements PLCListener {
         if ((address == 0) && (val == true)) {
             switch (pos) {
                 case 6: //Ok Ricetta, atteso lettura UDM
-                    if ( (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_WO)||
-                            (statusManager.getGlobalStatus()== StatusManager.GlobalStatus.WAITING_CODICE_RICETTA)){
+                    if (  statusManager.getGlobalStatus()== StatusManager.GlobalStatus.WAITING_RICETTA_OK_KO){
                         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
                         mainController.onRicettaOK();
                     } else {
@@ -32,9 +31,7 @@ public class PLCListenerImp implements PLCListener {
                     }
                     break;
                 case 5:// KO Ricetta
-                    if ( (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_WO)||
-                            (statusManager.getGlobalStatus()== StatusManager.GlobalStatus.WAITING_CODICE_RICETTA)){
-
+                    if (  statusManager.getGlobalStatus()== StatusManager.GlobalStatus.WAITING_RICETTA_OK_KO){
                         mainController.onRicettaKO();
                     } else {
                         Logger.error("RICEVUTO 0.5 - Ricetta KO inatteso");

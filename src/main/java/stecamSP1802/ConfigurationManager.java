@@ -4,26 +4,35 @@ package stecamSP1802;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.helper.PasswordMD5Converter;
+import stecamSP1802.services.DbService;
 
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 
 
 public class ConfigurationManager { //Singleton
     private static Logger Logger = LogManager.getLogger(ConfigurationManager.class);
     private static ConfigurationManager ourInstance = new ConfigurationManager();
+
     public static ConfigurationManager getInstance() {
         return ourInstance;
     }
-    private ConfigurationManager() {}
 
+    private ConfigurationManager() {
+    }
+
+
+    //From Local DB
+    Map<String, String> param;
+    private DbService dbService;
 
     private String localAdminUser;
     private String localUser;
     private String localAdminPassword;
-
 
     private String verificaListaPartiWOURL;
     private String verificaListaPartiUDM;
@@ -31,68 +40,92 @@ public class ConfigurationManager { //Singleton
     private String uRLVerificaUID;
     private String uRLDisabilitaUDM;
     private String connessioneSERVER;
-    private String connessioneLOCALSERVER;
+
     private String passwordAmministrativa;
     private String utenteLocale;
     private int logoffTimeout;
 
 
+    //From config properties
     final Properties prop = new Properties();
 
-
-    private InputStream input;
     private String plcName;
-
-
     private String plcIP;
     private int byteArrayPcPlc;
     private int byteArrayPlcPc;
-    private int  dbNumberPcPlc;
+    private int dbNumberPcPlc;
     private int dbNumberPlcPc;
+    public  String connessioneLOCALSERVER;
     private String comPORT;
     private double[] bitMonitor;
 
 
-
-    public void getConfiguration(){
-
-        input = getClass().getResourceAsStream("/config.properties");
-
+    public void getFileConfiguration() {
         try {
+            File jarFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+
+            InputStream input = new FileInputStream(jarFile.getParentFile() + "/main.properties");
+
             prop.load(input);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException e) {
+            Logger.error(e);
         }
 
+
+        //Load Properties from file
         plcName = prop.getProperty("PLCName");
         plcIP = prop.getProperty("PLCIP");
         byteArrayPcPlc = Integer.parseInt(prop.getProperty("byteArrayLengthofDB-PC-PLC"));
         byteArrayPlcPc = Integer.parseInt(prop.getProperty("byteArrayLengthofDB-PLC-PC"));
         dbNumberPcPlc = Integer.parseInt(prop.getProperty("dbNumber-PC-PLC"));
         dbNumberPlcPc = Integer.parseInt(prop.getProperty("dbNumber-PLC-PC"));
-        String[]bitArray = prop.get("bitMonitor").toString().split("#");
+        String[] bitArray = prop.get("bitMonitor").toString().split("#");
         bitMonitor = new double[bitArray.length];
-        for(int i=0;i<bitArray.length;i++)
-            bitMonitor[i]=Double.parseDouble(bitArray[i]);
-
+        for (int i = 0; i < bitArray.length; i++)
+            bitMonitor[i] = Double.parseDouble(bitArray[i]);
         comPORT = prop.getProperty("COM");
-
-        verificaListaPartiWOURL = prop.getProperty("VerificaListaPartiWOURL");
-        verificaListaPartiUDM  = prop.getProperty("VerificaListaPartiUDM");
-
-        nomeStazione =  prop.getProperty("NomeStazione");
-        uRLDisabilitaUDM = prop.getProperty("URLDisabilitaUDM");
-        connessioneSERVER = prop.getProperty("ConnessioneSERVER");
         connessioneLOCALSERVER = prop.getProperty("ConnessioneLOCALSERVER");
-        passwordAmministrativa = prop.getProperty("PasswordAmministrativa");
-        utenteLocale = prop.getProperty("utenteLocale");
-        logoffTimeout = Integer.parseInt(prop.getProperty("LogoffTimeout"));
-
-        localAdminUser = prop.getProperty("utente-Amministratore");
-        localUser = prop.getProperty("utente-Locale");
-        localAdminPassword = prop.getProperty("password-Amministratore");
 
     }
+
+    public void getDBConfiguration(){
+        if(dbService==null)
+        {
+            Logger.error("DBService NULL");
+            return;
+        }
+
+        try {
+            param = dbService.queryParametri();
+        } catch (SQLException e) {
+            Logger.error(e);
+        }
+
+        //Load properties from db
+        verificaListaPartiWOURL = param.get("VerificaListaPartiWOURL");
+        verificaListaPartiUDM  = param.get("VerificaListaPartiUDM");
+
+        nomeStazione =  param.get("NomeStazione");
+        uRLDisabilitaUDM = param.get("URLDisabilitaUDM");
+        connessioneSERVER = param.get("ConnessioneSERVER");
+
+        passwordAmministrativa = param.get("PasswordAmministrativa");
+        utenteLocale = param.get("utenteLocale");
+        logoffTimeout = Integer.parseInt(param.get("LogoffTimeout"));
+
+        localAdminUser = param.get("utente-Amministratore");
+        localUser = param.get("utente-Locale");
+        localAdminPassword = param.get("password-Amministratore");
+    }
+
+    public Properties getPropFile() {
+        return prop;
+    }
+
+    public Map<String, String> getPropDB() {
+        return param;
+    }
+
 
     public String getPlcName() {
         return plcName;
@@ -118,13 +151,13 @@ public class ConfigurationManager { //Singleton
         return dbNumberPlcPc;
     }
 
-    public String getCOMPort() { return comPORT;  }
-
-    public String getJDBCString() {
-        return "jdbc:sqlserver://127.0.0.1;databaseName=StecamSP1802;user=sqluser;password=sqluser";
+    public String getCOMPort() {
+        return comPORT;
     }
 
-    public double[] getBitMonitor() { return bitMonitor; }
+    public double[] getBitMonitor() {
+        return bitMonitor;
+    }
 
     public String getVerificaListaPartiWOURL() {
         return verificaListaPartiWOURL;
@@ -166,10 +199,6 @@ public class ConfigurationManager { //Singleton
         return logoffTimeout;
     }
 
-    public Properties getProp() {
-        return prop;
-    }
-
     public String getLocalAdminUser() {
         return localAdminUser;
     }
@@ -183,27 +212,35 @@ public class ConfigurationManager { //Singleton
     }
 
     public void saveProperties() {
-        URL resourceUrl = getClass().getResource("/config.properties");
-        File file = null;
-        try {
-            file = new File(resourceUrl.toURI());
-            FileOutputStream output = new FileOutputStream(file);
-            prop.store(output,null);
 
-        } catch (URISyntaxException | IOException e) {
+        //Salvo parametri file
+        try {
+            File jarFile = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+            FileOutputStream output = new FileOutputStream(jarFile.getParentFile() + "/main.properties");
+
+            prop.store(output, null);
+
+        } catch (IOException | URISyntaxException e) {
+            Logger.error(e);
+        }
+
+        //salvo parametri DB
+        try {
+            dbService.saveParametri( param);
+        } catch (SQLException e) {
             Logger.error(e);
         }
 
     }
 
     public boolean checkMatricola(String matricola) {
-        if(localAdminUser.matches(matricola) || localUser.matches(matricola))
+        if (localAdminUser.matches(matricola) || localUser.matches(matricola))
             return true;
         return false;
     }
 
     public boolean isLocalAdmin(String matricola) {
-        if(localAdminUser.matches(matricola))
+        if (localAdminUser.matches(matricola))
             return true;
         return false;
     }
@@ -212,5 +249,9 @@ public class ConfigurationManager { //Singleton
         if (localAdminPassword.matches(PasswordMD5Converter.getMD5(password)))
             return true;
         return false;
+    }
+
+    public void setDbService(DbService dbService) {
+        this.dbService = dbService;
     }
 }

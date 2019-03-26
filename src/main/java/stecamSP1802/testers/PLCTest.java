@@ -8,13 +8,9 @@ import com.google.common.collect.Maps;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.services.PLC;
 import stecamSP1802.services.PLCListener;
-import stecamSP1802.services.StatusManager;
-import stecamSP1802.services.barcode.BarCodeListener;
 import stecamSP1802.services.barcode.Parte;
-import stecamSP1802.services.barcode.SerialService;
 import stecamSP1802.services.barcode.WorkOrder;
 
-import java.net.ConnectException;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.Map;
@@ -40,7 +36,7 @@ public class PLCTest {
     }
 
     public static void testPiantaggio() {
-        ConfigurationManager.getInstance().getConfiguration();
+        ConfigurationManager.getInstance().getFileConfiguration();
         try {
             Connection conLDB = DriverManager.getConnection(ConfigurationManager.getInstance().getConnessioneLOCALSERVER());
             String SQLINSERT = " INSERT INTO [dbo].[piantaggi]" +
@@ -63,7 +59,7 @@ public class PLCTest {
     }
 
     public static void loadWO() {
-        ConfigurationManager.getInstance().getConfiguration();
+        ConfigurationManager.getInstance().getFileConfiguration();
 
         try {
             Connection conLDB = DriverManager.getConnection(ConfigurationManager.getInstance().getConnessioneLOCALSERVER());
@@ -98,7 +94,7 @@ public class PLCTest {
 
 
     public static void storeWO() {
-        ConfigurationManager.getInstance().getConfiguration();
+        ConfigurationManager.getInstance().getFileConfiguration();
         String SQLDROP = "TRUNCATE TABLE [dbo].[cache]";
 
 
@@ -153,7 +149,7 @@ public class PLCTest {
 
 
     public static void testDROPDB() {
-        ConfigurationManager.getInstance().getConfiguration();
+        ConfigurationManager.getInstance().getFileConfiguration();
 
         try {
             Connection conLDB = DriverManager.getConnection(ConfigurationManager.getInstance().getConnessioneLOCALSERVER());

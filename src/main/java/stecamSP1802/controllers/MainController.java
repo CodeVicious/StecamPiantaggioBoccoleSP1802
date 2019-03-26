@@ -196,6 +196,10 @@ public class MainController extends AbstractController implements Initializable,
 
         serialService = new SerialService(this, statusManager); //Gestore Bar Code
         dbService = new DbService(statusManager); //Gestore interfacce DB
+        dbService.connectLocalDB();
+        conf.setDbService(dbService);
+        conf.getDBConfiguration();
+
         watchDog = new WatchDog(this); // Gestore inattività ed altri alert temporizzati.
 
         plcListener = new PLCListenerImp(this, statusManager);
@@ -216,7 +220,7 @@ public class MainController extends AbstractController implements Initializable,
     }
 
     public void startMainServices() {
-        dbService.connectDB();
+        dbService.connectRemoteDB();
         plcService.connect();
     }
 
@@ -419,6 +423,8 @@ public class MainController extends AbstractController implements Initializable,
 
                                 if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
                                     codiceRICETTA.setText(esito.getResultQuery());
+                                    showMesage("RICETTA " + esito.getResultQuery() + " INVIATA ALLA MACCHINA. IN ATTESA DI ACK/NACK");
+                                    statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_RICETTA_OK_KO);
                                     plcService.sendCodiceRicetta(esito.getResultQuery());
                                 } else {
                                     Logger.warn("Query WO " + barCode + " RIGETTATA DAL SERVER");
@@ -448,9 +454,11 @@ public class MainController extends AbstractController implements Initializable,
                             codiceRICETTA.setStyle("-fx-control-inner-background: green");
                             codiceRICETTA.setText("checking"); //Chiedo il caricamento della ricetta direttamente al PLC
                             WorkOrder.getInstance().setCodiceRicetta(barCode);
-                            if (dbService.loadRicetta(barCode))
+                            if (dbService.loadRicetta(barCode)) {
+                                showMesage("RICETTA " + barCode + " INVIATA ALLA MACCHINA. IN ATTESA DI ACK/NACK");
+                                statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_RICETTA_OK_KO);
                                 plcService.sendCodiceRicetta(barCode);
-                            else {
+                            } else {
                                 Logger.warn("RCETTA " + barCode + " NON PRESENTE NEL DB!");
                                 codiceRICETTA.setStyle("-fx-control-inner-background: red");
                                 onRicettaKO();
@@ -523,7 +531,6 @@ public class MainController extends AbstractController implements Initializable,
                             if (VerificaCodice(barCode)) {
                                 refreshTabellaWO(lastUdM.getText(), barCode); //Aggiungo l'UdM
 
-
                                 if (WorkOrder.getInstance().checkLavorabile()) {
                                     statusManager.setGlobalStatus(StatusManager.GlobalStatus.WORKING);
                                     plcService.iniziaCicloMacchina();
@@ -540,6 +547,8 @@ public class MainController extends AbstractController implements Initializable,
                     }
                 });
                 break;
+            default:
+                Logger.warn("BARCODE " + barCode + " SCARTATO");
 
         }
 
@@ -804,6 +813,12 @@ public class MainController extends AbstractController implements Initializable,
         switch (globalStatus) {
             case WAITING_WO:
                 barcodeWO.setDisable(false);
+                codiceRICETTA.setDisable(true);
+                lastUdM.setDisable(true);
+                lastCodProdotto.setDisable(true);
+                break;
+            case WAITING_RICETTA_OK_KO:
+                barcodeWO.setDisable(true);
                 codiceRICETTA.setDisable(true);
                 lastUdM.setDisable(true);
                 lastCodProdotto.setDisable(true);

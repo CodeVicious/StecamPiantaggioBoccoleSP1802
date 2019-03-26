@@ -32,10 +32,10 @@ public class BarCodeListener implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
         //Check if Status not running for BarCode acquisiztion
 
-        if (
-                ((statusManager.getGlobalStatus() == StatusManager.GlobalStatus.CONNECTING) &&
-                        !WebQueryService.getInstance().isWebOffline())) {
-            Logger.warn("STATUS NOT READY FOR BARCODE. DISCARDED. GLOBAL STATUS " + statusManager.getGlobalStatus() + "AND IsOffLine:"+WebQueryService.getInstance().isWebOffline());
+        if ((statusManager.getGlobalStatus() == StatusManager.GlobalStatus.WAITING_RICETTA_OK_KO) ||
+                (statusManager.getGlobalStatus() == StatusManager.GlobalStatus.CONNECTING) &&
+                        !WebQueryService.getInstance().isWebOffline()){
+            Logger.warn("STATUS NOT READY FOR BARCODE. DISCARDED. GLOBAL STATUS " + statusManager.getGlobalStatus().toString() + " AND IsOffLine: " + WebQueryService.getInstance().isWebOffline());
             return;
         }
 

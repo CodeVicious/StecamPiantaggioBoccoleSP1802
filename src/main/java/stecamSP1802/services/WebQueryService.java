@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 
 public class WebQueryService {
     final static Logger Logger = LogManager.getLogger(WebQueryService.class);
@@ -28,17 +27,10 @@ public class WebQueryService {
 
 
 
-    private CsvParserService csvParserService;
+    private CsvParserService csvParserService = new CsvParserService();
     private StatusManager statusManager;
     private MainController mainController;
     private boolean isWebOffline = false;
-
-    public WebQueryService(StatusManager statusManager, MainController mainController) {
-        Preconditions.checkNotNull(statusManager);
-        csvParserService = new CsvParserService();
-        this.statusManager = statusManager;
-        this.mainController = mainController;
-    }
 
 
     synchronized public EsitoWebQuery VerificaListaPartiWO(String barCode) {

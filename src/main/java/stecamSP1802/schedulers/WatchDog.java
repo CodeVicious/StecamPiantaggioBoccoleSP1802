@@ -1,15 +1,12 @@
 package stecamSP1802.schedulers;
 
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.AbstractScheduledService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.controllers.MainController;
 
-import java.sql.Time;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 

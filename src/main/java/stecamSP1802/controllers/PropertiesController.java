@@ -5,17 +5,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
+import stecamSP1802.helper.PasswordMD5Converter;
 
 import java.net.URL;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class PropertiesController implements Initializable, ControlledScreen {
 
@@ -26,31 +26,49 @@ public class PropertiesController implements Initializable, ControlledScreen {
     ScreensController myController;
 
     @FXML
-    TableView tableProperties;
+    TableView<AppProperty> tableProperties;
 
     @FXML
-    TableColumn tablePropertiesNome;
+    TableColumn<AppProperty, String> tablePropertiesNome;
 
     @FXML
-    TableColumn tablePropertiesVal;
+    TableColumn<AppProperty, String> tablePropertiesVal;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         tableProperties.setItems(data);
         tableProperties.setEditable(true);
 
-        Properties prop = conf.getProp();
-        tablePropertiesNome.setCellValueFactory(new PropertyValueFactory<AppProperty,String>("keyword"));
-        tablePropertiesVal.setCellValueFactory(new PropertyValueFactory<AppProperty,String>("value"));
-        Set<String> keys = prop.stringPropertyNames();
+        Map<String, String> propDB = conf.getPropDB();
+        Properties propFILE = conf.getPropFile();
+        tablePropertiesNome.setCellValueFactory(new PropertyValueFactory<AppProperty, String>("keyword"));
+        tablePropertiesVal.setCellValueFactory(new PropertyValueFactory<AppProperty, String>("value"));
 
-        for(String p: keys){
-            data.add(new AppProperty(p,prop.getProperty(p)));
+
+        Set<String> keysDB = propDB.keySet();
+        Set<String> keysF = propFILE.stringPropertyNames();
+
+        for (String p : keysF) {
+            data.add(new AppProperty(p, propFILE.getProperty(p)));
+        }
+
+        for (String p : keysDB) {
+            if(!p.matches("password-Amministratore")){
+                data.add(new AppProperty(p, propDB.get(p)));
+            } else{
+                data.add(new AppProperty(p, mask(propDB.get(p))));
+            }
         }
 
         tablePropertiesVal.setCellFactory(TextFieldTableCell.forTableColumn());
 
 
+    }
+
+    private String mask(String text) {
+        char[] chars = new char[text.length()];
+        Arrays.fill(chars, '*');
+        return new String(chars);
     }
 
     @Override
@@ -63,16 +81,36 @@ public class PropertiesController implements Initializable, ControlledScreen {
     }
 
     public void onSaveProperties(ActionEvent event) {
+
         conf.saveProperties();
+        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.mainID);
+
     }
 
-    public void onEditSalva(TableColumn.CellEditEvent cellEditEvent) {
-        AppProperty p = (AppProperty)cellEditEvent.getTableView().getItems()
+    public void onEditCommit(TableColumn.CellEditEvent cellEditEvent) {
+        AppProperty p = (AppProperty) cellEditEvent.getTableView().getItems()
                 .get(cellEditEvent.getTablePosition().getRow());
-        p.setValue((String)cellEditEvent.getNewValue());
-        conf.getProp().setProperty(p.getKeyword(),p.getValue());
+
+        boolean isAmmPwd = p.getKeyword().matches("password-Amministratore");
+        if(!isAmmPwd) {
+            p.setValue((String) cellEditEvent.getNewValue());
+        } else {
+            p.setValue(mask((String) cellEditEvent.getNewValue()));
+        }
+
+        if (conf.getPropDB().get(p.getKeyword()) != null) {
+            if(!isAmmPwd) {
+                conf.getPropDB().put(p.getKeyword(), p.getValue());
+            } else {
+                conf.getPropDB().put(p.getKeyword(), PasswordMD5Converter.getMD5((String) cellEditEvent.getNewValue()));
+            }
+        } else {
+            conf.getPropFile().setProperty(p.getKeyword(), p.getValue());
+        }
 
         tableProperties.refresh();
 
     }
+
+
 }

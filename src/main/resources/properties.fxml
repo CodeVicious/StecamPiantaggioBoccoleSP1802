@@ -13,7 +13,7 @@
             <TableView fx:id="tableProperties" layoutY="39.0" prefHeight="637.0" prefWidth="1079.0">
               <columns>
                 <TableColumn fx:id="tablePropertiesNome" prefWidth="364.0" text="Nome parametro" />
-                <TableColumn fx:id="tablePropertiesVal" minWidth="0.0" onEditCommit="#onEditSalva" prefWidth="714.0" text="Valore parametro" />
+                <TableColumn fx:id="tablePropertiesVal" minWidth="0.0" onEditCommit="#onEditCommit" prefWidth="714.0" text="Valore parametro" />
               </columns>
             </TableView>
             <Label alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" prefHeight="38.0" prefWidth="1072.0" text="Tabella delle proprietà dell'applicativo" />

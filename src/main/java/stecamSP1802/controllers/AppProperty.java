@@ -26,4 +26,12 @@ public class AppProperty {
     public void setValue(String value) {
         this.value.set(value);
     }
+
+    public SimpleStringProperty keywordProperty() {
+        return keyword;
+    }
+
+    public SimpleStringProperty valueProperty() {
+        return value;
+    }
 }
