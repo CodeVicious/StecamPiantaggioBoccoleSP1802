@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,7 +93,7 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
         });
 
 
-
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/HMI/logo_stecam_small.png")));
         primaryStage.show();
 
 

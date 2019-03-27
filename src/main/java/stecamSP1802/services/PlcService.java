@@ -107,6 +107,13 @@ public class PlcService {
 
     public void iniziaCicloMacchina(){
         Logger.info("SETTO OK PIANTA 0.5");
+        Logger.info("RESETTO RESET CICLO 0.4");
+        plcMASTER.putBool(false,0,4,false);
         plcMASTER.putBool(false,0,5,true);
+    }
+
+    public void resetCiclo(){
+        Logger.info("SETTO RESET CICLO 0.4");
+        plcMASTER.putBool(false,0,4,true);
     }
 }

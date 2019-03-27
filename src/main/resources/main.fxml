@@ -28,9 +28,14 @@
                   <Image url="@HMI/logo_stecam_def.png" />
                </image>
             </ImageView>
-            <Label fx:id="stecamTime" alignment="CENTER" layoutX="546.0" prefHeight="71.0" prefWidth="189.0" text="Time">
+            <Label fx:id="stecamTime" layoutX="596.0" prefHeight="71.0" prefWidth="189.0" text="Time">
                <font>
                   <Font name="Courier New" size="20.0" />
+               </font>
+            </Label>
+            <Label fx:id="stecamTime1" alignment="CENTER_RIGHT" layoutX="496.0" layoutY="-1.0" prefHeight="71.0" prefWidth="85.0" text="orario">
+               <font>
+                  <Font name="Courier New Bold" size="14.0" />
                </font>
             </Label>
          </children></Pane>
@@ -140,7 +145,7 @@
             </Label>
             <Label fx:id="labelESITO" alignment="CENTER" contentDisplay="CENTER" layoutX="1044.0" layoutY="22.0" prefHeight="101.0" prefWidth="222.0" style="-fx-background-color: orange; -fx-background-radius: 10;" text="ESITO" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                <font>
-                  <Font name="Courier New" size="64.0" />
+                  <Font name="Courier New" size="48.0" />
                </font>
             </Label>
             <ImageView fx:id="imageALERTS" fitHeight="138.0" fitWidth="174.0" layoutX="848.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
@@ -174,16 +179,26 @@
                   <Font name="Courier New" size="20.0" />
                </font>
             </Label>
+            <Label layoutX="14.0" layoutY="109.0" prefHeight="28.0" prefWidth="131.0" text="ultimo errore" wrapText="true">
+               <font>
+                  <Font name="Courier New" size="14.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
       <AnchorPane layoutX="-3.0" layoutY="696.0" prefHeight="72.0" prefWidth="1287.0">
          <children>
+            <Label fx:id="errorBar" layoutX="159.0" layoutY="-50.0" prefHeight="28.0" prefWidth="850.0" wrapText="true">
+               <font>
+                  <Font name="Courier New" size="20.0" />
+               </font>
+            </Label>
             <Text layoutX="853.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sistema di Piantaggio Boccola - STECAM SP1802" textAlignment="RIGHT" wrappingWidth="411.609375">
                <font>
                   <Font name="Courier New" size="24.0" />
                </font>
             </Text>
-            <Label layoutX="14.0" layoutY="22.0" prefHeight="28.0" prefWidth="97.0" text="UTENTE -" wrapText="true">
+            <Label layoutX="24.0" layoutY="32.0" prefHeight="28.0" prefWidth="97.0" text="UTENTE -" wrapText="true">
                <font>
                   <Font name="Courier New" size="20.0" />
                </font>

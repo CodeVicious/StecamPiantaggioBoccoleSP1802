@@ -76,6 +76,10 @@ public class MainController extends AbstractController implements Initializable,
     Label lblUtenteLoggato;
 
     @FXML
+    Label errorBar;
+
+
+    @FXML
     CheckBox controlloWO;
 
     @FXML
@@ -367,8 +371,10 @@ public class MainController extends AbstractController implements Initializable,
         plcService.unsetRicettaCaricata();
         Logger.warn("RICETTA KO! ");
         Platform.runLater(() -> {
-            codiceRICETTA.setText(WorkOrder.getInstance().getCodiceRicetta() + " NON PRESENTE ");
+            barcodeWO.setText("");
+            codiceRICETTA.setText(" NON PRESENTE ");
             codiceRICETTA.setStyle("-fx-background-color: red");
+            showError("Codice Ricetta " + WorkOrder.getInstance().getCodiceRicetta() + " rigettato -> Nuovo WO");
             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         });
         showMesage("RICETTA KO! Ripetere il caricamento WorkOrder con codiceDett UDM corretti");
@@ -411,11 +417,13 @@ public class MainController extends AbstractController implements Initializable,
                         //check BarCode
                         if (!barCode.matches("\\d{7,8}")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
+                            showError("Il BarCode " + barCode + " NON E' UN VALIDO WORK ORDER");
                             barcodeWO.setText(barCode);
                             barcodeWO.setStyle("-fx-control-inner-background: red");
                         } else {
                             barcodeWO.setText(barCode);
                             barcodeWO.setStyle("-fx-control-inner-background: green");
+                            showError("");
                             cicloWO.setText(barCode);
 
                             if (isWOListPartEnabled) {
@@ -430,6 +438,7 @@ public class MainController extends AbstractController implements Initializable,
                                     Logger.warn("Query WO " + barCode + " RIGETTATA DAL SERVER");
                                     barcodeWO.setStyle("-fx-control-inner-background: red");
                                     showMesage("WO " + barCode + " KO! " + esito.getResultQuery());
+                                    showError("WO " + barCode + " KO! " + esito.getResultQuery());
                                 }
                             } else {
                                 WorkOrder.getInstance().setBarCodeWO(barCode);
@@ -445,6 +454,7 @@ public class MainController extends AbstractController implements Initializable,
                     public void run() {
                         if (!barCode.matches("\\d{8}[A-Z]?")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO");
+                            showError("Il BarCode " + barCode + " NON E' UN VALIDO CODICE ARTICOLO");
                             showMesage("CODICE ARTICOLO - ERRATO");
                             codiceRICETTA.setText(barCode);
                             codiceRICETTA.setStyle("-fx-control-inner-background: red");
@@ -453,6 +463,7 @@ public class MainController extends AbstractController implements Initializable,
                             codiceRICETTA.setText(barCode);
                             codiceRICETTA.setStyle("-fx-control-inner-background: green");
                             codiceRICETTA.setText("checking"); //Chiedo il caricamento della ricetta direttamente al PLC
+                            showError("");
                             WorkOrder.getInstance().setCodiceRicetta(barCode);
                             if (dbService.loadRicetta(barCode)) {
                                 showMesage("RICETTA " + barCode + " INVIATA ALLA MACCHINA. IN ATTESA DI ACK/NACK");
@@ -473,6 +484,7 @@ public class MainController extends AbstractController implements Initializable,
                         //check BarCode
                         if (!barCode.matches("\\d{4}(?i)(99|CS|EM|MM|MV|NQ|PI|PR|UC|UE|US)\\d{5,8}")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
+                            showError("Il BarCode " + barCode + " NON E' UN VALIDO UDM CODE");
                             showMesage("CODICE UdM - ERRATO");
 
                             lastUdM.setText(barCode);
@@ -481,6 +493,7 @@ public class MainController extends AbstractController implements Initializable,
                         } else {
                             lastUdM.setText(barCode);
                             lastUdM.setStyle("-fx-control-inner-background: green");
+                            showError("");
 
                             if (isUDMVerificaEnabled) {
                                 EsitoWebQuery esito = WebQueryService.getInstance().VerificaUDM(barCode);
@@ -519,6 +532,7 @@ public class MainController extends AbstractController implements Initializable,
                         //check BarCode
                         if (!barCode.matches("\\d{8}[A-Z]?")) {
                             Logger.error("Il BarCode " + barCode + " NON E' UN VALIDO CODICE COMPONENTE");
+                            showError("Il BarCode " + barCode + " NON E' UN VALIDO CODICE COMPONENTE");
                             showMesage("CODICE COMPONENTE- ERRATO");
 
                             lastCodProdotto.setText(barCode);
@@ -527,6 +541,7 @@ public class MainController extends AbstractController implements Initializable,
                         } else {
                             lastCodProdotto.setText(barCode);
                             lastCodProdotto.setStyle("-fx-control-inner-background: green");
+                            showError("");
 
                             if (VerificaCodice(barCode)) {
                                 refreshTabellaWO(lastUdM.getText(), barCode); //Aggiungo l'UdM
@@ -584,7 +599,13 @@ public class MainController extends AbstractController implements Initializable,
         Platform.runLater(() -> {
             msgBOX.setText(msg);
         });
+    }
 
+
+    public void showError(String msg) {
+        Platform.runLater(() -> {
+            errorBar.setText(msg);
+        });
     }
 
 
@@ -662,6 +683,9 @@ public class MainController extends AbstractController implements Initializable,
             synckUSERS.setDisable(true);
         }
 
+        setUpControls(statusManager.getGlobalStatus());
+
+
     }
 
     public void onControlloWO(ActionEvent event) {
@@ -676,13 +700,23 @@ public class MainController extends AbstractController implements Initializable,
 
     public void onSynckUsers(ActionEvent actionEvent) {
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
-                "SINCRONIZZO CON IL SERVER  ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-        alert.showAndWait();
-
-        if (alert.getResult() == ButtonType.YES) {
-            dbService.synckUSERS();
+        String res = getPopUpPassword();
+        if (!res.matches("CANCEL")) {
+            if (res.matches(loggedUser.getPassword())) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                        "SINCRONIZZO CON IL SERVER  ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+                alert.showAndWait();
+                if (alert.getResult() == ButtonType.YES) {
+                    dbService.synckUSERS();
+                    showError("SINCRONIZZAZIONE CONCLUSA");
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR,
+                        "PASSWORD SBAGLIATA", ButtonType.OK);
+                alert.showAndWait();
+            }
         }
+
     }
 
     public void onLoginBtn(ActionEvent actionEvent) {
@@ -741,9 +775,20 @@ public class MainController extends AbstractController implements Initializable,
     }
 
     public void onRicetteBtn(ActionEvent actionEvent) {
-        RicetteController ric = (RicetteController) myController.getController(MainStecamPiantaggioBoccoleSP1802.ricetteID);
-        ric.loadDataFromDB();
-        myController.setScreen(MainStecamPiantaggioBoccoleSP1802.ricetteID);
+
+        String res = getPopUpPassword();
+        if (!res.matches("CANCEL")) {
+            if (res.matches(loggedUser.getPassword())) {
+                RicetteController ric = (RicetteController) myController.getController(MainStecamPiantaggioBoccoleSP1802.ricetteID);
+                ric.loadDataFromDB();
+                myController.setScreen(MainStecamPiantaggioBoccoleSP1802.ricetteID);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR,
+                        "PASSWORD SBAGLIATA", ButtonType.OK);
+                alert.showAndWait();
+            }
+        }
+
     }
 
 
@@ -790,6 +835,8 @@ public class MainController extends AbstractController implements Initializable,
         imageALERTS.setImage(offline);
         LoginController lc = (LoginController) myController.getController(MainStecamPiantaggioBoccoleSP1802.loginID);
 
+        showError("ATTENZIONE CONNESSIONE WEBQUERY ASSENTE! AUTORIZZARE IL CICLO.");
+
         lc.setOFFLINEControls();
 
         if (!loggedUser.isConduttoreDiLinea()) {
@@ -808,52 +855,62 @@ public class MainController extends AbstractController implements Initializable,
         }
     }
 
+    public void setControlloONLine() {
+        imageALERTS.setImage(null);
+        showError("WebQuery onLine");
+    }
+
     public void setUpControls(StatusManager.GlobalStatus globalStatus) {
 
-        switch (globalStatus) {
-            case WAITING_WO:
-                barcodeWO.setDisable(false);
-                codiceRICETTA.setDisable(true);
-                lastUdM.setDisable(true);
-                lastCodProdotto.setDisable(true);
-                break;
-            case WAITING_RICETTA_OK_KO:
-                barcodeWO.setDisable(true);
-                codiceRICETTA.setDisable(true);
-                lastUdM.setDisable(true);
-                lastCodProdotto.setDisable(true);
-                break;
-            case WAITING_CODICE_RICETTA:
-                barcodeWO.setDisable(true);
-                codiceRICETTA.setDisable(false);
-                lastUdM.setDisable(true);
-                lastCodProdotto.setDisable(true);
-                break;
-            case WAITING_UDM:
-                barcodeWO.setDisable(true);
-                codiceRICETTA.setDisable(true);
-                lastUdM.setDisable(false);
-                lastCodProdotto.setDisable(true);
-                break;
-            case WAITING_CODICE_COMPONENTE:
-                barcodeWO.setDisable(true);
-                codiceRICETTA.setDisable(true);
-                lastUdM.setDisable(true);
-                lastCodProdotto.setDisable(false);
-                break;
-            case WORKING:
-                barcodeWO.setDisable(true);
-                codiceRICETTA.setDisable(true);
-                lastUdM.setDisable(true);
-                lastCodProdotto.setDisable(true);
-                break;
-            default:
-                barcodeWO.setDisable(true);
-                codiceRICETTA.setDisable(true);
-                lastUdM.setDisable(true);
-                lastCodProdotto.setDisable(true);
-
-
+        if (!loggedUser.isConduttoreDiLinea()) {
+            barcodeWO.setDisable(true);
+            codiceRICETTA.setDisable(true);
+            lastUdM.setDisable(true);
+            lastCodProdotto.setDisable(true);
+        } else {
+            switch (globalStatus) {
+                case WAITING_WO:
+                    barcodeWO.setDisable(false);
+                    codiceRICETTA.setDisable(true);
+                    lastUdM.setDisable(true);
+                    lastCodProdotto.setDisable(true);
+                    break;
+                case WAITING_RICETTA_OK_KO:
+                    barcodeWO.setDisable(true);
+                    codiceRICETTA.setDisable(true);
+                    lastUdM.setDisable(true);
+                    lastCodProdotto.setDisable(true);
+                    break;
+                case WAITING_CODICE_RICETTA:
+                    barcodeWO.setDisable(true);
+                    codiceRICETTA.setDisable(false);
+                    lastUdM.setDisable(true);
+                    lastCodProdotto.setDisable(true);
+                    break;
+                case WAITING_UDM:
+                    barcodeWO.setDisable(true);
+                    codiceRICETTA.setDisable(true);
+                    lastUdM.setDisable(false);
+                    lastCodProdotto.setDisable(true);
+                    break;
+                case WAITING_CODICE_COMPONENTE:
+                    barcodeWO.setDisable(true);
+                    codiceRICETTA.setDisable(true);
+                    lastUdM.setDisable(true);
+                    lastCodProdotto.setDisable(false);
+                    break;
+                case WORKING:
+                    barcodeWO.setDisable(true);
+                    codiceRICETTA.setDisable(true);
+                    lastUdM.setDisable(true);
+                    lastCodProdotto.setDisable(true);
+                    break;
+                default:
+                    barcodeWO.setDisable(true);
+                    codiceRICETTA.setDisable(true);
+                    lastUdM.setDisable(true);
+                    lastCodProdotto.setDisable(true);
+            }
         }
     }
 
@@ -872,4 +929,5 @@ public class MainController extends AbstractController implements Initializable,
     public void onRicettaTyped(ActionEvent event) {
         onNewBarCode(codiceRICETTA.getText());
     }
+
 }

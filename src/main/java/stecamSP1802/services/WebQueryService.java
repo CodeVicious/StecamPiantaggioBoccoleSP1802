@@ -169,6 +169,8 @@ public class WebQueryService {
     public void setWebOffline(boolean webOffline) {
         if (webOffline)
             mainController.setControlloOFFLine();
+        else
+            mainController.setControlloONLine();
         isWebOffline = webOffline;
     }
 
