@@ -101,6 +101,7 @@ public class MainStecamPiantaggioBoccoleSP1802 extends Application {
 
     private void closeProgram() {
         System.out.println("CHIUDO");
+
         mainContainer.closeMain(MainStecamPiantaggioBoccoleSP1802.mainID);
         this.primaryStage.close();
     }

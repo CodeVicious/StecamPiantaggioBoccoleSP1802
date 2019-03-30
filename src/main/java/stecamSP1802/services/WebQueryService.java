@@ -86,14 +86,17 @@ public class WebQueryService {
 
             BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line = inputStreamReader.readLine();
+            Logger.info("ESITO DA UDM "+line);
 
             if (line.matches("KO")) {
                 Logger.error("KO AS FIRST LINE - FIRST LINE " + line + "");
                 line = inputStreamReader.readLine();
-                return new EsitoWebQuery(EsitoWebQuery.ESITO.KO, line);
+                Logger.info("CODICE DA UDM "+line.trim());
+                return new EsitoWebQuery(EsitoWebQuery.ESITO.KO, line.trim());
             } else {
                 line = inputStreamReader.readLine();
-                return new EsitoWebQuery(EsitoWebQuery.ESITO.OK, line);
+                Logger.info("CODICE DA UDM "+line.trim());
+                return new EsitoWebQuery(EsitoWebQuery.ESITO.OK, line.trim());
             }
 
         } catch (MalformedURLException e) {

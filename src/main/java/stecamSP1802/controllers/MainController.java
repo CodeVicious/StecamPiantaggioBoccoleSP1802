@@ -500,6 +500,8 @@ public class MainController extends AbstractController implements Initializable,
                                 if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
                                     if (VerificaCodice(esito.getResultQuery())) //Controllo se nella lista componenti e setto il check
                                     {
+                                        showMesage("CODICE "+esito.getResultQuery()+" ACCETTATO");
+                                        lastCodProdotto.setText(esito.getResultQuery());
                                         refreshTabellaWO(barCode, esito.getResultQuery());
 
                                     } else {
@@ -571,7 +573,9 @@ public class MainController extends AbstractController implements Initializable,
 
 
     private boolean VerificaCodice(String codice) {
-        if (WorkOrder.getInstance().getListaParti().containsKey(codice)) {
+        Logger.info("VERIFICA CODICE "+codice);
+        if (WorkOrder.getInstance().getListaParti().containsKey(codice.trim())) {
+            Logger.info("CODICE OK "+codice);
             Parte parte = WorkOrder.getInstance().getListaParti().get(codice);
             parte.setVerificato(true);
             Logger.info("UDM OK - CODE " + codice);

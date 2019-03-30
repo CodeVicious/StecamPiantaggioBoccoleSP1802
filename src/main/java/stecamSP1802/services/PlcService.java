@@ -77,6 +77,7 @@ public class PlcService {
 
 
     public void closeConnection() {
+        unsetPianta();
         this.service.shutdownNow();
     }
 
