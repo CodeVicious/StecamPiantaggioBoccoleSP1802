@@ -98,7 +98,6 @@ public class WebQueryService {
                 Logger.info("CODICE DA UDM "+line.trim());
                 return new EsitoWebQuery(EsitoWebQuery.ESITO.OK, line.trim());
             }
-
         } catch (MalformedURLException e) {
             Logger.error("l'URL " + conf.getVerificaListaPartiUDM() + " è sbagliato" + e);
             setWebOffline(true);
