@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import stecamSP1802.ConfigurationManager;
 import stecamSP1802.MainStecamPiantaggioBoccoleSP1802;
+import stecamSP1802.helper.SwitchGUIJna;
 import stecamSP1802.schedulers.WatchDog;
 import stecamSP1802.services.StatusManagerListenerImp;
 import stecamSP1802.services.WebQueryService;
@@ -933,5 +934,10 @@ public class MainController extends AbstractController implements Initializable,
     public void onRicettaTyped(ActionEvent event) {
         onNewBarCode(codiceRICETTA.getText());
     }
+
+    public void onSwitchHMI(ActionEvent actionEvent) {
+        SwitchGUIJna.SwitchGUI(ConfigurationManager.getInstance().getHmi());
+    }
+
 
 }

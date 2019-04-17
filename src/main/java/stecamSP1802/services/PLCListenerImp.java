@@ -4,7 +4,9 @@ import com.google.common.base.Preconditions;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import stecamSP1802.ConfigurationManager;
 import stecamSP1802.controllers.MainController;
+import stecamSP1802.helper.SwitchGUIJna;
 
 public class PLCListenerImp implements PLCListener {
     private Logger Logger = LogManager.getLogger(PLCListenerImp.class);
@@ -22,6 +24,11 @@ public class PLCListenerImp implements PLCListener {
         Logger.info("PLC BIT CHANGED - PLC[" + plcName + "] - address [" + address + "] - pos [" + pos + "] - val[" + val + "]");
         if ((address == 0) && (val == true)) {
             switch (pos) {
+                case 7: //Switch GUI
+                    Logger.info("RICEVUTO 0.7 - CAMBIO GUI");
+                    SwitchGUIJna.SwitchGUI((ConfigurationManager.getInstance().getJavaUi()));
+
+                    break;
                 case 6: //Ok Ricetta, atteso lettura UDM
                     if (  statusManager.getGlobalStatus()== StatusManager.GlobalStatus.WAITING_RICETTA_OK_KO){
                         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);

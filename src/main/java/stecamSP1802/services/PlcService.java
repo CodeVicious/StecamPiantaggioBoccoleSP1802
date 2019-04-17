@@ -117,4 +117,6 @@ public class PlcService {
         Logger.info("SETTO RESET CICLO 0.4");
         plcMASTER.putBool(false,0,4,true);
     }
+
+
 }

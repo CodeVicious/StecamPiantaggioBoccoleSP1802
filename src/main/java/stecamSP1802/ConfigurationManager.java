@@ -58,6 +58,8 @@ public class ConfigurationManager { //Singleton
     public  String connessioneLOCALSERVER;
     private String comPORT;
     private double[] bitMonitor;
+    private String JavaUi;
+    private String Hmi;
 
 
     public void getFileConfiguration() {
@@ -85,6 +87,8 @@ public class ConfigurationManager { //Singleton
             bitMonitor[i] = Double.parseDouble(bitArray[i]);
         comPORT = prop.getProperty("COM");
         connessioneLOCALSERVER = prop.getProperty("ConnessioneLOCALSERVER");
+        JavaUi = prop.getProperty("JAVA-UI");
+        Hmi = prop.getProperty("HMI");
 
     }
 
@@ -186,6 +190,10 @@ public class ConfigurationManager { //Singleton
     public String getConnessioneLOCALSERVER() {
         return connessioneLOCALSERVER;
     }
+
+    public String getJavaUi(){ return JavaUi;}
+
+    public String getHmi(){return Hmi;}
 
     public String getPasswordAmministrativa() {
         return passwordAmministrativa;

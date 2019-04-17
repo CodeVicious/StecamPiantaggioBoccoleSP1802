@@ -12,15 +12,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="java" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES />
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/src/main/java" />
-        </SOURCES>
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.11.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.11.2" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.11" level="project" />
@@ -35,5 +26,7 @@
     <orderEntry type="library" name="Maven: com.univocity:univocity-parsers:2.5.4" level="project" />
     <orderEntry type="library" name="Maven: com.fazecast:jSerialComm:2.4.0" level="project" />
     <orderEntry type="library" name="Maven: com.microsoft.sqlserver:mssql-jdbc:7.2.1.jre8" level="project" />
+    <orderEntry type="library" exported="" name="Maven: net.java.dev.jna:jna:5.2.0" level="project" />
+    <orderEntry type="library" exported="" name="Maven: net.java.dev.jna:jna-platform:5.2.0" level="project" />
   </component>
 </module>
