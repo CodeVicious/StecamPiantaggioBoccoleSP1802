@@ -178,7 +178,11 @@ public class DbService {
     public ResultSet queryMatricola(StringBuilder matricola) throws SQLException {
         String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = " + matricola;
         Statement stmt = null;
-        stmt = conLDB.createStatement();
+        if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
+            stmt = conLDB.createStatement();
+        } else {
+            stmt = conGDB.createStatement();
+        }
         return (stmt.executeQuery(SQLSELECT));
     }
 
@@ -186,7 +190,11 @@ public class DbService {
         String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = " + matricola +
                 " AND HashPassword = '" + PasswordMD5Converter.getMD5(password.toString()) + "'";
         Statement stmt = null;
-        stmt = conLDB.createStatement();
+        if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
+            stmt = conLDB.createStatement();
+        } else {
+            stmt = conGDB.createStatement();
+        }
         return (stmt.executeQuery(SQLSELECT));
     }
 
@@ -377,9 +385,6 @@ public class DbService {
         return false;
     }
 
-    public void saveWO() {
-    }
-
     public void saveParametri(Map<String, String> param) throws SQLException {
 
         String SQLINSERT = " UPDATE [dbo].[parametri]" +
@@ -391,8 +396,8 @@ public class DbService {
         Statement stmt = conLDB.createStatement();
 
         for (String p : param.keySet()) {
-            preparedStmt.setString(1,param.get(p));
-            preparedStmt.setString(2,p );
+            preparedStmt.setString(1, param.get(p));
+            preparedStmt.setString(2, p);
             preparedStmt.addBatch();
             // execute the preparedstatement
         }
@@ -409,5 +414,20 @@ public class DbService {
             Logger.error(e);
             statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED);
         }
+    }
+
+    public boolean isGlobalOffline() {
+        try {
+            if ((conGDB!=null) && conGDB.isValid(3)) {
+                statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTED);
+                return false;
+            }
+        } catch (SQLException e) {
+            Logger.error("CONNESSION AL DB GLOBALE IMPOSSIBILE");
+            statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED);
+            return false;
+        }
+        statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED);
+        return true;
     }
 }

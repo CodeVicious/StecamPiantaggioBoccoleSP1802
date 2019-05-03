@@ -57,9 +57,9 @@
                   <Font name="Courier New" size="20.0" />
                </font>
             </Button>
-            <Button fx:id="btnSwitchHMI" layoutX="890.0" mnemonicParsing="false" onAction="#onSwitchHMI" prefHeight="55.0" prefWidth="167.0" text="HMI">
+            <Button fx:id="btnSwitchHMI" layoutX="890.0" mnemonicParsing="false" onAction="#onSwitchHMI" prefHeight="55.0" prefWidth="167.0" text="PAGINA PRINCIPALE" wrapText="true">
                <font>
-                  <Font name="Courier New" size="20.0" />
+                  <Font name="Courier New" size="17.0" />
                </font>
             </Button>
             <Button fx:id="newWoBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="666.0" layoutY="2.0" mnemonicParsing="false" onAction="#onNewWO" prefHeight="55.0" prefWidth="222.0" text="Nuovo WO" textAlignment="CENTER" wrapText="true">

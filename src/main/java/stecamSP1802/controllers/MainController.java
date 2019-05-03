@@ -178,6 +178,7 @@ public class MainController extends AbstractController implements Initializable,
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                     setText(null);
+                    this.setStyle("-fx-background-color: white;");
                 } else {
                     setText(item);
                     if (item.matches("OK"))
@@ -270,7 +271,7 @@ public class MainController extends AbstractController implements Initializable,
 
     public void CloseApp() {
         plcService.closeConnection();
-        dbService.saveWO();
+
         //dbService.close();
         //serialService.close();
         Platform.exit();
@@ -501,7 +502,7 @@ public class MainController extends AbstractController implements Initializable,
                                 if (esito.getEsitoQuery() == EsitoWebQuery.ESITO.OK) {
                                     if (VerificaCodice(esito.getResultQuery())) //Controllo se nella lista componenti e setto il check
                                     {
-                                        showMesage("CODICE "+esito.getResultQuery()+" ACCETTATO");
+                                        showMesage("CODICE " + esito.getResultQuery() + " ACCETTATO");
                                         lastCodProdotto.setText(esito.getResultQuery());
                                         refreshTabellaWO(barCode, esito.getResultQuery());
 
@@ -574,9 +575,9 @@ public class MainController extends AbstractController implements Initializable,
 
 
     private boolean VerificaCodice(String codice) {
-        Logger.info("VERIFICA CODICE "+codice);
+        Logger.info("VERIFICA CODICE " + codice);
         if (WorkOrder.getInstance().getListaParti().containsKey(codice.trim())) {
-            Logger.info("CODICE OK "+codice);
+            Logger.info("CODICE OK " + codice);
             Parte parte = WorkOrder.getInstance().getListaParti().get(codice);
             parte.setVerificato(true);
             Logger.info("UDM OK - CODE " + codice);
@@ -690,20 +691,42 @@ public class MainController extends AbstractController implements Initializable,
 
         setUpControls(statusManager.getGlobalStatus());
 
-
     }
 
     public void onControlloWO(ActionEvent event) {
         isWOListPartEnabled = controlloWO.isSelected();
         WebQueryService.getInstance().checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
+        if (!isWOListPartEnabled) {
+            Image offline = new Image(getClass().getResourceAsStream("/HMI/offline-icon.png"));
+            imageALERTS.setImage(offline);
+            return;
+        }
+        if (isWOListPartEnabled && isUDMVerificaEnabled) {
+            imageALERTS.setImage(null);
+        }
     }
 
     public void onControlloUDM(ActionEvent event) {
         isUDMVerificaEnabled = controlloUDM.isSelected();
         WebQueryService.getInstance().checkSendUDM(isWOListPartEnabled, isUDMVerificaEnabled);
+        if (!isUDMVerificaEnabled) {
+            Image offline = new Image(getClass().getResourceAsStream("/HMI/offline-icon.png"));
+            imageALERTS.setImage(offline);
+            return;
+        }
+        if (isWOListPartEnabled && isUDMVerificaEnabled) {
+            imageALERTS.setImage(null);
+        }
     }
 
     public void onSynckUsers(ActionEvent actionEvent) {
+
+        if (dbService.isGlobalOffline()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR,
+                    "DATABASE GLOBALE OFFLINE! SINCRONIZZAZIONE IMPOSSIBILE!", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
 
         String res = getPopUpPassword();
         if (!res.matches("CANCEL")) {
@@ -773,6 +796,7 @@ public class MainController extends AbstractController implements Initializable,
         WebQueryService.getInstance().cleanWO();
 
         woTblPiantaggio.setItems(tblWoData);
+        woTblPiantaggio.refresh();
 
 
         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);

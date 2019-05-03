@@ -119,7 +119,6 @@ public class WebQueryService {
 
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
-            setWebOffline(false);
         } catch (MalformedURLException e) {
             Logger.error("l'URL " + conf.getuRLDisabilitaUDM() + " è sbagliato" + e);
             setWebOffline(true);
@@ -132,15 +131,12 @@ public class WebQueryService {
     }
 
     public void sendDisabilitaUDM() {
-
         try {
             URL urlVERICFICA = new URL(conf.getuRLDisabilitaUDM() +
                     "?NomeStazione=" + conf.getNomeStazione() +
                     "&DisabilitaConvertiUDM=SI");
-
             URLConnection con = urlVERICFICA.openConnection();
             InputStream is = con.getInputStream();
-            setWebOffline(false);
         } catch (MalformedURLException e) {
             Logger.error("l'URL " + conf.getuRLDisabilitaUDM() + " è sbagliato" + e);
             setWebOffline(true);

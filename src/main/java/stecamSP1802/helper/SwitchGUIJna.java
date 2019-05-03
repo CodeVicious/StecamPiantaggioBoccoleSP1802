@@ -25,6 +25,7 @@ public class SwitchGUIJna {
         User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class);
 
         boolean EnumWindows(WinUser.WNDENUMPROC lpEnumFunc, Pointer arg);
+        boolean ShowWindow(HWND hWnd, int nCmdShow);
 
         HWND SetFocus(HWND hWnd);
 
@@ -59,6 +60,15 @@ public class SwitchGUIJna {
             Logger.info(t);
             if (t.equals(switchTo)) {
                 user32.SetForegroundWindow(listaWin.get(t));
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Logger.info("SWITCH ");
+                    System.out.println("SWITCH");
+                }
+                Logger.info("SWITCH ");
+                System.out.println("SWITCH");
+                user32.ShowWindow(listaWin.get(t), WinUser.SW_SHOWNOACTIVATE);
                 System.out.println(t);
                 return;
             }

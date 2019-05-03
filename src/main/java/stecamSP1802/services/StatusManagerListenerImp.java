@@ -42,7 +42,7 @@ public class StatusManagerListenerImp implements stecamSP1802.services.StatusMan
     public synchronized void onGlobalStatusChange(StatusManager.GlobalStatus globalStatus) {
         switch (globalStatus) {
             case WAITING_UDM:
-                mainController.showMesage("SPARARE I CODICI UDM");
+                mainController.showMesage("IN ATTESA  DI CODICI UDM");
                 break;
             case WAITING_WO:
                 mainController.showMesage("IN ATTESA DI WORK ORDER");

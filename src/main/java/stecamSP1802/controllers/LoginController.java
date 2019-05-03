@@ -150,15 +150,6 @@ public class LoginController implements Initializable, ControlledScreen {
     }
 
     private void checkPassword(StringBuilder password) throws SQLException {
-        if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
-            if (ConfigurationManager.getInstance().checkPassword(password.toString()))
-                loggedIn(ConfigurationManager.getInstance().getLocalAdminUser(), true, false);
-            else {
-                setMsg(matricola + " PASSWORD LOCALE SBAGLIATA! - RIPETERE PASSWORD");
-                password.setLength(0);
-                pwLBL.set("");
-            }
-        } else {
             ResultSet rs = dbService.queryMatricolaPassword(matricola, password);
             if (!rs.isBeforeFirst()) {
                 setMsg(matricola + " PASSWORD SBAGLIATA! - RIPETERE PASSWORD");
@@ -168,24 +159,11 @@ public class LoginController implements Initializable, ControlledScreen {
                 rs.next();
                 loggedIn(rs.getString("NomeOperatore"), true, true);
             }
-        }
+
 
     }
 
     private void checkMatricola(StringBuilder matricola) throws SQLException {
-        if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
-            if (ConfigurationManager.getInstance().checkMatricola(matricola.toString())) {
-                isMastricolaStage = false;
-                if (ConfigurationManager.getInstance().isLocalAdmin(matricola.toString()))
-                    setMsg(matricola + " INSERIRE PASSWORD");
-                else
-                    loggedIn(matricola.toString(), false, false);
-
-            } else {
-                setMsg("MATRICOLA NON PRESENTE! - REINSERIRE");
-                cleanUP();
-            }
-        } else {
             ResultSet rs = dbService.queryMatricola(matricola);
             if (!rs.next()) {
                 setMsg("MATRICOLA NON PRESENTE! - REINSERIRE");
@@ -199,7 +177,6 @@ public class LoginController implements Initializable, ControlledScreen {
                     loggedIn(rs.getString("NomeOperatore"), false, true);
                 }
             }
-        }
     }
 
     private void loggedIn(String nomeOperatore, boolean isConduttoreDiLinea, boolean isOnLine) {
