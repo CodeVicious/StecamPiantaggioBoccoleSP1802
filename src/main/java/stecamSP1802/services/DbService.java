@@ -73,11 +73,12 @@ public class DbService {
     }
 
 
-    public void storePiantaggio(String IOP, String PRG, String WO, String ESITO) {
+    public void storePiantaggio(String IOP, String PRG, String WO, String ESITO, String forza1, String forza2, String forza3, String forza4) {
         try {
             String SQLINSERT = " INSERT INTO [dbo].[piantaggi]" +
-                    "([TS],[IOP],[PRG],[WO],[ESITO])" +
-                    "     VALUES (?,?,?,?,?)";
+                    "([TS],[IOP],[PRG],[WO],[ESITO]," +
+                    "[FORZA1],[FORZA2],[FORZA3],[FORZA4])" +
+                    "     VALUES (?,?,?,?,?,?,?,?,?)";
 
             PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
             preparedStmt.setTimestamp(1, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));
@@ -85,6 +86,11 @@ public class DbService {
             preparedStmt.setString(3, PRG);
             preparedStmt.setString(4, WO);
             preparedStmt.setString(5, ESITO);
+            preparedStmt.setString(6, forza1);
+            preparedStmt.setString(7, forza2);
+            preparedStmt.setString(8, forza3);
+            preparedStmt.setString(9, forza4);
+
             preparedStmt.execute();
 
 
@@ -350,7 +356,6 @@ public class DbService {
 
         String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.ricette where codice=?";
 
-
         PreparedStatement preparedStmtDettaglio = null;
         try {
             preparedStmtDettaglio = conLDB.prepareStatement(SQLSELECT);
@@ -418,7 +423,7 @@ public class DbService {
 
     public boolean isGlobalOffline() {
         try {
-            if ((conGDB!=null) && conGDB.isValid(3)) {
+            if ((conGDB != null) && conGDB.isValid(3)) {
                 statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTED);
                 return false;
             }
@@ -429,5 +434,45 @@ public class DbService {
         }
         statusManager.setGlobalDbStatus(StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED);
         return true;
+    }
+
+    public String validaRicetta(String codiceRicetta) {
+        String SQLSELECT = "SELECT  [id]" +
+                ",[codice]" +
+                ",[descrizione]" +
+                "FROM [StecamSP1802].[dbo].[ricette]" +
+                "WHERE [codice] = " + codiceRicetta;
+        Statement stmt = null;
+
+        try {
+            stmt = conLDB.createStatement();
+            ResultSet rs = stmt.executeQuery(SQLSELECT);
+            if (!rs.next()) {
+                return "";
+            } else {
+                return rs.getString("id");
+            }
+        } catch (SQLException e) {
+            Logger.error("VALIDA RICETTA " + codiceRicetta);
+            return "";
+        }
+    }
+
+    public void refresh(String id, Map<String, Parte> listaServer) {
+        String SQLDETAILDEL = " DELETE FROM [dbo].[ricette_dettaglio] WHERE fk_ricetta = ?";
+
+        try {
+            PreparedStatement preparedStmtDettaglio = conLDB.prepareStatement(SQLDETAILDEL);
+            preparedStmtDettaglio.setString(1, id);
+            preparedStmtDettaglio.execute();
+
+            for (String rs : listaServer.keySet()) {
+                insertDettaglioRicetta(listaServer.get(rs).getCodice(),listaServer.get(rs).getDescrizione(),id);
+            }
+
+        } catch (SQLException e) {
+            Logger.error(e);
+        }
+
     }
 }

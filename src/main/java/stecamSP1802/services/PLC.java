@@ -485,6 +485,33 @@ public class PLC implements Runnable {
         }
     }
 
+    public float getFloat(boolean fromPLC, int address) throws Exception {
+        byte[] source;
+        if (fromPLC) {
+            synchronized (this.plcToPcLock) {
+                source = this.plcToPc;
+                if (address >= source.length - 3) {
+                    throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.plcToPcDb + " at address " + address);
+                }
+                ByteBuffer b = ByteBuffer.allocate(4);
+                b.put(source, address, 4);
+                b.rewind();
+                return b.getFloat();
+            }
+        } else {
+            synchronized (this.pcToPlcLock) {
+                source = this.pcToPlc;
+                if (address >= source.length - 3) {
+                    throw new Exception("PLC out of boundaries: " + this.PLCName + " in DB " + this.pcToPlcDb + " at address " + address);
+                }
+                ByteBuffer b = ByteBuffer.allocate(4);
+                b.put(source, address, 4);
+                b.rewind();
+                return b.getFloat();
+            }
+        }
+    }
+
     public String getString(boolean fromPLC, int address, int len) throws Exception {
         byte[] StrBuffer = new byte[len];
         byte[] source;

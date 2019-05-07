@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="707.0" prefWidth="1132.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="stecamSP1802.controllers.AggiornaRicetteController">
+   <children>
+      <AnchorPane layoutY="7.0" prefHeight="702.0" prefWidth="1137.0">
+         <children>
+            <TableView fx:id="tblRicettaNUOVA" layoutX="14.0" layoutY="182.0" prefHeight="435.0" prefWidth="539.0">
+               <columns>
+                  <TableColumn fx:id="codiceCOMPONENTENUOVO" prefWidth="182.0" resizable="false" text="Codice componente" />
+                <TableColumn fx:id="descrizioneCOMPONENTENUOVO" minWidth="0.0" prefWidth="355.0" resizable="false" text="Descirizone componente" />
+               </columns>
+            </TableView>
+            <TextField fx:id="txtCodRicetta" disable="true" layoutX="496.0" layoutY="74.0" prefHeight="55.0" prefWidth="307.0">
+               <font>
+                  <Font size="20.0" />
+               </font></TextField>
+            <Button fx:id="btnCANCEL" layoutX="390.0" layoutY="627.0" mnemonicParsing="false" onAction="#onBtnBack" prefHeight="62.0" prefWidth="163.0" text="CANCEL">
+               <font>
+                  <Font name="Courier New" size="23.0" />
+               </font>
+            </Button>
+            <Label layoutX="366.0" layoutY="91.0" prefHeight="21.0" prefWidth="100.0" text="Codice ricetta" />
+            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" prefHeight="64.0" prefWidth="1114.0" text="AGGIORNAMENTO RICETTA? AGGIORNA o CANCEL">
+               <font>
+                  <Font name="Courier New" size="33.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnAGGIORNA" layoutX="568.0" layoutY="627.0" mnemonicParsing="false" onAction="#onBtnUdate" prefHeight="62.0" prefWidth="163.0" text="AGGIORNA">
+               <font>
+                  <Font name="Courier New" size="23.0" />
+               </font>
+            </Button>
+            <TableView fx:id="tblRicettaVECCCHIA" layoutX="569.0" layoutY="182.0" prefHeight="435.0" prefWidth="548.0">
+               <columns>
+                  <TableColumn fx:id="codiceCOMPONENTEVECCHIO" prefWidth="182.0" resizable="false" text="Codice componente" />
+                  <TableColumn fx:id="descrizioneCOMPONENTEVECCHIO" minWidth="0.0" prefWidth="365.0" resizable="false" text="Descirizone componente" />
+               </columns>
+            </TableView>
+            <Label alignment="CENTER" layoutX="123.0" layoutY="141.0" prefHeight="32.0" prefWidth="321.0" style="-fx-background-color: green;" text="NUOVA LISTA COMPONENTI" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="22.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" layoutX="683.0" layoutY="141.0" prefHeight="32.0" prefWidth="321.0" style="-fx-background-color: red;" text="VECCHIA LISTA COMPONENTI" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="22.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

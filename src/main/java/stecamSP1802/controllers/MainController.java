@@ -1,5 +1,6 @@
 package stecamSP1802.controllers;
 
+import com.google.common.collect.Maps;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,6 +32,8 @@ import stecamSP1802.services.barcode.WorkOrder;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -125,6 +128,17 @@ public class MainController extends AbstractController implements Initializable,
     @FXML
     private ImageView imageALERTS;
 
+    @FXML
+    private TextField txtFORZA1;
+
+    @FXML
+    private TextField txtFORZA2;
+
+    @FXML
+    private TextField txtFORZA3;
+
+    @FXML
+    private TextField txtFORZA4;
 
     final ObservableList<WOTable> tblWoData = FXCollections.observableArrayList(WOTable.extractor());
 
@@ -169,7 +183,7 @@ public class MainController extends AbstractController implements Initializable,
 
         tblUdM.setCellValueFactory(new PropertyValueFactory<WOTable, String>("uDm"));
         tblArticolo.setCellValueFactory(new PropertyValueFactory<WOTable, String>("articolo"));
-        tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizioneDett"));
+        tblDescrizione.setCellValueFactory(new PropertyValueFactory<WOTable, String>("descrizione"));
         tblCheck.setCellValueFactory(new PropertyValueFactory<WOTable, String>("check"));
 
         tblCheck.setCellFactory(e -> new TableCell<ObservableList<String>, String>() {
@@ -348,9 +362,9 @@ public class MainController extends AbstractController implements Initializable,
 
     public void onRicettaOK() {
         plcService.unsetRicettaCaricata(); //Abbasso il bit di carica ricetta al PLC
-
         Logger.warn("RICETTA CARICATA! ");
         Platform.runLater(() -> {
+            checkAllineamentoRicette(); //Controlla variazioni nella tabella ricette e richiede eventuale aggiornamento
             WorkOrder wo = WorkOrder.getInstance();
             codiceRICETTA.setText(wo.getCodiceRicetta());
             codiceRICETTA.setStyle("-fx-background-color: green");
@@ -363,10 +377,92 @@ public class MainController extends AbstractController implements Initializable,
                 tblWoData.add(new WOTable(lista.get(art).getCodiceUdM(), lista.get(art).getCodice(), lista.get(art).getDescrizione(), lista.get(art).getVerificato()));
             }
 
+
             statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_UDM);
         });
 
         showMesage("RICETTA CARICATA! ");
+    }
+
+    private void checkAllineamentoRicette() {
+        WorkOrder wo = WorkOrder.getInstance();
+
+        String id = dbService.validaRicetta(wo.getCodiceRicetta());
+
+        if (id.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING,
+                    "ATTENZIONE RICETTA " + wo.getCodiceRicetta() + " NON PRESENTE IN LOCALE. SI SUGGERISCE DI AGGIORNARE LA LISTA RICETTE.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+
+        Map<String, Parte> listaServer = wo.getListaParti();
+        Map<String, Parte> listaLocale = Maps.newHashMap();
+
+        try {
+            ResultSet rs = dbService.caricaRicettaDettaglio(id);
+            while (rs.next()) {
+                listaLocale.put(rs.getString("codice"),
+                        new Parte("", rs.getString("codice"),
+                                rs.getString("descrizione"), false));
+            }
+        } catch (SQLException e) {
+            Logger.error("PROBLEMA REPERIMENTO DETTAGLI id " + id + " PER CODICE RICETTA " + wo.getCodiceRicetta());
+        }
+
+
+        if (areEqual(listaServer,listaLocale)) //Ricette uguali ok
+            return;
+
+        if(!loggedUser.isConduttoreDiLinea()){
+            Alert alert = new Alert(Alert.AlertType.WARNING,
+                    "ATTENZIONE DETTAGLIO RICETTA " + wo.getCodiceRicetta() +
+                            " NON CONGRUO CON RICETTA LOCALE. CONTATTARE CONDUTTORE DI LINEA.", ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/aggiornamentoRicetta.fxml"));
+        // initializing the controller
+
+        AggiornaRicetteController aggiornaRicetteController;
+
+        Parent layout;
+        try {
+            layout = loader.load();
+            aggiornaRicetteController = (AggiornaRicetteController) loader.getController();
+            aggiornaRicetteController.setCodiceRicetta(wo.getCodiceRicetta());
+            aggiornaRicetteController.setRicette(listaLocale,listaServer);
+            Scene scene = new Scene(layout);
+            // this is the popup stage
+            Stage popupStage = new Stage();
+            // Giving the popup controller access to the popup stage (to allow the controller to close the stage)
+            aggiornaRicetteController.setStage(popupStage);
+            if (this.main != null) {
+                popupStage.initOwner(main.getPrimaryStage());
+            }
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.setScene(scene);
+            popupStage.showAndWait();
+            if (aggiornaRicetteController.isUpdate()) {
+                dbService.refresh(id,listaServer);
+            }
+
+        } catch (IOException e) {
+            Logger.error(e);
+        }
+
+
+    }
+
+    private boolean areEqual(Map<String, Parte> first, Map<String, Parte> second) {
+        if (first.size() != second.size()) {
+            return false;
+        }
+
+        return first.keySet().stream()
+                .allMatch(e -> second.keySet().contains(e));
     }
 
     public void onRicettaKO() {
@@ -384,29 +480,45 @@ public class MainController extends AbstractController implements Initializable,
 
     public void piantaggioBUONO() {
         watchDog.resetSchedule();
+        ForzePiantaggio forze = plcService.getForze();
         Platform.runLater(() -> {
             labelESITO.setText("BUONO");
             labelESITO.setStyle("-fx-background-color: green");
+
+            txtFORZA1.setText(forze.getForza1String());
+            txtFORZA2.setText(forze.getForza2String());
+            txtFORZA3.setText(forze.getForza3String());
+            txtFORZA4.setText(forze.getForza4String());
+
         });
         Logger.warn("PIANTAGGIO BUONO! ");
         showMesage("PIANTAGGIO BUONO! ");
 
         dbService.storePiantaggio(loggedUser.getMatricola(), WorkOrder.getInstance().getCodiceRicetta(),
-                WorkOrder.getInstance().getBarCodeWO(), "OK");
+                WorkOrder.getInstance().getBarCodeWO(), "OK",
+                forze.getForza1String(),forze.getForza2String(),forze.getForza3String(),forze.getForza4String());
     }
 
     public void piantaggioSCARTO() {
         watchDog.resetSchedule();
+        ForzePiantaggio forze = plcService.getForze();
         Platform.runLater(() -> {
             labelESITO.setText("SCARTO");
             labelESITO.setStyle("-fx-background-color: red");
+
+            txtFORZA1.setText(forze.getForza1String());
+            txtFORZA2.setText(forze.getForza2String());
+            txtFORZA3.setText(forze.getForza3String());
+            txtFORZA4.setText(forze.getForza4String());
+
 
         });
         Logger.warn("PIANTAGGIO SCARTO! ");
         showMesage("PIANTAGGIO SCARTO! ");
 
         dbService.storePiantaggio(loggedUser.getMatricola(), WorkOrder.getInstance().getCodiceRicetta(),
-                WorkOrder.getInstance().getBarCodeWO(), "KO");
+                WorkOrder.getInstance().getBarCodeWO(), "KO",
+                forze.getForza1String(),forze.getForza2String(),forze.getForza3String(),forze.getForza4String());
     }
 
     public void onNewBarCode(String barCode) {

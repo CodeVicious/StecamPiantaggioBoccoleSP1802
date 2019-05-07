@@ -119,6 +119,14 @@
                   </TableView>
                </children>
             </AnchorPane>
+            <Label alignment="CENTER" layoutX="1138.0" layoutY="14.0" text="FORZA 1" />
+            <TextField fx:id="txtFORZA1" alignment="CENTER" editable="false" layoutX="1070.0" layoutY="35.0" text="forza 1" />
+            <Label alignment="CENTER" layoutX="1138.0" layoutY="86.0" text="FORZA 2" />
+            <TextField fx:id="txtFORZA2" alignment="CENTER" editable="false" layoutX="1070.0" layoutY="108.0" text="forza 2" />
+            <Label alignment="CENTER" layoutX="1134.0" layoutY="162.0" text="FORZA 3" />
+            <TextField fx:id="txtFORZA3" alignment="CENTER" editable="false" layoutX="1074.0" layoutY="187.0" text="forza 3" />
+            <Label alignment="CENTER" layoutX="1134.0" layoutY="238.0" text="FORZA 4" />
+            <TextField fx:id="txtFORZA4" alignment="CENTER" editable="false" layoutX="1074.0" layoutY="261.0" text="forza 4" />
          </children>
       </Pane>
       <Label fx:id="msgBOX" alignment="CENTER" contentDisplay="CENTER" layoutY="124.0" prefHeight="66.0" prefWidth="1280.0" style="-fx-background-color: yellow;" text="Messaggistica stato sistema" wrapText="true">
