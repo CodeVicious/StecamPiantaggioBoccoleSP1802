@@ -126,7 +126,13 @@ public class PlcService {
             float f2 = plcMASTER.getFloat(true, 6);
             float f3 = plcMASTER.getFloat(true, 10);
             float f4 = plcMASTER.getFloat(true, 14);
-            return new ForzePiantaggio(f1, f2, f3, f4);
+            float f5 = plcMASTER.getFloat(true, 18);
+            float f6 = plcMASTER.getFloat(true, 22);
+            float f7 = plcMASTER.getFloat(true, 26);
+            float f8 = plcMASTER.getFloat(true, 30);
+            float f9 = plcMASTER.getFloat(true, 34);
+
+            return new ForzePiantaggio(f1, f2, f3, f4, f5,f6,f7,f8,f9);
         } catch (Exception e) {
             Logger.error("PROBLEMA DI CONVERSIONE FORZE " + e);
         }

@@ -73,12 +73,17 @@ public class DbService {
     }
 
 
-    public void storePiantaggio(String IOP, String PRG, String WO, String ESITO, String forza1, String forza2, String forza3, String forza4) {
+    public void storePiantaggio(String IOP, String PRG, String WO, String ESITO,
+                                String forza1, String forza2, String forza3, String forza4,
+                                String forza5, String forza6, String forza7, String forza8,
+                                String forza9) {
         try {
             String SQLINSERT = " INSERT INTO [dbo].[piantaggi]" +
                     "([TS],[IOP],[PRG],[WO],[ESITO]," +
-                    "[FORZA1],[FORZA2],[FORZA3],[FORZA4])" +
-                    "     VALUES (?,?,?,?,?,?,?,?,?)";
+                    "[FORZA1],[FORZA2],[FORZA3],[FORZA4]," +
+                    "[FORZA5],[FORZA6],[FORZA7],[FORZA8],[FORZA9]" +
+                    ")" +
+                    " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
             PreparedStatement preparedStmt = conLDB.prepareStatement(SQLINSERT);
             preparedStmt.setTimestamp(1, new java.sql.Timestamp(Calendar.getInstance().getTimeInMillis()));
@@ -90,6 +95,12 @@ public class DbService {
             preparedStmt.setString(7, forza2);
             preparedStmt.setString(8, forza3);
             preparedStmt.setString(9, forza4);
+            preparedStmt.setString(10, forza5);
+            preparedStmt.setString(11, forza6);
+            preparedStmt.setString(12, forza7);
+            preparedStmt.setString(13, forza8);
+            preparedStmt.setString(14, forza9);
+
 
             preparedStmt.execute();
 
@@ -184,11 +195,8 @@ public class DbService {
     public ResultSet queryMatricola(StringBuilder matricola) throws SQLException {
         String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = " + matricola;
         Statement stmt = null;
-        if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
-            stmt = conLDB.createStatement();
-        } else {
-            stmt = conGDB.createStatement();
-        }
+        stmt = conLDB.createStatement();
+
         return (stmt.executeQuery(SQLSELECT));
     }
 
@@ -196,11 +204,8 @@ public class DbService {
         String SQLSELECT = "SELECT * FROM StecamSP1802.dbo.b_Operatore_SYNK where Matricola = " + matricola +
                 " AND HashPassword = '" + PasswordMD5Converter.getMD5(password.toString()) + "'";
         Statement stmt = null;
-        if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_DISCONNECTED) {
-            stmt = conLDB.createStatement();
-        } else {
-            stmt = conGDB.createStatement();
-        }
+        stmt = conLDB.createStatement();
+
         return (stmt.executeQuery(SQLSELECT));
     }
 
@@ -467,7 +472,7 @@ public class DbService {
             preparedStmtDettaglio.execute();
 
             for (String rs : listaServer.keySet()) {
-                insertDettaglioRicetta(listaServer.get(rs).getCodice(),listaServer.get(rs).getDescrizione(),id);
+                insertDettaglioRicetta(listaServer.get(rs).getCodice(), listaServer.get(rs).getDescrizione(), id);
             }
 
         } catch (SQLException e) {

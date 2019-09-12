@@ -140,6 +140,22 @@ public class MainController extends AbstractController implements Initializable,
     @FXML
     private TextField txtFORZA4;
 
+    @FXML
+    private TextField txtFORZA5;
+
+    @FXML
+    private TextField txtFORZA6;
+
+    @FXML
+    private TextField txtFORZA7;
+
+    @FXML
+    private TextField txtFORZA8;
+
+    @FXML
+    private TextField txtFORZA9;
+
+
     final ObservableList<WOTable> tblWoData = FXCollections.observableArrayList(WOTable.extractor());
 
     //Servizi
@@ -242,6 +258,7 @@ public class MainController extends AbstractController implements Initializable,
     public void startMainServices() {
         dbService.connectRemoteDB();
         plcService.connect();
+        dbService.synckUSERS();
     }
 
     public void startBarCodeService() {
@@ -489,6 +506,12 @@ public class MainController extends AbstractController implements Initializable,
             txtFORZA2.setText(forze.getForza2String());
             txtFORZA3.setText(forze.getForza3String());
             txtFORZA4.setText(forze.getForza4String());
+            txtFORZA5.setText(forze.getForza5String());
+            txtFORZA6.setText(forze.getForza6String());
+            txtFORZA7.setText(forze.getForza7String());
+            txtFORZA8.setText(forze.getForza8String());
+            txtFORZA9.setText(forze.getForza9String());
+
 
         });
         Logger.warn("PIANTAGGIO BUONO! ");
@@ -496,7 +519,9 @@ public class MainController extends AbstractController implements Initializable,
 
         dbService.storePiantaggio(loggedUser.getMatricola(), WorkOrder.getInstance().getCodiceRicetta(),
                 WorkOrder.getInstance().getBarCodeWO(), "OK",
-                forze.getForza1String(),forze.getForza2String(),forze.getForza3String(),forze.getForza4String());
+                forze.getForza1String(),forze.getForza2String(),forze.getForza3String(),forze.getForza4String(),
+                forze.getForza5String(),forze.getForza6String(),forze.getForza7String(),forze.getForza8String(),
+                forze.getForza9String());
     }
 
     public void piantaggioSCARTO() {
@@ -510,6 +535,11 @@ public class MainController extends AbstractController implements Initializable,
             txtFORZA2.setText(forze.getForza2String());
             txtFORZA3.setText(forze.getForza3String());
             txtFORZA4.setText(forze.getForza4String());
+            txtFORZA5.setText(forze.getForza5String());
+            txtFORZA6.setText(forze.getForza6String());
+            txtFORZA7.setText(forze.getForza7String());
+            txtFORZA8.setText(forze.getForza8String());
+            txtFORZA9.setText(forze.getForza9String());
 
 
         });
@@ -518,7 +548,9 @@ public class MainController extends AbstractController implements Initializable,
 
         dbService.storePiantaggio(loggedUser.getMatricola(), WorkOrder.getInstance().getCodiceRicetta(),
                 WorkOrder.getInstance().getBarCodeWO(), "KO",
-                forze.getForza1String(),forze.getForza2String(),forze.getForza3String(),forze.getForza4String());
+                forze.getForza1String(),forze.getForza2String(),forze.getForza3String(),forze.getForza4String(),
+                forze.getForza5String(),forze.getForza6String(),forze.getForza7String(),forze.getForza8String(),
+                forze.getForza9String());
     }
 
     public void onNewBarCode(String barCode) {
@@ -899,6 +931,8 @@ public class MainController extends AbstractController implements Initializable,
         lastUdM.setStyle("-fx-background-color: white");
         lastCodProdotto.setStyle("-fx-background-color: white");
 
+
+
         cicloWO.setText("");
         cicloPRG.setText("");
         cicloDESCRIZIONE.setText("");
@@ -909,10 +943,26 @@ public class MainController extends AbstractController implements Initializable,
 
         woTblPiantaggio.setItems(tblWoData);
         woTblPiantaggio.refresh();
-
-
         statusManager.setGlobalStatus(StatusManager.GlobalStatus.WAITING_WO);
         plcService.unsetPianta();
+
+        ForzePiantaggio forze = plcService.getForze();
+        Platform.runLater(() -> {
+            labelESITO.setText("BUONO");
+            labelESITO.setStyle("-fx-background-color: green");
+
+            txtFORZA1.setText(forze.getForza1String());
+            txtFORZA2.setText(forze.getForza2String());
+            txtFORZA3.setText(forze.getForza3String());
+            txtFORZA4.setText(forze.getForza4String());
+            txtFORZA5.setText(forze.getForza5String());
+            txtFORZA6.setText(forze.getForza6String());
+            txtFORZA7.setText(forze.getForza7String());
+            txtFORZA8.setText(forze.getForza8String());
+            txtFORZA9.setText(forze.getForza9String());
+
+
+        });
     }
 
     public void onRicetteBtn(ActionEvent actionEvent) {
