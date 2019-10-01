@@ -445,8 +445,8 @@ public class DbService {
         String SQLSELECT = "SELECT  [id]" +
                 ",[codice]" +
                 ",[descrizione]" +
-                "FROM [StecamSP1802].[dbo].[ricette]" +
-                "WHERE [codice] = " + codiceRicetta;
+                " FROM [StecamSP1802].[dbo].[ricette]" +
+                " WHERE [codice] = '" + codiceRicetta + "'";
         Statement stmt = null;
 
         try {
