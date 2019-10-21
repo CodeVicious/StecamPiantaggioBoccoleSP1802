@@ -38,7 +38,7 @@ public class DbService {
 
     public void synckUSERS() {
         if (statusManager.getGlobalDbStatus() == StatusManager.GlobalDbStatus.GLOBAL_DB_CONNECTED) {
-            String SQLSELECT = "SELECT * FROM [dbo].[b_Operatore]";
+            String SQLSELECT = "SELECT * FROM [SpalAutomazioneBrushless].[dbo].[b_Operatore]";
             String SQLDROP = "TRUNCATE TABLE [dbo].[b_Operatore_SYNK]";
             String SQLINSERT = " INSERT INTO [dbo].[b_Operatore_SYNK]" +
                     "           ([Matricola]" +
