@@ -53,8 +53,12 @@ public class DbService {
                 preparedStmt = conLDB.prepareStatement(SQLINSERT);
 
                 Statement stmt = conLDB.createStatement();
+                Statement remoteStmt = conGDB.createStatement();
+
+
+
                 stmt.executeUpdate(SQLDROP);
-                ResultSet rs = stmt.executeQuery(SQLSELECT);
+                ResultSet rs = remoteStmt.executeQuery(SQLSELECT);
                 // Iterate through the data in the result set and display it.
                 while (rs.next()) {
                     preparedStmt.setString(1, rs.getString("Matricola"));
